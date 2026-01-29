@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle del Vehículo | CARROQHATU</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css" rel="stylesheet">    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+</head>
+
+<body>
+     <!--NAVBAR-->
+    <div class="container-fluid position-relative nav-bar p-0">
+        <div class="position-relative px-lg-0" style="z-index: 9;">
+            <nav class="navbar navbar-expand-lg bg-white navbar-dark py-3 py-lg-0 pl-3 pl-lg-5 shadow-sm">
+                <a href="index.html" class="navbar-brand">
+                    <img class="imglogo" src="img/CarroQhatuL.png" alt="Logo">
+                </a>
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+               <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
+                    <div class="navbar-nav ml-auto py-0">
+                        <a href="index.html" class="nav-item nav-link">
+                            <img src="img/iconoinicio (1).svg" class="iconhome">
+                        </a>
+                        <a class="navbar_txtInicio nav-item nav-link" href="index.html" class="nav-item nav-link">Inicio</a>
+                        <a href="about.html" class="nav-item nav-link">Compra un auto</a>
+                        <a href="service.html" class="nav-item nav-link">Vende tu auto</a>            
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Nosotros</a>
+                            <div class="dropdown-menu rounded-0 m-0">
+                                <a href="team.html" class="dropdown-item">Conócenos</a>
+                                <a href="testimonial.html" class="dropdown-item">Testimonios</a>
+                                <a href="team.html" class="dropdown-item">Blog</a>
+                                <a href="contact.html" class="dropdown-item">Contáctos</a>
+                                
+                            </div>
+                        </div> 
+                        </div class="nav-item ml-lg-3">
+                            <a href="contact.html" class="btn-contacto">
+                                Contáctanos<i class="fa fa-headset"></i>
+                            </a>   
+                        </div>
+                     </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+    <!--FIN NAVBAR-->
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="carousel-container">
+                    <div class="img-counter"><span id="currentIdx">1</span> / <span id="totalIdx">5</span></div>
+                    <button class="btn-nav btn-prev" onclick="changeImg(-1)"><i class="fas fa-chevron-left"></i></button>
+                    <img id="fotoPrincipal" src="" class="img-main">
+                    <button class="btn-nav btn-next" onclick="changeImg(1)"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                
+                <div id="galeriaThumbs" class="d-flex mt-3 overflow-auto"></div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="info-car">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h1 id="txtNombre" class="h3 title-model font-weight-bold mb-9"></h1>
+                            <p id="txtSubtitulo" class="text-muted"></p>
+                            <p id="txtKmLoc" class="small text-secondary"></p>
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="mb-4">
+                        <span class="text-muted small">Precio contado</span>
+                        <h1 id="txtPrecioContado" class="price-contado"></h1>
+                    </div>
+
+                    <div class="divider"></div>
+
+                <div class="techgrid-items">
+                    <div class="tech-item">
+                        <div>
+                            <span class="tech-label d-block">Año</span>
+                            <span class="tech-value" id="txtAnio"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="tech-item">
+                        <div>
+                            <span class="tech-label d-block">Motor</span>
+                            <span class="tech-value" id="txtMotor"></span>
+                        </div>
+                    </div>
+
+                    <div class="tech-item">
+                        <div>
+                            <span class="tech-label d-block">Versión</span>
+                            <span class="tech-value" id="txtVersion"></span>
+                        </div>
+                    </div>
+
+                    <div class="tech-item">
+                        <div>
+                            <span class="tech-label d-block">Transmisión</span>
+                            <span class="tech-value" id="txtTransmision"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="tech-item">
+                        <div>
+                            <span class="tech-label d-block">Otros</span>
+                            <span class="tech-value" id="txtOtros"></span>
+                        </div>
+                    </div>
+
+                </div> <!--fin tech grid-->
+                    
+                <div class="btnReservarDetail">
+                    <button id="btnReservar" class="btn-reservarcardetail">
+                    Reservar ahora
+                    </button>
+                </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="lightboxOverlay" class="lightbox">
+        <span class="close-lightbox" onclick="closeFullImage()">&times;</span>
+        
+        <div class="zoom-wrapper" id="zoomContainer">
+            <img id="fullImage" src="" alt="Imagen Completa">
+    </div>
+</div>
+<!--FIN FORM DETALLE CARRO-->
+
+    <!--BANNER DETAIL-->
+        <section class="cards-detailcontainer">
+            <div class="cta-detailgrid">
+                <article id="bannerReservar" class="cta-img-carddetail" style="cursor:pointer;">
+                    <img src="img/bannerdetail.svg" alt="¿Te gusta este vehículo?">
+                </article>
+            </div>
+        </section>
+    <!--FIN BANNER DETAIL-->
+
+    <!--CATÁLOGO DETAIL 1-->
+        <h2 class="beneficios-title titulo-linea title-detailcatalogo">
+            También te puede interesar
+            <span></span>
+        </h2>
+      <section class="mas-vendidos container">
+            <div class="carousel-wrapper">
+                <button class="mv-arrow left">&#10094;</button>
+                <div class="mv-carousel"> <a href="detail.html?id=HONDA-HR-V-2022">
+                        <div class="mv-card">
+                            <img src="img/HONDA-HR-V.jpg" class="mv-img">
+                            <h4>HONDA HR-V EXL</h4>
+                            <div class="mv-divider"></div>
+                            <p class="mv-price">$ 17,500 <span class="abrev-divisa">USD</span></p>
+                            <div class="mv-divider"></div>
+                            <p class="mv-month">
+                                <span><i class="fa fa-road"></i> 76 mil KM</span>
+                                <span><i class="fa fa-cogs"></i> 1.8 cc</span>
+                            </p>
+                        </div>
+                    </a>
+                    <a href="detail.html?id=NISSAN-NAVARA">
+                        <div class="mv-card">
+                            <img src="img/NAVARA1.jpg" class="mv-img">
+                            <h4>Nissan Navara 4x4</h4>
+                            <div class="mv-divider"></div>
+                            <p class="mv-price">S/37,000<span class="abrev-divisa">PEN</span></p>
+                            <div class="mv-divider"></div>
+                            <p class="mv-month">
+                                <span><i class="fa fa-road"></i> 226mil KM </span>
+                                <span><i class="fa fa-cogs"></i> 2.5</span>
+                            </p>
+                        </div>
+                    </a> 
+                     <a href="detail.html?id=TOYOTA-RAV4">
+                        <div class="mv-card">
+                            <img src="img/RAV4-1.jpg" class="mv-img">
+                            <h4>Toyota Rav4 4x4 Full</h4>
+                            <div class="mv-divider"></div>
+                            <p class="mv-price">S/. 50,000<span class="abrev-divisa">PEN</span></p>
+                            <div class="mv-divider"></div>
+                            <p class="mv-month">
+                                <span><i class="fa fa-road"></i> 152mil KM </span>
+                                <span><i class="fa fa-cogs"></i> 2.5cc </span>
+                            </p>
+                        </div>
+                    </a> 
+                     <a href="detail.html?id=TOYOTA-HILUX-2017">
+                        <div class="mv-card">
+                            <img src="img/HILUX2017-1.jpg" class="mv-img">
+                            <h4>Toyota Hilux 4x4 SR 2017</h4>
+                            <div class="mv-divider"></div>
+                            <p class="mv-price">$ 21,000<span class="abrev-divisa">USD</span></p>                
+                            <div class="mv-divider"></div>
+                            <p class="mv-month">
+                                <span><i class="fa fa-road"></i> 93mil KM </span>
+                                <span><i class="fa fa-cogs"></i> 1.0 GD</span>
+                                
+                            </p>
+                        </div>
+                    </a>     
+                    <a href="detail.html?id=Mitsubishi-L200-4x2" class="text-decoration-none text-dark">
+                        <div class="mv-card" onclick="location.href='detail.html?id=Mitsubishi-L200-4x2'" style="cursor: pointer;">
+                            <img src="img/L2002.jpg" class="mv-img">
+                            <h4>Mitsubishi L200 4x2</h4>
+                            <div class="mv-divider"></div>
+                            <p class="mv-price">$ 16,500<span class="abrev-divisa">USD</span></p>
+                            <div class="mv-divider"></div>
+                            <p class="mv-month">                                
+                                <span><i class="fa fa-road"></i> 74mil KM </span>
+                                <span><i class="fa fa-cogs"></i> 2.4 </span>                                
+                            </p>
+                        </div>
+                    </a>
+                    <a href="detail.html?id=Kia-Sportage-4x4-2016-mod-2017" class="text-decoration-none text-dark">
+                        <div class="mv-card">
+                            <img src="img/sportage1.jpg" class="mv-img">
+                            <h4>Kia Sportage 4x4 2016</h4>
+                            <div class="mv-divider"></div>
+                            <p class="mv-price">S/. 61,000<span class="abrev-divisa">PEN</span></p>
+                            <div class="mv-divider"></div>
+                            <p class="mv-month">
+                                <span><i class="fa fa-road"></i> 53mil KM</span>
+                                
+                                <span><i class="fa fa-cogs"></i> 2.0</span>
+                                
+                            </p>                      
+                        </div>
+                    </a>
+                    <a href="detail.html?id=AudiQ5-2012">
+                        <div class="mv-card">
+                            <img src="img/audiq5.jpg" class="mv-img">
+                            <h4>Audi Q5 4x4 2012</h4>
+                            <div class="mv-divider"></div>
+                            <p class="mv-price">$ 55,000<span class="abrev-divisa">USD</span></p>
+                            <div class="mv-divider"></div>
+                            <p class="mv-month">
+                                <span><i class="fa fa-road"></i> 99mil KM</span>                                                    
+                                <span><i class="fa fa-cogs"></i> 2.0 </span>
+                            </p>
+                        </div>
+                    </a>
+                    <a href="detail.html?id=hyundai-tucson-2019">
+                        <div class="mv-card">
+                            <img src="img/TUCSON2019.jpg" class="mv-img">
+                            <h4>Hyundai Tucson 2019</h4>
+                            <div class="mv-divider"></div>
+                            <p class="mv-price">S/. 70,000<span class="abrev-divisa">PEN</span></p>
+                            <div class="mv-divider"></div>
+                            <p class="mv-month">
+                                <span><i class="fa fa-road"></i> 64mil KM</span>                            
+                                <span> <i class="fa fa-cogs"></i> 2.0</span>                           
+                            </p>
+                        </div>  
+                    </a>
+                    <a href="detail.html?id=GLORY-NEW-580">
+                        <div class="mv-card">
+                            <img src="img/DFSKGLORYNEW580.jpg" class="mv-img">
+                            <h4>DFSK Glory New 580</h4>
+                            <div class="mv-divider"></div>
+                            <p class="mv-price">S/. 47,000<span class="abrev-divisa">PEN</span></p>
+                            <div class="mv-divider"></div>
+                            <p class="mv-month">
+                                <span> <i class="fa fa-road"></i> 57mil KM</span>                           
+                                <span><i class="fa fa-cogs"></i> 1.8 Bi</span>                                 
+                            </p>
+                        </div>
+                    </a>
+                    <a href="detail.html?id=CHEVROLET-TRACKET-2022">
+                        <div class="mv-card">
+                            <img src="img/TRACKERLTZ.jpg" class="mv-img">
+                            <h4>Chevrolet Tracker LTZ</h4>
+                            <div class="mv-divider"></div>
+                            <p class="mv-price">$ 14,500<span class="abrev-divisa">USD</span></p>
+                            <div class="mv-divider"></div>
+                            <p class="mv-month">
+                                <span><i class="fa fa-road"></i> 17mil KM</span>                            
+                                <span><i class="fa fa-cogs"></i> 1.2</span> 
+                            </p>
+                        </div>
+                    </a>
+                    <a href="detail.html?id=FORLAND-300">
+                        <div class="mv-card">
+                            <img src="img/FORLANDF300-1.png" class="mv-img">
+                            <h4>Forland F300 3Tn 2024</h4>
+                            <div class="mv-divider"></div>
+                            <p class="mv-price">$ 17,000<span class="abrev-divisa">USD</span></p>
+                            <div class="mv-divider"></div>
+                            <p class="mv-month">
+                                <span><i class="fa fa-road"></i> 1279 KM </span>                            
+                                <span><i class="fa fa-cogs"></i> 2.8</span>
+                            </p>
+                        </div>
+                    </a>
+                    <a href="detail.html?id=GLORY-580">
+                        <div class="mv-card">
+                            <img src="img/glory580.jpg" class="mv-img">
+                            <h4>DFSK Glory 580 2024</h4>
+                            <div class="mv-divider"></div>
+                            <p class="mv-price">S/. 52,000<span class="abrev-divisa">USD</span></p>
+                            <div class="mv-divider"></div>
+                            <p class="mv-month">
+                                <span><i class="fa fa-road"></i> 50mil KM</span>                            
+                                <span><i class="fa fa-cogs"></i> 1.8</span> 
+                            </p>
+                        </div>
+                    </a>
+                    <a href="detail.html?id=CHEVROLET-SPIN-2023">
+                        <div class="mv-card">
+                            <img src="img/chevSPIN.jpg" class="mv-img">
+                            <h4>Chevrolet Spin 2023</h4>
+                            <div class="mv-divider"></div>
+                            <p class="mv-price">S/. 55,000<span class="abrev-divisa">PEN</span></p>
+                            <div class="mv-divider"></div>
+                            <p class="mv-month">
+                                <span><i class="fa fa-road"></i> 20mil KM</span>
+                          
+                                <span><i class="fa fa-cogs"></i> 1.8</span>
+                            </p>
+                        </div>
+                    </a>  </div>
+                <button class="mv-arrow right">&#10095;</button>
+            </div>
+        </section>
+    <!--FIN CATALOGO DETAIL1-->
+
+    <!--INICIO CATALOGO 2-->    
+        <h2 class="separador-detail detail-linea line-detailcatalogo">
+            <span></span>
+        </h2>
+        <section class="mas-vendidos container scroll2">
+            <div class="carousel-wrapper">
+                <button class="mv2-arrow left">&#10094;</button>
+                <div class="mv-carousel">                 
+                <a href="detail.html?id=VOLKSWAGEN-TIGUAN-2012">
+                    <div class="mv-card">
+                        <img src="img/TIGUAN.jpg" class="mv-img">
+                        <h4>Volkswagen Tiguan 4x4 2012 Mod 2013</h4>
+                        <div class="mv-divider"></div>
+                        <p class="mv-price">$ 14,700<span class="abrev-divisa">USD</span></p>
+                        <div class="mv-divider"></div>
+                        <p class="mv-month">
+                                <span><i class="fa fa-road"></i> 121mil KM </span>                            
+                                <span><i class="fa fa-cogs"></i> 2.0</span>                            
+                        </p>
+                    </div>
+                </a>
+                <a href="detail.html?id=MITSUBISHI-L200-2013">
+                    <div class="mv-card">
+                        <img src="img/L2002013.jpg" class="mv-img">
+                        <h4>Mitsubishi L200 2013 Mod 2014</h4>
+                        <div class="mv-divider"></div>
+                        <p class="mv-price">S/. 49,500<span class="abrev-divisa">PEN</span></p>
+                        <div class="mv-divider"></div>
+                        <p class="mv-month">
+                            <span><i class="fa fa-road"></i> 105mil KM </span>
+                            <span><i class="fa fa-cogs"></i> 2.5</span>                        
+                        </p>
+                    </div>
+                </a>
+                <a href="detail.html?id=TOYOTA-HILUX-2019">
+                    <div class="mv-card">
+                        <img src="img/hiluxsrv20192.jpg" class="mv-img">
+                        <h4>Toyota Hilux SRV 2019</h4>
+                        <div class="mv-divider"></div>
+                        <p class="mv-price">$ 31,000<span class="abrev-divisa">USD</span></p>
+                        <div class="mv-divider"></div>
+                        <p class="mv-month">
+                            <span><i class="fa fa-road"></i> 97mil KM </span>
+                            <span><i class="fa fa-cogs"></i> 2.8</span>                                                       
+                        </p>
+                    </div>
+                </a>
+
+                <a href="detail.html?id=TOYOTA-HILUX-2015">
+                    <div class="mv-card">
+                        <img src="img/hilux4x42015.jpg" class="mv-img">
+                        <h4>Toyota Hilux 4x4 2015</h4>
+                        <div class="mv-divider"></div>
+                        <p class="mv-price">S/. 25,500<span class="abrev-divisa">PEN</span></p>
+                        <div class="mv-divider"></div>
+                        <p class="mv-month">
+                            <span> 
+                                <i class="fa fa-road"></i>193mil KM 
+                            </span>
+                            <span>
+                                <i class="fa fa-cogs"></i>1kd 3.0
+                            </span>                           
+                        </p>
+                    </div>
+                </a>
+                <a href="detail.html?id=RENAULT-LOGAN-2018">
+                    <div class="mv-card">
+                        <img src="img/renaultlogan.jpg" class="mv-img">
+                        <h4>Renault Logan 2018 Mod 2019</h4>
+                        <div class="mv-divider"></div>
+                        <p class="mv-price">S/. 29,500<span class="abrev-divisa">PEN</span></p>
+                        <div class="mv-divider"></div>
+                        <p class="mv-month">
+                            <span> 
+                                <i class="fa fa-road"></i>58,800 KM 
+                            </span>
+                            <span>
+                                <i class="fa fa-cogs"></i>1.6
+                            </span>                           
+                        </p>
+                    </div>
+                </a>
+                <a href="detail.html?id=MITSUBISHI-L200-2025">
+                    <div class="mv-card">
+                        <img src="img/missubishil200.jpg" class="mv-img">
+                        <h4>Mitsubishi L200 4x4 2025</h4>
+                        <div class="mv-divider"></div>
+                        <p class="mv-price">$ 35,000<span class="abrev-divisa">USD</span></p>
+                        <div class="mv-divider"></div>
+                        <p class="mv-month">
+                            <span> 
+                                <i class="fa fa-road"></i>13mil KM 
+                            </span>
+                            <span>
+                                <i class="fa fa-cogs"></i>2.4
+                            </span>                           
+                        </p>
+                    </div>
+                </a>
+                <a href="detail.html?id=MAZDA-CX5-2016">
+                    <div class="mv-card">
+                        <img src="img/MAZDACX5.jpg" class="mv-img">
+                        <h4>Mazda CX-5 2016 Mod 2017</h4>
+                        <div class="mv-divider"></div>
+                        <p class="mv-price">S/. 55,000<span class="abrev-divisa">PEN</span></p>
+                        <div class="mv-divider"></div>
+                        <p class="mv-month">
+                            <span>
+                                <i class="fa fa-road"></i>1279 KM 
+                            </span>
+                            <span>
+                                <i class="fa fa-cogs"></i>2.0
+                            </span>
+                        </p>
+                    </div>
+                </a>
+                <a href="detail.html?id=KING-LONG-2024">                    
+                    <div class="mv-card">
+                        <img src="img/kinglong.jpg" class="mv-img">
+                        <h4>King Long Santana 2024 Mod 2025</h4>
+                        <div class="mv-divider"></div>
+                        <p class="mv-price">S/. 63,000<span class="abrev-divisa">PEN</span></p>
+                        <div class="mv-divider"></div>
+                        <p class="mv-month">
+                            <span>
+                                <i class="fa fa-road"></i>21mil KM 
+                            </span>
+                            <span>
+                                <i class="fa fa-cogs"></i>2.7
+                            </span>
+                        </p>
+                    </div>
+                </a>
+
+                <a href="detail.html?id=KIA-SOLUTO-SEMIFULL-2021">
+                    <div class="mv-card">
+                        <img src="img/kiasoluto.jpg" class="mv-img">
+                        <h4>Kia Soluto SemiFull 2021-2022</h4>
+                        <div class="mv-divider"></div>
+                        <p class="mv-price">S/. 37,000<span class="abrev-divisa">PEN</span></p>
+                        <div class="mv-divider"></div>
+                        <p class="mv-month">
+                            <span>
+                                <i class="fa fa-road"></i>84mil KM 
+                            </span>
+                            <span>
+                                <i class="fa fa-cogs"></i>1.4
+                            </span>
+                        </p>
+                    </div>
+                </a>
+                <a href="detail.html?id=HYUNDAI-VERNA-2020">
+                    <div class="mv-card">
+                        <img src="img/hyundaiverna.jpg" class="mv-img">
+                        <h4>Hyundai Verna 2020</h4>
+                        <div class="mv-divider"></div>
+                        <p class="mv-price">S/. 35,000<span class="abrev-divisa">PEN</span></p>
+                        <div class="mv-divider"></div>
+                        <p class="mv-month">
+                            <span>
+                                <i class="fa fa-road"></i>75mil KM 
+                            </span>
+                            <span>
+                                <i class="fa fa-cogs"></i>1.4
+                            </span>
+                        </p>
+                    </div>
+                </a>
+                <a href="detail.html?id=JMC-VIGUS-2024">
+                    <div class="mv-card">
+                        <img src="img/JMCVIGUS.png" class="mv-img">
+                        <h4>JMC VIGUS PLUS 4X4 2024</h4>
+                        <div class="mv-divider"></div>
+                        <p class="mv-price">S/. 63,000<span class="abrev-divisa">PEN</span></p>
+                        <div class="mv-divider"></div>
+                        <p class="mv-month">
+                            <span>
+                                <i class="fa fa-road"></i>23mil KM 
+                            </span>
+                            <span>
+                                <i class="fa fa-cogs"></i>2.4
+                            </span>
+                        </p>
+                    </div>
+                </a>
+            </div>
+                <button class="mv2-arrow right">&#10095;</button>
+            </div>
+        </section>
+    <!--FIN CATALOGO 2-->
+
+    <!--INICIO FORMULARIO COTIZACION COMPRA-->
+    <section class="formcotizawspp">
+        <div class="item cta-box">
+        <div class="form-side">
+                <h2 class="formquestion">¿Tienes un auto específico en mente?</h2>
+                <p class="form-p">Nosotros lo encontramos por ti al mejor precio. ¡Cotiza ahora!</p>
+
+                <div class="input-infocotiza">
+                    <label class="question1">¿Qué auto buscas?</label>
+                    <input type="text" id="carModel" placeholder="Ejemplo: Hyundai Tucson">
+                </div>
+
+                <div class="input-infocotiza">
+                    <label class="question2">Año / Rango de años</label>
+                    <input type="text" id="carYear" placeholder="Ejemplo: 2023 o 2020-2024">
+                </div>
+
+                <div class="input-infocotiza">
+                    <label class="question3">Presupuesto aproximado</label>
+                    <input type="text" id="carBudget" placeholder="Ejemplo: 35,000 soles">
+                </div>
+
+                <button onclick="sendToWhatsApp()" class="btn-wsppform">Cotizar auto</button>
+                </div>
+
+                <div class="image-side">
+                <img src="img/cardetail3.svg" alt="Imagen del carro">
+            </div>
+      </div> 
+    </section>
+        
+      <!--FIN FORMULARIO COTIZACIÓN-->
+        
+
+
+    <script src="js/datos.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const autoId = urlParams.get('id');
+        const auto = listaAutos.find(item => item.id === autoId);
+
+        let currentImgIdx = 0;
+
+        if (auto) {
+            
+            // Llenar textos
+            document.getElementById('txtNombre').innerText = auto.nombre;
+            document.getElementById('txtSubtitulo').innerText = auto.subtitulo;
+            document.getElementById('txtKmLoc').innerText = `${auto.km} km • ${auto.ubicacion}`;
+            document.getElementById('txtPrecioContado').innerText = `${auto.precioContado}`;
+            document.getElementById('txtAnio').innerText = auto.anio;
+            document.getElementById('txtMotor').innerText = auto.motor;
+            document.getElementById('txtVersion').innerText = auto.version;
+            document.getElementById('txtTransmision').innerText = auto.transmision;
+            document.getElementById('txtOtros').innerText = auto.otros;
+            
+            // Configurar Carrusel
+            document.getElementById('totalIdx').innerText = auto.fotos.length;
+            updateImage();
+
+            // Crear Miniaturas
+            const galeria = document.getElementById('galeriaThumbs');
+            auto.fotos.forEach((foto, index) => {
+                const img = document.createElement('img');
+                img.src = foto;
+                img.className = 'thumb';
+                img.onclick = () => { currentImgIdx = index; updateImage(); };
+                galeria.appendChild(img);
+            });                
+                const telefono = "51972043502"; 
+                const mensaje = `Hola! Estoy interesado en el vehículo: ${auto.nombre} (${auto.anio}). ¿Sigue disponible?`;
+                const whatsappUrl = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
+                //para banner:
+                const mensajebanner = `Hola! Estoy interesado en el vehículo: ${auto.nombre} (${auto.anio}). ¿Sigue disponible? Ayudenme con todo el proceso!`;
+                const whatsappUrlbanner = `https://wa.me/${telefono}?text=${encodeURIComponent(mensajebanner)}`;
+
+                const btnNegro = document.getElementById('btnReservar');
+                if (btnNegro) {
+                    btnNegro.onclick = () => window.open(whatsappUrl, '_blank');
+                }
+
+                const bannerReserva = document.getElementById('bannerReservar');
+                if(bannerReserva){
+                    bannerReserva.onclick = () => window.open(whatsappUrlbanner, '_blank');
+                }
+        }
+
+        function updateImage() {
+            const imgElement = document.getElementById('fotoPrincipal');
+            imgElement.src = auto.fotos[currentImgIdx];
+            document.getElementById('currentIdx').innerText = currentImgIdx + 1;
+            
+            // Marcar miniatura activa
+            const thumbs = document.querySelectorAll('.thumb');
+            thumbs.forEach((t, i) => {
+                t.style.borderColor = (i === currentImgIdx) ? '#0046ff' : 'transparent';
+            });
+        }
+
+        function changeImg(step) {
+            currentImgIdx += step;
+            if (currentImgIdx >= auto.fotos.length) currentImgIdx = 0;
+            if (currentImgIdx < 0) currentImgIdx = auto.fotos.length - 1;
+            updateImage();
+        }
+
+        // Variables para controlar el estado
+        const overlay = document.getElementById('lightboxOverlay');
+        const fullImg = document.getElementById('fullImage');
+        const zoomContainer = document.getElementById('zoomContainer');
+        let isZoomed = false;
+
+        // 1. Abrir el Lightbox
+        document.getElementById('fotoPrincipal').onclick = function() {
+            overlay.style.display = "flex";
+            fullImg.src = this.src;
+            document.body.style.overflow = "hidden";
+        }
+
+        // 2. Función para cerrar y RESETEAR el zoom
+        function closeFullImage() {
+            overlay.style.display = "none";
+            document.body.style.overflow = "auto";
+            // Importante: Resetear el zoom al cerrar
+            isZoomed = false;
+            fullImg.classList.remove('zoomed');
+            fullImg.style.transformOrigin = "center center";
+        }
+
+        // Cerrar con la tecla ESC
+        document.addEventListener('keydown', (e) => { if(e.key === "Escape") closeFullImage(); });
+
+        // Cerrar al hacer clic en el fondo negro
+        overlay.onclick = function(e) {
+            // Si el clic NO fue en la imagen ni en su contenedor
+            if (e.target === overlay) {
+                closeFullImage();
+            }
+        }
+
+        // --- LÓGICA DEL ZOOM ---
+
+        // A) Al hacer clic en la imagen grande: Activar/Desactivar Zoom
+        fullImg.onclick = function(e) {
+            // Evitamos que el clic cierre el overlay
+            e.stopPropagation();
+            
+            isZoomed = !isZoomed;
+            
+            if (isZoomed) {
+                this.classList.add('zoomed');
+            } else {
+                this.classList.remove('zoomed');
+                this.style.transformOrigin = "center center"; // Volver al centro
+            }
+        };
+
+        // B) Al mover el mouse sobre el contenedor: Mover la imagen (Panning)
+        zoomContainer.onmousemove = function(e) {
+            if (!isZoomed) return; // Solo si está con zoom activo
+
+            // Calcular la posición del mouse relativa al contenedor
+            const rect = zoomContainer.getBoundingClientRect();
+            const x = e.clientX - rect.left; // Coordenada X dentro del contenedor
+            const y = e.clientY - rect.top;  // Coordenada Y dentro del contenedor
+
+            // Convertir a porcentajes para usar en transform-origin
+            const xPercent = (x / zoomContainer.offsetWidth) * 100;
+            const yPercent = (y / zoomContainer.offsetHeight) * 100;
+
+            // Mover el punto de origen de la imagen hacia donde está el mouse
+            fullImg.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+        };
+
+        // C) Si el mouse sale del contenedor, volver a centrar suavemente
+        zoomContainer.onmouseleave = function() {
+            if (isZoomed) {
+                fullImg.style.transformOrigin = "center center";
+            }
+        };
+        
+        function sendToWhatsApp() {
+            const phone = "51972043502"; 
+            const model = document.getElementById('carModel').value;
+            const year = document.getElementById('carYear').value;
+            const budget = document.getElementById('carBudget').value;
+
+            if (!model || !budget) {
+                alert("Por favor completa el modelo y tu presupuesto.");
+                return;
+            }
+
+            const text = `*NUEVA SOLICITUD DE COMPRA*%0A%0A` +
+                        `*Vehículo:* ${model}%0A` + 
+                        `*Año:* ${year}%0A` +
+                        `*Presupuesto:* ${budget}`;
+
+            window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+            }
+    </script>
+        <div id="btnWspFlotante" class="btn-whatsapp">
+            <i class="fab fa-whatsapp"></i>
+        </div>
+    <script>
+        
+    // Ponemos el código fuera de cualquier "if" primero para probar
+    document.addEventListener('DOMContentLoaded', function() {
+        const botonVerde = document.getElementById('btnWspFlotante');
+        
+        if (botonVerde) {
+            botonVerde.onclick = function() {
+                console.log("¡CLIC DETECTADO!"); 
+                
+                // Si 'auto' existe (porque ya cargó datos.js)
+                if (typeof auto !== 'undefined') {
+                    const tel = "51986754980"; // Tu número
+                    const msj = `Hola! Me interesa el ${auto.nombre} que vi en su web...`;
+                    window.open(`https://wa.me/${tel}?text=${encodeURIComponent(msj)}`, '_blank');
+                } else {                    
+                    window.open(`https://wa.me/51972043502`, '_blank');
+                }
+            };
+        } else {
+            console.error("No se encontró el botón con ID: btnWspFlotante");
+        }
+    });
+    </script>
+
+   <script>
+    document.querySelectorAll('.carousel-wrapper').forEach(wrapper => {
+        const carousel = wrapper.querySelector('.mv-carousel');
+        const leftBtn = wrapper.querySelector('.left');
+        const rightBtn = wrapper.querySelector('.right');
+
+        function mvScroll(direction) {
+            const card = carousel.querySelector('.mv-card');
+            if (!card) return;
+
+            const distance = card.offsetWidth + 20; // mismo cálculo que tenías
+            smoothScroll(carousel, distance * direction, 600);
+        }
+
+        leftBtn.addEventListener('click', () => mvScroll(-1));
+        rightBtn.addEventListener('click', () => mvScroll(1));
+    });
+
+    /* ===== TU EFECTO ORIGINAL (SIN CAMBIOS) ===== */
+    function smoothScroll(element, change, duration) {
+        const start = element.scrollLeft;
+        const startTime = performance.now();
+
+        function animateScroll(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+
+            const ease = progress < 0.5
+                ? 4 * progress * progress * progress
+                : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+            element.scrollLeft = start + change * ease;
+
+            if (progress < 1) {
+                requestAnimationFrame(animateScroll);
+            }
+        }
+
+        requestAnimationFrame(animateScroll);
+    }
+    </script>
+
+
+</body>
+</html>
+
+
+    <!--INICIO FOOTER-->
+    <footer class="main-footer">    
+        <img class="logo-footer" src="img/CarroQhatuL.png">
+        <div class="footer-grid">        
+            <div class="col-brand">
+                <p>Plataforma líder en la Compra y Venta de Vehículos Usados en el Perú.</p>
+                <div class="social-icons">
+                    <a href="#" class="icon-box"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="#" class="icon-box"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="icon-box"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="icon-box"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+                
+                <div class="col-contact">
+                    <h3 class="h3footer">Contacto</h3>
+                    <div class="contact-links">
+                        <a href="tel:+51972043502"><i class="fa-solid fa-phone"></i> +51 972043502</a>
+                        <a href="mailto:rbm.aracayo@gmail.com"><i class="fa-solid fa-envelope"></i> rbm.aracayo@gmail.com</a>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-center">
+                <div class="center-top">
+                    <div class="sub-col">
+                        <h3 class="h3footer">Explora</h3>
+                        <ul>
+                            <li><a href="about.html">Comprar auto</a></li>
+                            <li><a href="service.html">Vender mi auto</a></li>
+                            <li><a href="#">Catálogo</a></li>
+                        </ul>
+                    </div>
+                    <div class="sub-col">
+                        <h3 class="h3footer">Soporte</h3>
+                        <ul>
+                            <li><a href="#">Términos y Condiciones</a></li>
+                            <li><a href="#">Privacidad</a></li>
+                            <li><a href="#">Libro de Reclamaciones</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="center-bottom">
+                    <h3 class="h3footer destaque-amarillo">¿QUIERES QUE TE CONTACTEMOS?</h3>
+                    <form action="https://formspree.io/f/TU_ID_AQUI" method="POST" class="footer-form">
+                        <input type="text" name="contacto" placeholder="Tu Email o Nº Celular aquí" required>
+                        <button type="submit">ENVIAR</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 CarroQhatu • Todos los Derechos Reservados</p>
+        </div>
+    </footer>
+    <!--FIN FOOTER-->
+
+
+    <!-- REGRESO AL INICIO-->
+    <a href="#" class="btn btn-lg btn-subir btn-lg-square back-to-top"><i class="fa fa-angle-double-up"></i></a>
+
+
+    <!-- JavaScript Libraries 
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="lib/tempusdominus/js/moment.min.js"></script>
+    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+
+    <!-- Template Javascript 
+    <script src="js/main.js"></script>
+</body>
+
+</html>
