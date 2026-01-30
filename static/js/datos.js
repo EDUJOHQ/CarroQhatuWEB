@@ -9,10 +9,9 @@ const listaAutos = [
         precioContado: "$ 16,500 USD",
         anio: "2019",
         version: "GLS",
-        motor: "2.4L Diesel",
         transmision: "Automática",
         otros: "-",
-        fotos: ["img/mitsubishil200.jpg","img/L2002.jpg", "img/L2003.jpg", "img/L2004.jpg"] // La primera es la principal
+        fotos: ["static/img/mitsubishil200.jpg","static/img/L2002.jpg", "static/img/L2003.jpg", "static/img/L2004.jpg"] // La primera es la principal
     },
     {
         id: "Kia-Sportage-4x4-2016-mod-2017",
@@ -26,7 +25,7 @@ const listaAutos = [
         version: "-",
         transmision: "Mecánica",
         otros: "Parlantes JBL - Tratamiento cerámico",
-        fotos: ["img/sportage1.jpg","img/KIASPORTAGE2.jpg", "img/KIASPORTAGE3.jpg", "img/KIASPORTAGE4.jpg", "img/KIASPORTAGE5.jpg", "img/KIASPORTAGE6.jpg", "img/KIASPORTAGE7.jpg", "img/KIASPORTAGE8.jpg"]
+        fotos: ["static/img/sportage1.jpg","static/img/KIASPORTAGE2.jpg", "static/img/KIASPORTAGE3.jpg", "static/img/KIASPORTAGE4.jpg", "static/img/KIASPORTAGE5.jpg", "static/img/KIASPORTAGE6.jpg", "static/img/KIASPORTAGE7.jpg", "static/img/KIASPORTAGE8.jpg"]
     },
     {
         id: "AudiQ5-2012",
@@ -40,7 +39,7 @@ const listaAutos = [
         version: "Quattro",
         transmision: "Automática",
         otros:"Lunas Polarizadas 3M - 8 airbag - Dos llaves",
-        fotos: ["img/audiq5.jpg", "img/AUDIQ5-2.png"]
+        fotos: ["static/img/audiq5.jpg", "static/img/AUDIQ5-2.png"]
     },
     {
         id: "hyundai-tucson-2019",
@@ -54,7 +53,7 @@ const listaAutos = [
         version: "GL",
         transmision: "Mecánica",
         otros:"-",
-        fotos: ["img/TUCSON2019.jpg","img/TUCSON2019-2.jpg","img/TUCSON2019-3.jpg","img/TUCSON2019-4.jpg"]
+        fotos: ["static/img/TUCSON2019.jpg","static/img/TUCSON2019-2.jpg","static/img/TUCSON2019-3.jpg","static/img/TUCSON2019-4.jpg"]
     },
     {
         id: "GLORY-NEW-580",
@@ -68,7 +67,7 @@ const listaAutos = [
         version: "-",
         transmision: "Mecánica",
         otros:"-",
-        fotos: ["img/pruebanewglory.png","img/GLORYNEW580-2.png","img/GLORYNEW580-3.png","img/GLORYNEW580-4.png","img/GLORYNEW580-5.png","img/GLORYNEW580-6.png","img/GLORYNEW580-7.png"]
+        fotos: ["static/img/pruebanewglory.png","static/img/GLORYNEW580-2.png","static/img/GLORYNEW580-3.png","static/img/GLORYNEW580-4.png","static/img/GLORYNEW580-5.png","static/img/GLORYNEW580-6.png","static/img/GLORYNEW580-7.png"]
     },
     {
         id: "CHEVROLET-TRACKET-2022",
@@ -82,7 +81,7 @@ const listaAutos = [
         version: "LTZ",
         transmision: "Automática",
         otros:"Pantalla de 8' - AppleCarPlay - Rines de Aleacion 17' - 6 airbags",
-        fotos: ["img/HYUNDAITRACKER-1.png","img/HYUNDAITRACKER-2.png","img/HYUNDAITRACKER-3.png","img/HYUNDAITRACKER-4.png","img/HYUNDAITRACKER-5.png","img/HYUNDAITRACKER-6.png"]
+        fotos: ["static/img/HYUNDAITRACKER-1.png","static/img/HYUNDAITRACKER-2.png","static/img/HYUNDAITRACKER-3.png","static/img/HYUNDAITRACKER-4.png","static/img/HYUNDAITRACKER-5.png","static/img/HYUNDAITRACKER-6.png"]
     },
     {
         id: "FORLAND-300",
@@ -96,7 +95,7 @@ const listaAutos = [
         version: "Carga",
         transmision: "Mecánica",
         otros:"-",
-        fotos: ["img/FORLANDF300-1.png","img/FORLANDF300-2.png","img/FORLANDF300-4.png"]
+        fotos: ["static/img/FORLANDF300-1.png","static/img/FORLANDF300-2.png","static/img/FORLANDF300-4.png"]
     },
     {
         id: "GLORY-580",
@@ -110,7 +109,7 @@ const listaAutos = [
         version: "-",
         transmision: "-",
         otros:"3 filas asientos - Aros Magnesio 17' - Espejos abatibles - Control de estabilidad - Asientos Ecocuero",
-        fotos: ["img/GLORY580-1.png","img/GLORY580-2.png","img/GLORY580-3.png","img/GLORY580-4.png","img/GLORY580-5.png","img/GLORY580-6.png","img/GLORY580-7.png","img/GLORY580-8.png"]
+        fotos: ["static/img/GLORY580-1.png","static/img/GLORY580-2.png","static/img/GLORY580-3.png","static/img/GLORY580-4.png","static/img/GLORY580-5.png","static/img/GLORY580-6.png","static/img/GLORY580-7.png","static/img/GLORY580-8.png"]
     },
     {
         id: "CHEVROLET-SPIN-2023",
@@ -124,7 +123,7 @@ const listaAutos = [
         version: "-",
         transmision: "-",
         otros:"7 asientos - 3 filas",
-        fotos: ["img/chevSPIN.jpg","img/chevSPIN-2.jpg","img/chevSPIN-3.png","img/chevSPIN-4.jpg","img/chevSPIN-5.png"]
+        fotos: ["static/img/chevSPIN.jpg","static/img/chevSPIN-2.jpg","static/img/chevSPIN-3.png","static/img/chevSPIN-4.jpg","static/img/chevSPIN-5.png"]
     }, 
     {  
         id: "VOLKSWAGEN-TIGUAN-2012",
@@ -138,7 +137,7 @@ const listaAutos = [
         version: "-",
         transmision: "-",
         otros:"-",
-        fotos: ["img/W-TIGUAN1.png","img/W-TIGUAN2.png"]
+        fotos: ["static/img/W-TIGUAN1.png","static/img/W-TIGUAN2.png"]
     },
     {
         id: "MITSUBISHI-L200-2013",
@@ -152,7 +151,7 @@ const listaAutos = [
         version: "-",
         transmision: "-",
         otros:"-",
-        fotos: ["img/L200-1-2013.png","img/L200-2-2013.png"]
+        fotos: ["static/img/L200-1-2013.png","static/img/L200-2-2013.png"]
     },
     {
         id: "MITSUBISHI-L200-2025",
@@ -166,7 +165,7 @@ const listaAutos = [
         version: "-",
         transmision: "-",
         otros:"-",
-        fotos: ["img/MITSU-L200-1.png","img/MITSU-L200-2.png","img/MITSU-L200-3.png"]
+        fotos: ["static/img/MITSU-L200-1.png","static/img/MITSU-L200-2.png","static/img/MITSU-L200-3.png"]
     }, 
     {
         id: "TOYOTA-HILUX-2019",
@@ -180,7 +179,7 @@ const listaAutos = [
         version: "-",
         transmision: "-",
         otros:"-",
-        fotos: ["img/HILUX-2019-1.png","img/HILUX-2019-2.png","img/HILUX-2019-3.png"]
+        fotos: ["static/img/HILUX-2019-1.png","static/img/HILUX-2019-2.png","static/img/HILUX-2019-3.png"]
     }, 
     {
         id: "TOYOTA-HILUX-2015",
@@ -194,7 +193,7 @@ const listaAutos = [
         version: "-",
         transmision: "-",
         otros:"-",
-        fotos: ["img/TOYOTA-HILUX-2015.png","img/TOYOTA-HILUX-2015-2.png"]
+        fotos: ["static/img/TOYOTA-HILUX-2015.png","static/img/TOYOTA-HILUX-2015-2.png"]
     }, 
     {
         id: "RENAULT-LOGAN-2018",
@@ -208,7 +207,7 @@ const listaAutos = [
         version: "-",
         transmision: "-",
         otros:"Cámara de retroceso - 2 Llaves Originales",
-        fotos: ["img/RENAULT-LOGAN-1.png","img/RENAULT-LOGAN-2.png","img/RENAULT-LOGAN-3.png","img/RENAULT-LOGAN-4.png"]
+        fotos: ["static/img/RENAULT-LOGAN-1.png","static/img/RENAULT-LOGAN-2.png","static/img/RENAULT-LOGAN-3.png","static/img/RENAULT-LOGAN-4.png"]
     }, 
     {
         id: "MAZDA-CX5-2016",
@@ -222,7 +221,7 @@ const listaAutos = [
         version: "-",
         transmision: "-",
         otros:"-",
-        fotos: ["img/MAZDA-CX5-1.png","img/MAZDA-CX5-2.png","img/MAZDA-CX5-3.png"]
+        fotos: ["static/img/MAZDA-CX5-1.png","static/img/MAZDA-CX5-2.png","static/img/MAZDA-CX5-3.png"]
     }, 
     {
         id: "KING-LONG-2024",
@@ -236,7 +235,7 @@ const listaAutos = [
         version: "-",
         transmision: "-",
         otros:"-",
-        fotos: ["img/KINGLONG-1.png","img/KINGLONG-2.png","img/KINGLONG-3.png"]
+        fotos: ["static/img/KINGLONG-1.png","static/img/KINGLONG-2.png","static/img/KINGLONG-3.png"]
     }, 
     {
         id: "KIA-SOLUTO-SEMIFULL-2021",
@@ -250,7 +249,7 @@ const listaAutos = [
         version: "Semifull",
         transmision: "Mecánica",
         otros:"Piso tapizado, asientos enmicados, techo enmicado",
-        fotos: ["img/KIA-SOLUTO-1.png","img/KIA-SOLUTO-2.png","img/KIA-SOLUTO-3.png","img/KIA-SOLUTO-4.png","img/KIA-SOLUTO-5.png","img/KIA-SOLUTO-6.png","img/KIA-SOLUTO-7.png","img/KIA-SOLUTO-8.png","img/KIA-SOLUTO-9.png"]
+        fotos: ["static/img/KIA-SOLUTO-1.png","static/img/KIA-SOLUTO-2.png","static/img/KIA-SOLUTO-3.png","static/img/KIA-SOLUTO-4.png","static/img/KIA-SOLUTO-5.png","static/img/KIA-SOLUTO-6.png","static/img/KIA-SOLUTO-7.png","static/img/KIA-SOLUTO-8.png","static/img/KIA-SOLUTO-9.png"]
     }, 
     {
         id: "HYUNDAI-VERNA-2020",
@@ -264,7 +263,7 @@ const listaAutos = [
         version: "-",
         transmision: "-",
         otros:"-",
-        fotos: ["img/HYUNDAI-VERNA-1.png","img/HYUNDAI-VERNA-2.png","img/HYUNDAI-VERNA-3.png","img/HYUNDAI-VERNA-4.png","img/HYUNDAI-VERNA-5.png","img/HYUNDAI-VERNA-6.png"]
+        fotos: ["static/img/HYUNDAI-VERNA-1.png","static/img/HYUNDAI-VERNA-2.png","static/img/HYUNDAI-VERNA-3.png","static/img/HYUNDAI-VERNA-4.png","static/img/HYUNDAI-VERNA-5.png","static/img/HYUNDAI-VERNA-6.png"]
     },   
     {
         id: "JMC-VIGUS-2024",
@@ -278,7 +277,7 @@ const listaAutos = [
         version: "-",
         transmision: "-",
         otros:"-",
-        fotos: ["img/JMCVIGUS.png","img/JMC-VIGUS-2.png","img/JMC-VIGUS-3.png","img/JMC-VIGUS-4.png"]
+        fotos: ["static/img/JMCVIGUS.png","static/img/JMC-VIGUS-2.png","static/img/JMC-VIGUS-3.png","static/img/JMC-VIGUS-4.png"]
     }, 
     {
         id: "TOYOTA-HILUX-2017",
@@ -292,7 +291,7 @@ const listaAutos = [
         version: "-",
         transmision: "-",
         otros:"-",
-        fotos: ["img/HILUX2017-1.jpg","img/HILUX2017-2.jpg","img/HILUX2017-3.jpg","img/HILUX-2017-4.jpg"]
+        fotos: ["static/img/HILUX2017-1.jpg","static/img/HILUX2017-2.jpg","static/img/HILUX2017-3.jpg","static/img/HILUX-2017-4.jpg"]
     }, 
     {
         id: "TOYOTA-RAV4",
@@ -306,7 +305,7 @@ const listaAutos = [
         version: "Full",
         transmision: "-",
         otros:"-",
-        fotos: ["img/RAV4-1.jpg","img/RAV4-2.jpg","img/RAV4-3.jpg","img/RAV4-4.jpg"]
+        fotos: ["static/img/RAV4-1.jpg","static/img/RAV4-2.jpg","static/img/RAV4-3.jpg","static/img/RAV4-4.jpg"]
     }, 
     {
         id: "NISSAN-NAVARA",
@@ -320,7 +319,7 @@ const listaAutos = [
         version: "-",
         transmision: "-",
         otros:"-",
-        fotos: ["img/NAVARA1.jpg","img/NAVARA2.jpg","img/NAVARA3.jpg","img/NAVARA4.jpg","img/NAVARA5.jpg","img/NAVARA6.jpg","img/NAVARA7.jpg","img/NAVARA8.jpg","img/NAVARA9.jpg"]
+        fotos: ["static/img/NAVARA1.jpg","static/img/NAVARA2.jpg","static/img/NAVARA3.jpg","static/img/NAVARA4.jpg","static/img/NAVARA5.jpg","static/img/NAVARA6.jpg","static/img/NAVARA7.jpg","static/img/NAVARA8.jpg","static/img/NAVARA9.jpg"]
     }, 
     {
         id: "HONDA-HR-V-2022",
@@ -334,7 +333,6 @@ const listaAutos = [
         version: "-",
         transmision: "Mecánica",
         otros:"Paddle shirft - 6 Airbags - Controls estabilidad - Asis.Frenado - Asis. De Pendiente",
-        fotos: ["img/HONDA-HR-V.jpg","img/HONDA-HR-V2.jpg","img/HONDA-HR-V3.jpg","img/HONDA-HR-V4.jpg","img/HONDA-HR-V5.jpg","img/HONDA-HR-V6.jpg","img/HONDA-HR-V7.jpg"]
+        fotos: ["static/img/HONDA-HR-V.jpg","static/img/HONDA-HR-V2.jpg","static/img/HONDA-HR-V3.jpg","static/img/HONDA-HR-V4.jpg","static/img/HONDA-HR-V5.jpg","static/img/HONDA-HR-V6.jpg","static/img/HONDA-HR-V7.jpg"]
     }, 
-    // Agrega aquí los otros 18 siguiendo el mismo formato...
 ];

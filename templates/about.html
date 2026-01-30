@@ -8,8 +8,10 @@
     <meta content="Free HTML Templates" name="keywords">
     <meta content="Free HTML Templates" name="description">
 
+   
     <!-- Favicon -->
-    <link href="img/favicon.ico" rel="icon">
+    <link href="{{ url_for('static', filename='img/favicon.ico') }}" rel="icon">
+
 
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -20,14 +22,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- Libraries Stylesheet -->
-    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-    <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='lib/owlcarousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css') }}" rel="stylesheet">
 
-    <!-- Customized Bootstrap Stylesheet -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Customized Bootstrap Stylesheet -->    
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
 
     <!-- Template Stylesheet -->
-    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
 </head>
 
 <body>
@@ -36,31 +39,31 @@
     <div class="container-fluid position-relative nav-bar p-0">
         <div class="position-relative px-lg-1" style="z-index: 1000;" >
             <nav class="navbar navbar-expand-lg bg-secondary navbar-dark py-3 py-lg-0 pl-3 pl-lg-5">
-                <a href="index.html" class="navbar-brand">
-                    <img class="imglogo" src="img/CarroQhatuL.png" href="index.html" loading="lazy" alt="Logo">
+                <a href="{{ url_for('index') }}" class="navbar-brand">
+                    <img class="imglogo" src="{{ url_for('static', filename='img/CarroQhatuL.png') }}" loading="lazy" alt="Logo">
                 </a>
                 <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
                     <div class="navbar-nav ml-auto py-0">
-                        <a href="index.html" class="nav-item nav-link">
-                            <img src="img/iconoinicio (1).svg" class="iconhome" loading="lazy">
+                        <a href="{{ url_for('index') }}" class="nav-item nav-link">
+                            <img src="{{ url_for('static', filename='img/iconoinicio (1).svg') }}" class="iconhome" loading="lazy">
                         </a>
-                        <a class="navbar_txtInicio nav-item nav-link" href="index.html" class="nav-item nav-link">Inicio</a>
-                        <a href="about.html" class="nav-item nav-link">Compra un auto</a>
-                        <a href="service.html" class="nav-item nav-link">Vende tu auto</a>            
+                        <a class="navbar_txtInicio nav-item nav-link" href="{{ url_for('index') }}" class="nav-item nav-link">Inicio</a>
+                        <a href="{{ url_for('about') }}" class="nav-item nav-link">Compra un auto</a>
+                        <a href="{{ url_for('service') }}" class="nav-item nav-link">Vende tu auto</a>            
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Nosotros</a>
                             <div class="dropdown-menu rounded-0 m-0">
-                                <a href="team.html" class="dropdown-item">Conócenos</a>
-                                <a href="testimonial.html" class="dropdown-item">Testimonios</a>
-                                <a href="team.html" class="dropdown-item">Blog</a>
-                                <a href="contact.html" class="dropdown-item">Contáctos</a>                        
+                                <a href="{{ url_for('team') }}" class="dropdown-item">Conócenos</a>
+                                <a href="{{ url_for('testimonial') }}" class="dropdown-item">Testimonios</a>
+                                <a href="{{ url_for('booking') }}" class="dropdown-item">Blog</a>
+                                <a href="{{ url_for('contact') }}" class="dropdown-item">Contáctos</a>                        
                             </div>
                         </div> 
                         </div class="nav-item ml-lg-3">
-                            <a href="contact.html" class="btn-contacto">
+                            <a href="{{ url_for('contact') }}" class="btn-contacto">
                                 Contáctanos<i class="fa fa-headset"></i>
                             </a>   
                         </div>
@@ -74,7 +77,7 @@
      <!-- Banner Principal Inicio -->
     <section class="bannercontainercompra">
         <video class="banner-video" autoplay muted loop playsinline>
-            <source src="img/bannercompraunauto.mp4" type="video/mp4" loading="lazy">
+            <source src="{{ url_for('static', filename='img/bannercompraunauto.mp4') }}" type="video/mp4" loading="lazy">
         </video>
         <div class="banner-overlaycompra">
         </div>
@@ -90,24 +93,24 @@
                 <div class="item hero-text">
                     <h1>Compra tu auto con <span class="highlight">total confianza</span></h1>
                     <p>Transformamos la incertidumbre en una decisión inteligente y segura.</p>
-                    <a href="car.html" class="btn-vercatalogo">Ver Catálogo</a>
+                    <a href="{{ url_for('car') }}" class="btn-vercatalogo">Ver Catálogo</a>
                 </div>
             
                 <div class="item card-feature">
-                    <img class="iconinspeccion" src="img/iconbusqueda.svg" loading="lazy">
+                    <img class="iconinspeccion" src="{{ url_for('static', filename='img/iconbusqueda.svg') }}" loading="lazy">
                     <h3>Inspección 360°</h3>
                     <p>Evaluación técnica, mecánica y estructural profunda.</p>
                 </div>    
 
                 <div class="item card-feature">
-                    <img class="iconlegal" src="img/iconlegal.svg" loading="lazy">
+                    <img class="iconlegal" src="{{ url_for('static', filename='img/iconlegal.svg') }}" loading="lazy">
                     <h3>Blindaje Legal</h3>
                     <p>Verificación de documentos, gravámenes y antecedentes.</p>
                 </div>
 
         
                 <div class="item card-feature">
-                    <img class="icontasacion" src="img/icontasacion.svg" loading="lazy">        
+                    <img class="icontasacion" src="{{ url_for('static', filename='img/icontasacion.svg') }}" loading="lazy">        
                     <h3>Tasación Justa</h3>
                     <p>Precios reales basados en el estado actual del mercado.</p>
                 </div>
@@ -141,7 +144,7 @@
                             </div>
 
                             <div class="image-side">
-                            <img src="img/cardetail3.svg" alt="Imagen del carro" loading="lazy">
+                            <img src="{{url_for('static', filename='img/cardetail3.svg') }}" alt="Imagen carro form" loading="lazy">
                         </div>
                 </div>
             </div>
@@ -162,16 +165,16 @@
             <div class="cta-compragrid">
                 <!-- CARD 1 -->
                 <article class="cta-img-cardcompra">
-                    <img src="img/cotizacion.svg" alt="Catálogo de vehículos" loading="lazy">
+                    <img src="{{ url_for('static', filename='img/cotizacion.svg') }}" alt="Catálogo de vehículos" loading="lazy">
                 </article>
                 <!-- CARD 2 -->
                 <article class="cta-img-cardcompra">
-                    <img src="img/busqueda.svg" alt="Compra con confianza" loading="lazy">
+                    <img src="{{ url_for('static', filename='img/busqueda.svg') }}" alt="Compra con confianza" loading="lazy">
                 </article>
 
                 <!-- CARD 3 -->
                 <article class="cta-img-cardcompra">
-                    <img src="img/recomendacion.svg" alt="Vende tu vehículo" loading="lazy">
+                    <img src="{{ url_for('static', filename='img/recomendacion.svg') }}" alt="Vende tu vehículo" loading="lazy">
                 </article>
             </div>
         </section>
@@ -186,13 +189,13 @@
             <div class="container pb-3">        
                 <div class="row justify-content-center">
                     <div class="col-lg-20 text-center">
-                        <img class="imgcarrosabout" src="img/about.png" alt="imgcarros" loading="lazy">                    
+                        <img class="imgcarrosabout" src="{{ url_for('static', filename='img/about.png') }}" alt="imgcarros" loading="lazy">                    
                         <h4 class="questionsection">¿Listo para encontrar tu compañero de ruta?</h4>
                         <h2 class="textsection">Explora nuestro inventario de vehículos verificados o solicita una inspección para el auto que tienes visto.</h2>                                    
                     </div>            
                     
                     <div class="section-buttongrid">
-                    <a href="car.html" class="btn-vercatalogo">Ver Catálogo</a> 
+                    <a href="{{ url_for('car') }}" class="btn-vercatalogo">Ver Catálogo</a> 
                     <a href="https://wa.me/51972043502?text=Hola!%quiero%información%para%comprar%un%vehículo..." class="btn-secondary" target="_blank">Solicitar Información</a>
                     </div>
                 </div>
@@ -211,81 +214,81 @@
 
             <!-- GRUPO 1 -->
             <div class="grupo-testi">
-                <img class="carousel-icon" src="img/VOLKSWAGEN.svg" loading="lazy">
-                <img class="carousel-icon" src="img/TOYOTA.svg" loading="lazy">
-                <img class="carousel-icon" src="img/RENAULT.svg" loading="lazy">
-                <img class="carousel-icon" src="img/HYUNDAI.svg" loading="lazy">
-                <img class="carousel-icon" src="img/mazda.svg" loading="lazy">
-                <img class="carousel-icon" src="img/HONDA.svg" loading="lazy">  
-                <img class="carousel-icon" src="img/FORD.svg" loading="lazy">  
-                <img class="carousel-icon" src="img/KIA.svg" loading="lazy">  
-                <img class="carousel-icon" src="img/susuki.svg" loading="lazy">
-                <img class="carousel-icon" src="img/audi.svg" loading="lazy">                
-                <img class="carousel-icon" src="img/jeep.svg" loading="lazy">
-                <img class="carousel-icon" src="img/nissan.svg" loading="lazy">  
-                <img class="carousel-icon" src="img/lexus.svg" loading="lazy">
-                <img class="carousel-icon" src="img/chevrolet.svg" loading="lazy">
-                <img class="carousel-icon" src="img/subaru.svg" loading="lazy">                            
+                <img class="carousel-icon" src="{{ url_for('static', filename='img/VOLKSWAGEN.svg') }}" loading="lazy">
+                <img class="carousel-icon" src="{{ url_for('static', filename='img/TOYOTA.svg') }}" loading="lazy">
+                <img class="carousel-icon" src="{{ url_for('static', filename='img/RENAULT.svg') }}" loading="lazy">
+                <img class="carousel-icon" src="{{ url_for('static', filename='img/HYUNDAI.svg') }}" loading="lazy">
+                <img class="carousel-icon" src="{{ url_for('static', filename='img/mazda.svg') }}" loading="lazy">
+                <img class="carousel-icon" src="{{ url_for('static', filename='img/HONDA.svg') }}" loading="lazy">  
+                <img class="carousel-icon" src="{{ url_for('static', filename='img/FORD.svg') }}" loading="lazy">  
+                <img class="carousel-icon" src="{{ url_for('static', filename='img/KIA.svg') }}" loading="lazy">  
+                <img class="carousel-icon" src="{{ url_for('static', filename='img/susuki.svg') }}" loading="lazy">
+                <img class="carousel-icon" src="{{ url_for('static', filename='img/audi.svg') }}" loading="lazy">                
+                <img class="carousel-icon" src="{{ url_for('static', filename='img/jeep.svg') }}" loading="lazy">
+                <img class="carousel-icon" src="{{ url_for('static', filename='img/nissan.svg') }}" loading="lazy">  
+                <img class="carousel-icon" src="{{ url_for('static', filename='img/lexus.svg') }}" loading="lazy">
+                <img class="carousel-icon" src="{{ url_for('static', filename='img/chevrolet.svg') }}" loading="lazy">
+                <img class="carousel-icon" src="{{ url_for('static', filename='img/subaru.svg') }}" loading="lazy">                            
         </section>
     <!-- FIN MARCAS CAROUSEL -->
      
  <!--INICIO FOOTER-->
- <footer class="main-footer">    
-    <img class="logo-footer" src="img/CarroQhatuL.png">
-    <div class="footer-grid">        
-        <div class="col-brand">
-            <p>Plataforma líder en la Compra y Venta de Vehículos Usados en el Perú.</p>
-            <div class="social-icons">
-                <a href="#" class="icon-box"><i class="fa-brands fa-tiktok"></i></a>
-                <a href="#" class="icon-box"><i class="fa-brands fa-facebook-f"></i></a>
-                <a href="#" class="icon-box"><i class="fa-brands fa-instagram"></i></a>
-                <a href="#" class="icon-box"><i class="fa-brands fa-youtube"></i></a>
-            </div>
-            
-            <div class="col-contact">
-                <h3 class="h3footer">Contacto</h3>
-                <div class="contact-links">
-                    <a href="tel:+51972043502"><i class="fa-solid fa-phone"></i> +51 972043502</a>
-                    <a href="mailto:rbm.aracayo@gmail.com"><i class="fa-solid fa-envelope"></i> rbm.aracayo@gmail.com</a>
+    <footer class="main-footer">    
+        <img class="logo-footer" src="{{ url_for('static', filename='img/CarroQhatuL.png') }}">
+        <div class="footer-grid">        
+            <div class="col-brand">
+                <p>Plataforma líder en la Compra y Venta de Vehículos Usados en el Perú.</p>
+                <div class="social-icons">
+                    <a href="#" class="icon-box"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="#" class="icon-box"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="icon-box"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="icon-box"><i class="fa-brands fa-youtube"></i></a>
                 </div>
-            </div>
+                
+                <div class="col-contact">
+                    <h3 class="h3footer">Contacto</h3>
+                    <div class="contact-links">
+                        <a href="tel:+51972043502"><i class="fa-solid fa-phone"></i> +51 972043502</a>
+                        <a href="mailto:rbm.aracayo@gmail.com"><i class="fa-solid fa-envelope"></i> rbm.aracayo@gmail.com</a>
+                    </div>
+                </div>
 
-        </div>
-        <div class="col-center">
-            <div class="center-top">
-                <div class="sub-col">
-                    <h3 class="h3footer">Explora</h3>
-                    <ul>
-                        <li><a href="#">Comprar auto</a></li>
-                        <li><a href="#">Vender mi auto</a></li>
-                        <li><a href="#">Catálogo</a></li>
-                    </ul>
-                </div>
-                <div class="sub-col">
-                    <h3 class="h3footer">Soporte</h3>
-                    <ul>
-                        <li><a href="#">Términos y Condiciones</a></li>
-                        <li><a href="#">Privacidad</a></li>
-                        <li><a href="#">Libro de Reclamaciones</a></li>
-                    </ul>
-                </div>
             </div>
-            
-            <div class="center-bottom">
-                <h3 class="h3footer destaque-amarillo">¿QUIERES QUE TE CONTACTEMOS?</h3>
-                <form action="https://formspree.io/f/TU_ID_AQUI" method="POST" class="footer-form">
-                    <input type="text" name="contacto" placeholder="Tu Email o Nº Celular aquí" required>
-                    <button type="submit">ENVIAR</button>
-                </form>
-            </div>
-        </div>
-    </div>
+            <div class="col-center">
+                <div class="center-top">
+                    <div class="sub-col">
+                        <h3 class="h3footer">Explora</h3>
+                        <ul>
+                            <li><a href="about.html">Comprar auto</a></li>
+                            <li><a href="service.html">Vender mi auto</a></li>
+                            <li><a href="#">Catálogo</a></li>
+                        </ul>
+                    </div>
+                    <div class="sub-col">
+                        <h3 class="h3footer">Soporte</h3>
+                        <ul>
+                            <li><a href="#">Términos y Condiciones</a></li>
+                            <li><a href="#">Privacidad</a></li>
+                            <li><a href="#">Libro de Reclamaciones</a></li>
+                        </ul>
+                    </div>
+                </div>
 
-    <div class="footer-bottom">
-        <p>&copy; 2026 CarroQhatu • Todos los Derechos Reservados</p>
-    </div>
-</footer>
- <!--FIN FOOTER-->
+                <div class="center-bottom">
+                    <h3 class="h3footer destaque-amarillo">¿QUIERES QUE TE CONTACTEMOS?</h3>
+                    <form action="https://formspree.io/f/TU_ID_AQUI" method="POST" class="footer-form">
+                        <input type="text" name="contacto" placeholder="Tu Email o Nº Celular aquí" required>
+                        <button type="submit">ENVIAR</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 CarroQhatu • Todos los Derechos Reservados • EdujoHQ • <a href="https://html.design/">Html Templates</a></p>
+        </div>
+    </footer>
+    <!--FIN FOOTER-->
 
     <!-- REGRESO AL INICIO-->
     <a href="#" class="btn btn-lg btn-subir btn-lg-square back-to-top"><i class="fa fa-angle-double-up"></i></a>
@@ -294,15 +297,18 @@
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-    <script src="lib/easing/easing.min.js"></script>
-    <script src="lib/waypoints/waypoints.min.js"></script>
-    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-    <script src="lib/tempusdominus/js/moment.min.js"></script>
-    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
-    <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+    
+    <script src="{{ url_for('static', filename='lib/easing/easing.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/waypoints/waypoints.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/owlcarousel/owl.carousel.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/tempusdominus/js/moment.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/tempusdominus/js/moment-timezone.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js') }}"></script>
 
-    <!-- Template Javascript -->
-    <script src="js/main.js"></script>
+    <!-- Script principal del template -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+
     <script>
         function sendToWhatsApp() {
             const phone = "51972043502"; // Tu número aquí

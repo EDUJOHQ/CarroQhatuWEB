@@ -7,41 +7,62 @@
     <link rel="stylesheet" href="css/style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css" rel="stylesheet">    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Favicon -->
+    <link href="{{ url_for('static', filename='img/favicon.ico') }}" rel="icon">
+
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Rubik&display=swap" rel="stylesheet"> 
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Libraries Stylesheet -->
+    <link href="{{ url_for('static', filename='lib/owlcarousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css') }}" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->    
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+
+    <!-- Template Stylesheet -->
+    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
 
 </head>
 
 <body>
-     <!--NAVBAR-->
+    <!-- Navbar Start -->
     <div class="container-fluid position-relative nav-bar p-0">
-        <div class="position-relative px-lg-0" style="z-index: 9;">
-            <nav class="navbar navbar-expand-lg bg-white navbar-dark py-3 py-lg-0 pl-3 pl-lg-5 shadow-sm">
-                <a href="index.html" class="navbar-brand">
-                    <img class="imglogo" src="img/CarroQhatuL.png" alt="Logo">
+        <div class="position-relative px-lg-1" style="z-index: 1000;" >
+            <nav class="navbar navbar-expand-lg bg-secondary navbar-dark py-3 py-lg-0 pl-3 pl-lg-5">
+                <a href="{{ url_for('index') }}" class="navbar-brand">
+                    <img class="imglogo" src="{{ url_for('static', filename='img/CarroQhatuL.png') }}" loading="lazy" alt="Logo">
                 </a>
                 <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                
-               <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
+                <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
                     <div class="navbar-nav ml-auto py-0">
-                        <a href="index.html" class="nav-item nav-link">
-                            <img src="img/iconoinicio (1).svg" class="iconhome">
+                        <a href="{{ url_for('index') }}" class="nav-item nav-link">
+                            <img src="{{ url_for('static', filename='img/iconoinicio (1).svg') }}" class="iconhome" loading="lazy">
                         </a>
-                        <a class="navbar_txtInicio nav-item nav-link" href="index.html" class="nav-item nav-link">Inicio</a>
-                        <a href="about.html" class="nav-item nav-link">Compra un auto</a>
-                        <a href="service.html" class="nav-item nav-link">Vende tu auto</a>            
+                        <a class="navbar_txtInicio nav-item nav-link" href="{{ url_for('index') }}" class="nav-item nav-link">Inicio</a>
+                        <a href="{{ url_for('about') }}" class="nav-item nav-link">Compra un auto</a>
+                        <a href="{{ url_for('service') }}" class="nav-item nav-link">Vende tu auto</a>            
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Nosotros</a>
                             <div class="dropdown-menu rounded-0 m-0">
-                                <a href="team.html" class="dropdown-item">Conócenos</a>
-                                <a href="testimonial.html" class="dropdown-item">Testimonios</a>
-                                <a href="team.html" class="dropdown-item">Blog</a>
-                                <a href="contact.html" class="dropdown-item">Contáctos</a>
-                                
+                                <a href="{{ url_for('team') }}" class="dropdown-item">Conócenos</a>
+                                <a href="{{ url_for('testimonial') }}" class="dropdown-item">Testimonios</a>
+                                <a href="{{ url_for('booking') }}" class="dropdown-item">Blog</a>
+                                <a href="{{ url_for('contact') }}" class="dropdown-item">Contáctos</a>                        
                             </div>
                         </div> 
                         </div class="nav-item ml-lg-3">
-                            <a href="contact.html" class="btn-contacto">
+                            <a href="{{ url_for('contact') }}" class="btn-contacto">
                                 Contáctanos<i class="fa fa-headset"></i>
                             </a>   
                         </div>
@@ -50,8 +71,9 @@
             </nav>
         </div>
     </div>
-    <!--FIN NAVBAR-->
+    <!-- Navbar End -->
 
+<!--INICIO FORM DETALLE CARRO-->
     <div class="container mt-5">
         <div class="row">
             <div class="col-lg-8">
@@ -146,7 +168,7 @@
         <section class="cards-detailcontainer">
             <div class="cta-detailgrid">
                 <article id="bannerReservar" class="cta-img-carddetail" style="cursor:pointer;">
-                    <img src="img/bannerdetail.svg" alt="¿Te gusta este vehículo?">
+                    <img src="{{ url_for('static', filename='img/bannerdetail.svg') }}" alt="¿Te gusta este vehículo?">
                 </article>
             </div>
         </section>
@@ -160,9 +182,10 @@
       <section class="mas-vendidos container">
             <div class="carousel-wrapper">
                 <button class="mv-arrow left">&#10094;</button>
-                <div class="mv-carousel"> <a href="detail.html?id=HONDA-HR-V-2022">
+                <div class="mv-carousel"> 
+                    <a href="{{ url_for('detail', id='HONDA-HR-V-2022') }}">
                         <div class="mv-card">
-                            <img src="img/HONDA-HR-V.jpg" class="mv-img">
+                            <img src="{{ url_for('static', filename='img/HONDA-HR-V.jpg') }}" class="mv-img">
                             <h4>HONDA HR-V EXL</h4>
                             <div class="mv-divider"></div>
                             <p class="mv-price">$ 17,500 <span class="abrev-divisa">USD</span></p>
@@ -173,9 +196,9 @@
                             </p>
                         </div>
                     </a>
-                    <a href="detail.html?id=NISSAN-NAVARA">
+                    <a href="{{ url_for('detail', id='NISSAN-NAVARA') }}">
                         <div class="mv-card">
-                            <img src="img/NAVARA1.jpg" class="mv-img">
+                            <img src="{{ url_for('static', filename='img/NAVARA1.jpg') }}" class="mv-img">
                             <h4>Nissan Navara 4x4</h4>
                             <div class="mv-divider"></div>
                             <p class="mv-price">S/37,000<span class="abrev-divisa">PEN</span></p>
@@ -186,9 +209,9 @@
                             </p>
                         </div>
                     </a> 
-                     <a href="detail.html?id=TOYOTA-RAV4">
+                     <a href="{{ url_for('detail', id='TOYOTA-RAV4') }}">
                         <div class="mv-card">
-                            <img src="img/RAV4-1.jpg" class="mv-img">
+                            <img src="{{ url_for('static', filename='img/RAV4-1.jpg') }}" class="mv-img">
                             <h4>Toyota Rav4 4x4 Full</h4>
                             <div class="mv-divider"></div>
                             <p class="mv-price">S/. 50,000<span class="abrev-divisa">PEN</span></p>
@@ -199,9 +222,9 @@
                             </p>
                         </div>
                     </a> 
-                     <a href="detail.html?id=TOYOTA-HILUX-2017">
+                     <a href="{{ url_for('detail', id='TOYOTA-HILUX-2017') }}">
                         <div class="mv-card">
-                            <img src="img/HILUX2017-1.jpg" class="mv-img">
+                            <img src="{{ url_for('static', filename='img/HILUX2017-1.jpg') }}" class="mv-img">
                             <h4>Toyota Hilux 4x4 SR 2017</h4>
                             <div class="mv-divider"></div>
                             <p class="mv-price">$ 21,000<span class="abrev-divisa">USD</span></p>                
@@ -213,9 +236,9 @@
                             </p>
                         </div>
                     </a>     
-                    <a href="detail.html?id=Mitsubishi-L200-4x2" class="text-decoration-none text-dark">
+                    <a href="{{ url_for('detail', id='Mitsubishi-L200-4x2') }}" class="text-decoration-none text-dark">
                         <div class="mv-card" onclick="location.href='detail.html?id=Mitsubishi-L200-4x2'" style="cursor: pointer;">
-                            <img src="img/L2002.jpg" class="mv-img">
+                            <img src="{{ url_for('static', filename='img/L2002.jpg') }}" class="mv-img">
                             <h4>Mitsubishi L200 4x2</h4>
                             <div class="mv-divider"></div>
                             <p class="mv-price">$ 16,500<span class="abrev-divisa">USD</span></p>
@@ -226,9 +249,9 @@
                             </p>
                         </div>
                     </a>
-                    <a href="detail.html?id=Kia-Sportage-4x4-2016-mod-2017" class="text-decoration-none text-dark">
+                    <a href="{{ url_for('detail', id='Kia-Sportage-4x4-2016-mod-2017') }}" class="text-decoration-none text-dark">
                         <div class="mv-card">
-                            <img src="img/sportage1.jpg" class="mv-img">
+                            <img src="{{ url_for('static', filename='img/sportage1.jpg') }}" class="mv-img">
                             <h4>Kia Sportage 4x4 2016</h4>
                             <div class="mv-divider"></div>
                             <p class="mv-price">S/. 61,000<span class="abrev-divisa">PEN</span></p>
@@ -241,9 +264,9 @@
                             </p>                      
                         </div>
                     </a>
-                    <a href="detail.html?id=AudiQ5-2012">
+                    <a href="{{ url_for('detail', id='AudiQ5-2012') }}">
                         <div class="mv-card">
-                            <img src="img/audiq5.jpg" class="mv-img">
+                            <img src="{{ url_for('static', filename='img/audiq5.jpg') }}" class="mv-img">
                             <h4>Audi Q5 4x4 2012</h4>
                             <div class="mv-divider"></div>
                             <p class="mv-price">$ 55,000<span class="abrev-divisa">USD</span></p>
@@ -254,9 +277,9 @@
                             </p>
                         </div>
                     </a>
-                    <a href="detail.html?id=hyundai-tucson-2019">
+                    <a href="{{ url_for('detail', id='hyundai-tucson-2019') }}">
                         <div class="mv-card">
-                            <img src="img/TUCSON2019.jpg" class="mv-img">
+                            <img src="{{ url_for('static', filename='img/TUCSON2019.jpg') }}" class="mv-img">
                             <h4>Hyundai Tucson 2019</h4>
                             <div class="mv-divider"></div>
                             <p class="mv-price">S/. 70,000<span class="abrev-divisa">PEN</span></p>
@@ -267,9 +290,9 @@
                             </p>
                         </div>  
                     </a>
-                    <a href="detail.html?id=GLORY-NEW-580">
+                    <a href="{{ url_for('detail', id='GLORY-NEW-580') }}">
                         <div class="mv-card">
-                            <img src="img/DFSKGLORYNEW580.jpg" class="mv-img">
+                            <img src="{{ url_for('static', filename='img/DFSKGLORYNEW580.jpg') }}" class="mv-img">
                             <h4>DFSK Glory New 580</h4>
                             <div class="mv-divider"></div>
                             <p class="mv-price">S/. 47,000<span class="abrev-divisa">PEN</span></p>
@@ -280,9 +303,9 @@
                             </p>
                         </div>
                     </a>
-                    <a href="detail.html?id=CHEVROLET-TRACKET-2022">
+                    <a href="{{ url_for('detail', id='CHEVROLET-TRACKET-2022') }}">
                         <div class="mv-card">
-                            <img src="img/TRACKERLTZ.jpg" class="mv-img">
+                            <img src="{{ url_for('static', filename='img/TRACKERLTZ.jpg') }}" class="mv-img">
                             <h4>Chevrolet Tracker LTZ</h4>
                             <div class="mv-divider"></div>
                             <p class="mv-price">$ 14,500<span class="abrev-divisa">USD</span></p>
@@ -293,9 +316,9 @@
                             </p>
                         </div>
                     </a>
-                    <a href="detail.html?id=FORLAND-300">
+                    <a href="{{ url_for('detail', id='FORLAND-300') }}">
                         <div class="mv-card">
-                            <img src="img/FORLANDF300-1.png" class="mv-img">
+                            <img src="{{ url_for('static', filename='img/FORLANDF300-1.png') }}" class="mv-img">
                             <h4>Forland F300 3Tn 2024</h4>
                             <div class="mv-divider"></div>
                             <p class="mv-price">$ 17,000<span class="abrev-divisa">USD</span></p>
@@ -306,9 +329,9 @@
                             </p>
                         </div>
                     </a>
-                    <a href="detail.html?id=GLORY-580">
+                    <a href="{{ url_for('detail', id='GLORY-580') }}">
                         <div class="mv-card">
-                            <img src="img/glory580.jpg" class="mv-img">
+                            <img src="{{ url_for('static', filename='img/glory580.jpg') }}" class="mv-img">
                             <h4>DFSK Glory 580 2024</h4>
                             <div class="mv-divider"></div>
                             <p class="mv-price">S/. 52,000<span class="abrev-divisa">USD</span></p>
@@ -319,9 +342,9 @@
                             </p>
                         </div>
                     </a>
-                    <a href="detail.html?id=CHEVROLET-SPIN-2023">
+                    <a href="{{ url_for('detail', id='CHEVROLET-SPIN-2023') }}">
                         <div class="mv-card">
-                            <img src="img/chevSPIN.jpg" class="mv-img">
+                            <img src="{{ url_for('static', filename='img/chevSPIN.jpg') }}" class="mv-img">
                             <h4>Chevrolet Spin 2023</h4>
                             <div class="mv-divider"></div>
                             <p class="mv-price">S/. 55,000<span class="abrev-divisa">PEN</span></p>
@@ -346,9 +369,9 @@
             <div class="carousel-wrapper">
                 <button class="mv2-arrow left">&#10094;</button>
                 <div class="mv-carousel">                 
-                <a href="detail.html?id=VOLKSWAGEN-TIGUAN-2012">
+                <a href="{{ url_for('detail', id='VOLKSWAGEN-TIGUAN-2012') }}">
                     <div class="mv-card">
-                        <img src="img/TIGUAN.jpg" class="mv-img">
+                        <img src="{{ url_for('static', filename='img/TIGUAN.jpg') }}" class="mv-img">
                         <h4>Volkswagen Tiguan 4x4 2012 Mod 2013</h4>
                         <div class="mv-divider"></div>
                         <p class="mv-price">$ 14,700<span class="abrev-divisa">USD</span></p>
@@ -359,9 +382,9 @@
                         </p>
                     </div>
                 </a>
-                <a href="detail.html?id=MITSUBISHI-L200-2013">
+                <a href="{{ url_for('detail', id='MITSUBISHI-L200-2013') }}">
                     <div class="mv-card">
-                        <img src="img/L2002013.jpg" class="mv-img">
+                        <img src="{{ url_for('static', filename='img/L2002013.jpg') }}" class="mv-img">
                         <h4>Mitsubishi L200 2013 Mod 2014</h4>
                         <div class="mv-divider"></div>
                         <p class="mv-price">S/. 49,500<span class="abrev-divisa">PEN</span></p>
@@ -372,9 +395,9 @@
                         </p>
                     </div>
                 </a>
-                <a href="detail.html?id=TOYOTA-HILUX-2019">
+                <a href="{{ url_for('detail', id='TOYOTA-HILUX-2019') }}">
                     <div class="mv-card">
-                        <img src="img/hiluxsrv20192.jpg" class="mv-img">
+                        <img src="{{ url_for('static', filename='img/hiluxsrv20192.jpg') }}" class="mv-img">
                         <h4>Toyota Hilux SRV 2019</h4>
                         <div class="mv-divider"></div>
                         <p class="mv-price">$ 31,000<span class="abrev-divisa">USD</span></p>
@@ -386,9 +409,9 @@
                     </div>
                 </a>
 
-                <a href="detail.html?id=TOYOTA-HILUX-2015">
+                <a href="{{ url_for('detail', id='TOYOTA-HILUX-2015') }}">
                     <div class="mv-card">
-                        <img src="img/hilux4x42015.jpg" class="mv-img">
+                        <img src="{{ url_for('static', filename='img/hilux4x42015.jpg') }}" class="mv-img">
                         <h4>Toyota Hilux 4x4 2015</h4>
                         <div class="mv-divider"></div>
                         <p class="mv-price">S/. 25,500<span class="abrev-divisa">PEN</span></p>
@@ -403,9 +426,9 @@
                         </p>
                     </div>
                 </a>
-                <a href="detail.html?id=RENAULT-LOGAN-2018">
+                <a href="{{ url_for('detail', id='RENAULT-LOGAN-2018') }}">
                     <div class="mv-card">
-                        <img src="img/renaultlogan.jpg" class="mv-img">
+                        <img src="{{ url_for('static', filename='img/renaultlogan.jpg') }}" class="mv-img">
                         <h4>Renault Logan 2018 Mod 2019</h4>
                         <div class="mv-divider"></div>
                         <p class="mv-price">S/. 29,500<span class="abrev-divisa">PEN</span></p>
@@ -420,9 +443,9 @@
                         </p>
                     </div>
                 </a>
-                <a href="detail.html?id=MITSUBISHI-L200-2025">
+                <a href="{{ url_for('detail', id='MITSUBISHI-L200-2025') }}">
                     <div class="mv-card">
-                        <img src="img/missubishil200.jpg" class="mv-img">
+                        <img src="{{ url_for('static', filename='img/missubishil200.jpg') }}" class="mv-img">
                         <h4>Mitsubishi L200 4x4 2025</h4>
                         <div class="mv-divider"></div>
                         <p class="mv-price">$ 35,000<span class="abrev-divisa">USD</span></p>
@@ -437,9 +460,9 @@
                         </p>
                     </div>
                 </a>
-                <a href="detail.html?id=MAZDA-CX5-2016">
+                <a href="{{ url_for('detail', id='MAZDA-CX5-2016') }}">
                     <div class="mv-card">
-                        <img src="img/MAZDACX5.jpg" class="mv-img">
+                        <img src="{{ url_for('static', filename='img/MAZDACX5.jpg') }}" class="mv-img">
                         <h4>Mazda CX-5 2016 Mod 2017</h4>
                         <div class="mv-divider"></div>
                         <p class="mv-price">S/. 55,000<span class="abrev-divisa">PEN</span></p>
@@ -454,9 +477,9 @@
                         </p>
                     </div>
                 </a>
-                <a href="detail.html?id=KING-LONG-2024">                    
+                <a href="{{ url_for('detail', id='KING-LONG-2024') }}">                    
                     <div class="mv-card">
-                        <img src="img/kinglong.jpg" class="mv-img">
+                        <img src="{{ url_for('static', filename='img/kinglong.jpg') }}" class="mv-img">
                         <h4>King Long Santana 2024 Mod 2025</h4>
                         <div class="mv-divider"></div>
                         <p class="mv-price">S/. 63,000<span class="abrev-divisa">PEN</span></p>
@@ -472,9 +495,9 @@
                     </div>
                 </a>
 
-                <a href="detail.html?id=KIA-SOLUTO-SEMIFULL-2021">
+                <a href="{{ url_for('detail', id='KIA-SOLUTO-SEMIFULL-2021') }}">
                     <div class="mv-card">
-                        <img src="img/kiasoluto.jpg" class="mv-img">
+                        <img src="{{ url_for('static', filename='img/kiasoluto.jpg') }}" class="mv-img">
                         <h4>Kia Soluto SemiFull 2021-2022</h4>
                         <div class="mv-divider"></div>
                         <p class="mv-price">S/. 37,000<span class="abrev-divisa">PEN</span></p>
@@ -489,9 +512,9 @@
                         </p>
                     </div>
                 </a>
-                <a href="detail.html?id=HYUNDAI-VERNA-2020">
+                <a href="{{ url_for('detail', id='HYUNDAI-VERNA-2020') }}">
                     <div class="mv-card">
-                        <img src="img/hyundaiverna.jpg" class="mv-img">
+                        <img src="{{ url_for('static', filename='img/hyundaiverna.jpg') }}" class="mv-img">
                         <h4>Hyundai Verna 2020</h4>
                         <div class="mv-divider"></div>
                         <p class="mv-price">S/. 35,000<span class="abrev-divisa">PEN</span></p>
@@ -506,9 +529,9 @@
                         </p>
                     </div>
                 </a>
-                <a href="detail.html?id=JMC-VIGUS-2024">
+                <a href="{{ url_for('detail', id='JMC-VIGUS-2024') }}">
                     <div class="mv-card">
-                        <img src="img/JMCVIGUS.png" class="mv-img">
+                        <img src="{{ url_for('static', filename='img/JMCVIGUS.png') }}" class="mv-img">
                         <h4>JMC VIGUS PLUS 4X4 2024</h4>
                         <div class="mv-divider"></div>
                         <p class="mv-price">S/. 63,000<span class="abrev-divisa">PEN</span></p>
@@ -555,7 +578,7 @@
                 </div>
 
                 <div class="image-side">
-                <img src="img/cardetail3.svg" alt="Imagen del carro">
+                <img src="{{ url_for('static', filename='img/cardetail3.svg') }}" alt="Imagen del carro">
             </div>
       </div> 
     </section>
@@ -563,8 +586,7 @@
       <!--FIN FORMULARIO COTIZACIÓN-->
         
 
-
-    <script src="js/datos.js"></script>
+    <script src="{{ url_for('static', filename='js/datos.js') }}"></script>
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const autoId = urlParams.get('id');
@@ -804,9 +826,9 @@
 </html>
 
 
-    <!--INICIO FOOTER-->
+     <!--INICIO FOOTER-->
     <footer class="main-footer">    
-        <img class="logo-footer" src="img/CarroQhatuL.png">
+        <img class="logo-footer" src="{{ url_for('static', filename='img/CarroQhatuL.png') }}">
         <div class="footer-grid">        
             <div class="col-brand">
                 <p>Plataforma líder en la Compra y Venta de Vehículos Usados en el Perú.</p>
@@ -845,7 +867,7 @@
                         </ul>
                     </div>
                 </div>
-                
+
                 <div class="center-bottom">
                     <h3 class="h3footer destaque-amarillo">¿QUIERES QUE TE CONTACTEMOS?</h3>
                     <form action="https://formspree.io/f/TU_ID_AQUI" method="POST" class="footer-form">
@@ -857,7 +879,7 @@
         </div>
 
         <div class="footer-bottom">
-            <p>&copy; 2026 CarroQhatu • Todos los Derechos Reservados</p>
+            <p>&copy; 2026 CarroQhatu • Todos los Derechos Reservados • EdujoHQ • <a href="https://html.design/">Html Templates</a></p>
         </div>
     </footer>
     <!--FIN FOOTER-->
@@ -867,18 +889,19 @@
     <a href="#" class="btn btn-lg btn-subir btn-lg-square back-to-top"><i class="fa fa-angle-double-up"></i></a>
 
 
-    <!-- JavaScript Libraries 
+    <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-    <script src="lib/easing/easing.min.js"></script>
-    <script src="lib/waypoints/waypoints.min.js"></script>
-    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-    <script src="lib/tempusdominus/js/moment.min.js"></script>
-    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
-    <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+    
+    <script src="{{ url_for('static', filename='lib/easing/easing.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/waypoints/waypoints.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/owlcarousel/owl.carousel.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/tempusdominus/js/moment.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/tempusdominus/js/moment-timezone.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js') }}"></script>
 
-    <!-- Template Javascript 
-    <script src="js/main.js"></script>
+    <!-- Script principal del template -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 
 </html>

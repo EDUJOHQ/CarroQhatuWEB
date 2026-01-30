@@ -8,8 +8,9 @@
     <meta content="Free HTML Templates" name="keywords">
     <meta content="Free HTML Templates" name="description">
 
-    <!-- Favicon -->
-    <link href="img/favicon.ico" rel="icon">
+   <!-- Favicon -->
+    <link href="{{ url_for('static', filename='img/favicon.ico') }}" rel="icon">
+
 
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -18,49 +19,49 @@
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <!-- Libraries Stylesheet -->
-    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-    <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
 
-    <!-- Customized Bootstrap Stylesheet -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Libraries Stylesheet -->
+    <link href="{{ url_for('static', filename='lib/owlcarousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css') }}" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->    
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
 
     <!-- Template Stylesheet -->
-    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
 </head>
 
 <body>
-    <!-- Navbar Start -->
+         <!-- Navbar Start -->
     <div class="container-fluid position-relative nav-bar p-0">
-        <div class="position-relative px-lg-0" style="z-index: 9;" >
+        <div class="position-relative px-lg-1" style="z-index: 1000;" >
             <nav class="navbar navbar-expand-lg bg-secondary navbar-dark py-3 py-lg-0 pl-3 pl-lg-5">
-                <a href="" class="navbar-brand">
-                    <img class="imglogo" src="img/CarroQhatuL.png" href="index.html" alt="Logo">
+                <a href="{{ url_for('index') }}" class="navbar-brand">
+                    <img class="imglogo" src="{{ url_for('static', filename='img/CarroQhatuL.png') }}" loading="lazy" alt="Logo">
                 </a>
                 <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
                     <div class="navbar-nav ml-auto py-0">
-                        <a href="index.html" class="nav-item nav-link">
-                            <img src="img/iconoinicio (1).svg" class="iconhome">
+                        <a href="{{ url_for('index') }}" class="nav-item nav-link">
+                            <img src="{{ url_for('static', filename='img/iconoinicio (1).svg') }}" class="iconhome" loading="lazy">
                         </a>
-                        <a class="navbar_txtInicio nav-item nav-link" href="index.html" class="nav-item nav-link">Inicio</a>
-                        <a href="about.html" class="nav-item nav-link">Compra un auto</a>
-                        <a href="service.html" class="nav-item nav-link">Vende tu auto</a> 
+                        <a class="navbar_txtInicio nav-item nav-link" href="{{ url_for('index') }}" class="nav-item nav-link">Inicio</a>
+                        <a href="{{ url_for('about') }}" class="nav-item nav-link">Compra un auto</a>
+                        <a href="{{ url_for('service') }}" class="nav-item nav-link">Vende tu auto</a>            
                         <div class="nav-item dropdown">
-                            <a href="team.html" class="nav-link dropdown-toggle" data-toggle="dropdown">Nosotros</a>
+                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Nosotros</a>
                             <div class="dropdown-menu rounded-0 m-0">
-                                <a href="team.html" class="dropdown-item">Conócenos</a>
-                                <a href="testimonial.html" class="dropdown-item">Testimonios</a>
-                                <a href="team.html" class="dropdown-item">Blog</a>
-                                <a href="contact.html" class="dropdown-item">Contáctos</a>
-                                
+                                <a href="{{ url_for('team') }}" class="dropdown-item">Conócenos</a>
+                                <a href="{{ url_for('testimonial') }}" class="dropdown-item">Testimonios</a>
+                                <a href="{{ url_for('booking') }}" class="dropdown-item">Blog</a>
+                                <a href="{{ url_for('contact') }}" class="dropdown-item">Contáctos</a>                        
                             </div>
                         </div> 
-                        <div class="nav-item ml-lg-3">
-                            <a href="contact.html" class="btn-contacto">
+                        </div class="nav-item ml-lg-3">
+                            <a href="{{ url_for('contact') }}" class="btn-contacto">
                                 Contáctanos<i class="fa fa-headset"></i>
                             </a>   
                         </div>
@@ -74,7 +75,7 @@
     <!-- Banner Principal Inicio -->
             <section class="banner-video-container">
                 <video class="banner-video" autoplay muted loop playsinline>
-                    <source src="img/bannervende.mp4" type="video/mp4">
+                    <source src="{{ url_for('static', filename='img/bannervende.mp4') }}" type="video/mp4">
                 </video>
                 <div class="banner-overlayventa">                    
                 </div>
@@ -223,7 +224,7 @@
                     <img src="https://www.carlogos.org/car-logos/volvo-logo.png"> Volvo
                 </li>
                 <li onclick="selectItem('brand', 'Tengo otra marca...', 'img/otramarca.svg')">
-                    <img src="img/otramarca.svg"> Tengo otra marca...
+                    <img src="{{ url_for('static', filename='img/otramarca.svg') }}" alt="Otra marca"> Tengo otra marca...
                 </li>
             </ul>
         </div>
@@ -445,13 +446,6 @@
 
 </script>
 
-
-
-
-
-
-
-
  <!--Sección serviciosventa-->
  <div class="container-fluid py-5">
         <div class="container pt-5 pb-3">
@@ -544,7 +538,7 @@
                         <div class="perfil">                           
                             <div>
                                 <h3>Anderson Coaquira H.</h3>
-                                <span>Vendió un Toyota Hilux SRV 2019</span>
+                                <span>Vendió un Toyota Corolla 2020</span>
                             </div>
                         </div>
                         <div class="rating">
@@ -624,21 +618,21 @@
             <div class="testimoniosdirec izq">
             <!-- GRUPO 1 -->
                 <div class="grupo-testi">
-                    <img class="carousel-icon" src="img/VOLKSWAGEN.svg">
-                    <img class="carousel-icon" src="img/TOYOTA.svg">
-                    <img class="carousel-icon" src="img/RENAULT.svg">
-                    <img class="carousel-icon" src="img/HYUNDAI.svg">
-                    <img class="carousel-icon" src="img/mazda.svg">
-                    <img class="carousel-icon" src="img/HONDA.svg">  
-                    <img class="carousel-icon" src="img/FORD.svg">  
-                    <img class="carousel-icon" src="img/KIA.svg">  
-                    <img class="carousel-icon" src="img/susuki.svg">
-                    <img class="carousel-icon" src="img/audi.svg">                
-                    <img class="carousel-icon" src="img/jeep.svg">
-                    <img class="carousel-icon" src="img/nissan.svg">  
-                    <img class="carousel-icon" src="img/lexus.svg">
-                    <img class="carousel-icon" src="img/chevrolet.svg">
-                    <img class="carousel-icon" src="img/subaru.svg">  
+                    <img class="carousel-icon" src="{{ url_for('static', filename='img/VOLKSWAGEN.svg') }}">
+                    <img class="carousel-icon" src="{{ url_for('static', filename='img/TOYOTA.svg') }}">
+                    <img class="carousel-icon" src="{{ url_for('static', filename='img/RENAULT.svg') }}">
+                    <img class="carousel-icon" src="{{ url_for('static', filename='img/HYUNDAI.svg') }}">
+                    <img class="carousel-icon" src="{{ url_for('static', filename='img/mazda.svg') }}">
+                    <img class="carousel-icon" src="{{ url_for('static', filename='img/HONDA.svg') }}">  
+                    <img class="carousel-icon" src="{{ url_for('static', filename='img/FORD.svg') }}">  
+                    <img class="carousel-icon" src="{{ url_for('static', filename='img/KIA.svg') }}">  
+                    <img class="carousel-icon" src="{{ url_for('static', filename='img/susuki.svg') }}">
+                    <img class="carousel-icon" src="{{ url_for('static', filename='img/audi.svg') }}">                
+                    <img class="carousel-icon" src="{{ url_for('static', filename='img/jeep.svg') }}">
+                    <img class="carousel-icon" src="{{ url_for('static', filename='img/nissan.svg') }}">  
+                    <img class="carousel-icon" src="{{ url_for('static', filename='img/lexus.svg') }}">
+                    <img class="carousel-icon" src="{{ url_for('static', filename='img/chevrolet.svg') }}">
+                    <img class="carousel-icon" src="{{ url_for('static', filename='img/subaru.svg') }}">  
                 </div>
             </div>                            
         </section>
@@ -647,9 +641,9 @@
 
 
   
-    <!--INICIO FOOTER-->
+     <!--INICIO FOOTER-->
     <footer class="main-footer">    
-        <img class="logo-footer" src="img/CarroQhatuL.png">
+        <img class="logo-footer" src="{{ url_for('static', filename='img/CarroQhatuL.png') }}">
         <div class="footer-grid">        
             <div class="col-brand">
                 <p>Plataforma líder en la Compra y Venta de Vehículos Usados en el Perú.</p>
@@ -688,7 +682,7 @@
                         </ul>
                     </div>
                 </div>
-                
+
                 <div class="center-bottom">
                     <h3 class="h3footer destaque-amarillo">¿QUIERES QUE TE CONTACTEMOS?</h3>
                     <form action="https://formspree.io/f/TU_ID_AQUI" method="POST" class="footer-form">
@@ -700,7 +694,7 @@
         </div>
 
         <div class="footer-bottom">
-            <p>&copy; 2026 CarroQhatu • Todos los Derechos Reservados</p>
+            <p>&copy; 2026 CarroQhatu • Todos los Derechos Reservados • EdujoHQ • <a href="https://html.design/">Html Templates</a></p>
         </div>
     </footer>
     <!--FIN FOOTER-->
@@ -710,18 +704,20 @@
     <a href="#" class="btn btn-lg btn-subir btn-lg-square back-to-top"><i class="fa fa-angle-double-up"></i></a>
 
 
-    <!-- JavaScript Libraries -->
+   <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-    <script src="lib/easing/easing.min.js"></script>
-    <script src="lib/waypoints/waypoints.min.js"></script>
-    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-    <script src="lib/tempusdominus/js/moment.min.js"></script>
-    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
-    <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+    
+    <script src="{{ url_for('static', filename='lib/easing/easing.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/waypoints/waypoints.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/owlcarousel/owl.carousel.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/tempusdominus/js/moment.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/tempusdominus/js/moment-timezone.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js') }}"></script>
 
-    <!-- Template Javascript -->
-    <script src="js/main.js"></script>
+    <!-- Script principal del template -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
 </body>
 
 </html>
