@@ -954,14 +954,15 @@
                 <div class="video-modal-content">
                     <span class="close-btn" onclick="closeVideo()">X</span>
                     <video id="modalVideo"
-                        src="videos/video2.mp4"
+                        src="videos/video2.mp4"                            
                         controls
                         playsinline
                         preload="none">
                     </video>
                 </div>
-            </div>         
-            <div class="video-card" onclick="openVideo('videos/video0.mp4')">
+            </div>   
+
+            <div class="video-card" onclick="openVideo('https://www.dropbox.com/scl/fi/tiysadbc5kk6ugyomliyp/video0.mp4?rlkey=d21x2uwi5ajprwuo9tykcrt6v&st=5jgp60a1&raw=1')">
             <img src="img/miniaturasomos.svg" alt="Video">
             <div class="play-btn">▶</div>
             </div>
@@ -989,17 +990,21 @@
 
             <script>
             function openVideo(src) {
-            const modal = document.getElementById('videoModal');
-            const video = document.getElementById('modalVideo');
+                const modal = document.getElementById('videoModal');
+                const video = document.getElementById('modalVideo');
 
-            video.src = src;
-            video.currentTime = 0;
-            modal.classList.add('active');
-            video.play().catch(() => {
-            console.log('Autoplay bloqueado, requiere interacción');
-            });
+                if (!modal || !video) {
+                    console.error("No se encontró el modal o el elemento de video en el HTML");
+                    return;
+                }
+
+                video.src = src;
+                video.load(); // Indispensable para Dropbox
+                modal.classList.add('active');
+                
+                // Intentar reproducir (el navegador puede pedir un clic extra)
+                video.play().catch(error => console.log("Reproducción manual requerida"));
             }
-
             function closeVideo() {
             const modal = document.getElementById('videoModal');
             const video = document.getElementById('modalVideo');
