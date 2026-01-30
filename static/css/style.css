@@ -982,6 +982,7 @@ body { background-color: #ffffff; font-family: 'Open Sans', sans-serif; color: #
         transition: all 0.4s ease;
         width: 200px;
     }
+   
 
     /* Botón "Activado" (Cuando todo está lleno)*/
     .btn-ready {
@@ -994,6 +995,26 @@ body { background-color: #ffffff; font-family: 'Open Sans', sans-serif; color: #
         transform: translateY(-2px);
     }
 
+    .btn-loadercotizar {
+    width: 18px;
+    height: 18px;
+    border: 3px solid rgba(255,255,255,0.4);
+    border-top: 3px solid #fff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    }
+    
+    @keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+    }
+
+    /* Estado cargando del botón */
+    .btn-cotizar.loading {
+    cursor: not-allowed;
+    opacity: 0.8;
+    }
 
 /**/
 

@@ -269,7 +269,8 @@
         class="btn-cotizar" 
         disabled
         onclick="cotizarAuto(event)">
-        Cotizar auto
+        <span class="btn-formcotizarautoservice">Cotizar auto</span>
+        <span class="btn-loadercotizar" style="display: none;"></span>
         </button> 
 
         <div id="resultado-box" onclick="event.stopPropagation()" style="display:none; opacity:0; transition: opacity 0.5s ease; margin-top:20px; padding:20px; border-radius:12px; background:#f4f6fb; border:1px solid #ddd; width: 100%;">
@@ -366,6 +367,10 @@
     function cotizarAuto(e) {
     e.preventDefault();
 
+    const btn = document.getElementById("btn-enviar");
+    const btnText = btn.querySelector(".btn-formcotizarautoservice");
+    const btnLoader = btn.querySelector(".btn-loadercotizar");
+
     dataForm.year = document.getElementById("label-year").innerText;
     dataForm.estado = document.getElementById("label-estado").innerText;
 
@@ -380,7 +385,11 @@
         return;
     }
 
-    fetch("http://localhost:5000/cotizar", {
+    btn.disabled = true;
+    btnText.style.display = "none";
+    btnLoader.style.display = "inline-block";
+
+    fetch("/cotizar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dataForm)
@@ -403,6 +412,12 @@
         .catch(err => {
         console.error(err);
         alert("Error al cotizar");
+        })
+        .finally(() => {
+            // 🔹 DESACTIVAR LOADING (SIEMPRE)
+            btn.disabled = false;
+            btnText.style.display = "inline";
+            btnLoader.style.display = "none";
         });
         
     }
@@ -425,24 +440,54 @@
         "_blank"
     );
     }
-
+    // ---------- EXPLICAR IA------------------
     function explicarIA() {
-        const iaBox = document.getElementById("ia-respuesta");
-        iaBox.innerHTML = "Analizando con IA...";
+    document.getElementById("ia-respuesta").innerHTML = "Analizando con IA...";
 
-        fetch("http://localhost:5000/explicar", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(ultimaCotizacion)
-        })
+    console.log("Enviando a IA:", ultimaCotizacion);
+
+    fetch("/explicar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(ultimaCotizacion)
+    })
         .then(res => res.json())
         .then(res => {
-            iaBox.innerHTML = res.respuesta;
+        if (res.respuesta) {
+            document.getElementById("ia-respuesta").innerText = res.respuesta;
+        } else {
+            throw new Error("Respuesta IA inválida");
+        }
         })
-        .catch(() => {
-            iaBox.innerHTML = "Error al conectar con IA.";
+        .catch(err => {
+        console.error(err);
+        document.getElementById("ia-respuesta").innerText =
+            "No se pudo generar la explicación en este momento.";
         });
     }
+
+
+    
+
+    //----------BOTON COTIZAR LOADING--------------
+    function setLoading(isLoading) {
+    const btn = document.getElementById("btn-enviar");
+    const text = btn.querySelector(".btn-formcotizarautoservice");
+    const loader = btn.querySelector(".btn-loadercotizar");
+
+    if (isLoading) {
+        btn.disabled = true;
+        btn.classList.add("loading");
+        text.style.display = "none";
+        loader.style.display = "inline-block";
+    } else {
+        btn.disabled = false;
+        btn.classList.remove("loading");
+        text.style.display = "inline-block";
+        loader.style.display = "none";
+    }
+    }
+
 
 </script>
 
