@@ -187,8 +187,8 @@
                             <img src="{{ url_for('static', filename='img/susuki.svg') }}" alt="susuki" class="icon-carmarc">
                         </div>    
                             
-                        <a class="btn-catalogocontent" href="car.html">                
-                        <button href="car.html" class="btn-catalogo space-button">
+                        <a class="btn-catalogocontent" href="{{ url_for('car') }}">                
+                        <button href="{{ url_for('car') }}" class="btn-catalogo space-button">
                             Ir a Catálogo
                         </button>
                         </a> 
@@ -201,21 +201,21 @@
         <section class="cards-home container">
             <div class="cta-grid">
                 <!-- CARD 1 -->
-                    <a href="car.html">
+                    <a href="{{ url_for('car') }}">
                         <article class="cta-img-card">
                             <img src="{{ url_for('static', filename='img/cardprin1.svg') }}" alt="Catálogo de vehículos">
                         </article>
                     </a>
                 
                 <!-- CARD 2 -->
-                    <a href="car.html">
+                    <a href="{{ url_for('car') }}">
                         <article class="cta-img-card">
                             <img src="{{ url_for('static', filename='img/cardprin2.svg') }}" alt="Compra con confianza">
                         </article>
                      </a>
 
                 <!-- CARD 3 -->
-                    <a href="service.html">
+                    <a href="{{ url_for('service') }}">
                         <article class="cta-img-card destacado">
                             <img src="{{ url_for('static', filename='img/cardprin3.svg') }}" alt="Vende tu vehículo">
                         </article>
