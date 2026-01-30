@@ -106,7 +106,7 @@
     <!-- Banner Principal Inicio -->
         <section class="banner-video-container">
             <video class="banner-video" autoplay muted loop playsinline>
-                <source src="img/bannercatalogo.mp4" type="video/mp4" loading="lazy">
+                <source src="{{ url_for('static', filename='img/bannercatalogo.mp4') }}" type="video/mp4" loading="lazy">
             </video>
             <div class="banner-overlay">
             </div>
@@ -130,8 +130,8 @@
                                 <span class="badge-verifiedcatal">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
-                            <a href="detail.html?id=HONDA-HR-V-2022">                             
-                            <img src="img/HONDA-HR-V2.jpg" alt="Honda HONDA-HR-V-2022" class="carcatal-image" loading="lazy">
+                            <a href="{{ url_for('detail', id='HONDA-HR-V-2022') }}">                             
+                            <img src="{{ url_for('static', filename='img/HONDA-HR-V2.jpg') }}" alt="Honda HONDA-HR-V-2022" class="carcatal-image" loading="lazy">
                             <div class="cardcatal-body">
                                 <h2 class="carcatal-title">HONDA HR-V EXL</h2>                            
                                 <div class="especif-grid">
@@ -145,10 +145,10 @@
                                     <span class="pricecardcatal-label">Precio</span>
                                     <span class="pricecardcatal-value">USD S/.17,500</span>
                                 </div>
-                                <a href="detail.html?id=HONDA-HR-V-2022" class="btn-detailcar">VER DETALLE</a>                                 
+                                <a href="{{ url_for('detail', id='HONDA-HR-V-2022') }}" class="btn-detailcar">VER DETALLE</a>                                 
 
                                 <a href="https://wa.me/51972043502" class="contact-linkwspp">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" loading="lazy">
+                                    <img src="{{ url_for('static', filename='img/whatsapp.svg') }}" alt="WhatsApp" loading="lazy">
                                     CONTACTAR
                                 </a>
                             </div>   
@@ -162,8 +162,8 @@
                                 <span class="badge-verifiedcatal">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
-                            <a href="detail.html?id=NISSAN-NAVARA">
-                                <img src="img/NAVARA1.jpg" alt="Nissan Navara" class="carcatal-image" loading="lazy">
+                            <a href="{{ url_for('detail', id='NISSAN-NAVARA') }}">
+                                <img src="{{ url_for('static', filename='img/NAVARA1.jpg') }}" alt="Nissan Navara" class="carcatal-image" loading="lazy">
                                 <div class="cardcatal-body">
                                     <h2 class="carcatal-title">Nissan Navara 4x4</h2>
                                 
@@ -178,10 +178,10 @@
                                         <span class="pricecardcatal-label">Precio</span>
                                         <span class="pricecardcatal-value">PEN S/.37,000</span>
                                     </div>
-                                    <a href="detail.html?id=NISSAN-NAVARA" class="btn-detailcar">VER DETALLE</a>
+                                    <a href="{{ url_for('detail', id='NISSAN-NAVARA') }}" class="btn-detailcar">VER DETALLE</a>
 
                                     <a href="https://wa.me/51972043502" class="contact-linkwspp">
-                                        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" loading="lazy">
+                                        <img src="{{ url_for('static', filename='img/whatsapp.svg') }}" alt="WhatsApp" loading="lazy">
                                         CONTACTAR
                                     </a>
                                 </div>
@@ -195,8 +195,8 @@
                                 <span class="badge-verifiedcatal">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
-                            <a href="detail.html?id=TOYOTA-RAV4">
-                                <img src="img/RAV4-1.jpg" alt="rav4" class="carcatal-image">
+                            <a href="{{ url_for('detail', id='TOYOTA-RAV4') }}">
+                                <img src="{{ url_for('static', filename='img/RAV4-1.jpg') }}" alt="rav4" class="carcatal-image">
                             <div class="cardcatal-body">
                                 <h2 class="carcatal-title">TOYOTA RAV4 4X4 FULL</h2>
                             
@@ -211,10 +211,10 @@
                                     <span class="pricecardcatal-label">Precio</span>
                                     <span class="pricecardcatal-value">PEN S/.50,000</span>
                                 </div>
-                                <a href="detail.html?id=TOYOTA-RAV4" class="btn-detailcar">VER DETALLE</a>
+                                <a href="{{ url_for('detail', id='TOYOTA-RAV4') }}" class="btn-detailcar">VER DETALLE</a>
 
                                 <a href="https://wa.me/51972043502" class="contact-linkwspp">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+                                    <img src="{{ url_for('static', filename='img/whatsapp.svg') }}" alt="WhatsApp">
                                     CONTACTAR
                                 </a>
                             </div>
@@ -229,9 +229,9 @@
                                 <span class="badge-verifiedcatal">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
-                            <a href="detail.html?id=TOYOTA-HILUX-2017">
+                            <a href="{{ url_for('detail', id='TOYOTA-HILUX-2017') }}">
                                 
-                            <img src="img/HILUX2017-1.jpg" alt="TOYOTA-HILUX-2017" class="carcatal-image">
+                            <img src="{{ url_for('static', filename='img/HILUX2017-1.jpg') }}" alt="TOYOTA-HILUX-2017" class="carcatal-image">
                             <div class="cardcatal-body">
                                 <h2 class="carcatal-title">TOYOTA HILUX 4X4 SR 2017</h2>
                             
@@ -247,10 +247,10 @@
                                     <span class="pricecardcatal-value">USD $21,000</span>
                                 </div>
 
-                                <a href="detail.html?id=TOYOTA-HILUX-2017" class="btn-detailcar">VER DETALLE</a>
+                                <a href="{{ url_for('detail', id='TOYOTA-HILUX-2017') }}" class="btn-detailcar">VER DETALLE</a>
 
                                 <a href="https://wa.me/51972043502" class="contact-linkwspp">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+                                    <img src="{{ url_for('static', filename='img/whatsapp.svg') }}" alt="WhatsApp">
                                     CONTACTAR
                                 </a>
                             </div>
@@ -264,7 +264,7 @@
                                 <span class="badge-verifiedcatal">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
-                            <img src="img/L2002.jpg" alt="MITSUBISHI-L200" class="carcatal-image">
+                            <img src="{{ url_for('static', filename='img/L2002.jpg') }}" alt="MITSUBISHI-L200" class="carcatal-image">
                             <div class="cardcatal-body">
                                 <h2 class="carcatal-title">MITSUBISHI L200 4X2 2019</h2>
                             
@@ -279,10 +279,10 @@
                                     <span class="pricecardcatal-label">Precio</span>
                                     <span class="pricecardcatal-value">USD $16,500</span>
                                 </div>
-                                <a href="detail.html?id=Mitsubishi-L200-4x2" class="btn-detailcar">VER DETALLE</a>
+                                <a href="{{ url_for('detail', id='Mitsubishi-L200-4x2') }}" class="btn-detailcar">VER DETALLE</a>
 
                                 <a href="https://wa.me/51972043502" class="contact-linkwspp">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+                                    <img src="{{ url_for('static', filename='img/whatsapp.svg') }}" alt="WhatsApp">
                                     CONTACTAR
                                 </a>
                             </div>
@@ -294,7 +294,7 @@
                                 <span class="badge-verifiedcatal">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
-                            <img src="img/sportage1.jpg" alt="Kia Sportage" class="carcatal-image">
+                            <img src="{{ url_for('static', filename='img/sportage1.jpg') }}" alt="Kia Sportage" class="carcatal-image">
                             <div class="cardcatal-body">
                                 <h2 class="carcatal-title">KIA SPORTAGE</h2>
                             
@@ -309,10 +309,10 @@
                                     <span class="pricecardcatal-label">Precio</span>
                                     <span class="pricecardcatal-value">PEN S/.61,000</span>
                                 </div>
-                                <a href="detail.html?id=Kia-Sportage-4x4-2016-mod-2017" class="btn-detailcar">VER DETALLE</a>
+                                <a href="{{ url_for('detail', id='Kia-Sportage-4x4-2016-mod-2017') }}" class="btn-detailcar">VER DETALLE</a>
 
                                 <a href="https://wa.me/51972043502" class="contact-linkwspp">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+                                    <img src="{{ url_for('static', filename='img/whatsapp.svg') }}" alt="WhatsApp">
                                     CONTACTAR
                                 </a>
                             </div>
@@ -325,7 +325,7 @@
                                 <span class="badge-verifiedcatal">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
-                            <img src="img/audiq5.jpg" alt="AUDI 15 4X4 2012" class="carcatal-image">
+                            <img src="{{ url_for('static', filename='img/audiq5.jpg') }}" alt="AUDI 15 4X4 2012" class="carcatal-image">
                             <div class="cardcatal-body">
                                 <h2 class="carcatal-title">AUDI 15 4X4</h2>
                             
@@ -340,10 +340,10 @@
                                     <span class="pricecardcatal-label">Precio</span>
                                     <span class="pricecardcatal-value">PEN S/.55,000</span>
                                 </div>
-                                <a href="detail.html?id=AudiQ5-2012" class="btn-detailcar">VER DETALLE</a>
+                                <a href="{{ url_for('detail', id='AudiQ5-2012') }}" class="btn-detailcar">VER DETALLE</a>
 
                                 <a href="https://wa.me/51972043502" class="contact-linkwspp">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+                                    <img src="{{ url_for('static', filename='img/whatsapp.svg') }}" alt="WhatsApp">
                                     CONTACTAR
                                 </a>
                             </div>
@@ -356,7 +356,7 @@
                                 <span class="badge-verifiedcatal">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
-                            <img src="img/TUCSON2019.jpg" alt="HYUNDAI TUCSON 2019" class="carcatal-image">
+                            <img src="{{ url_for('static', filename='img/TUCSON2019.jpg') }}" alt="HYUNDAI TUCSON 2019" class="carcatal-image">
                             <div class="cardcatal-body">
                                 <h2 class="carcatal-title">HYUNDAI TUCSON 2019</h2>
                             
@@ -371,10 +371,10 @@
                                     <span class="pricecardcatal-label">Precio</span>
                                     <span class="pricecardcatal-value">PEN S/.70,000</span>
                                 </div>
-                                <a href="detail.html?id=hyundai-tucson-2019" class="btn-detailcar">VER DETALLE</a>
+                                <a href="{{ url_for('detail', id='hyundai-tucson-2019') }}" class="btn-detailcar">VER DETALLE</a>
 
                                 <a href="https://wa.me/51972043502" class="contact-linkwspp">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+                                    <img src="{{ url_for('static', filename='img/whatsapp.svg') }}" alt="WhatsApp">
                                     CONTACTAR
                                 </a>
                             </div>
@@ -387,7 +387,7 @@
                                 <span class="badge-verifiedcatal">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
-                            <img src="img/GLORYNEW580-1.png" alt="DFSK GlORY-NEW-580" class="carcatal-image">
+                            <img src="{{ url_for('static', filename='img/GLORYNEW580-1.png') }}" alt="DFSK GlORY-NEW-580" class="carcatal-image">
                             <div class="cardcatal-body">
                                 <h2 class="carcatal-title">DFSK GlORY-NEW-580</h2>
                             
@@ -402,10 +402,10 @@
                                     <span class="pricecardcatal-label">Precio</span>
                                     <span class="pricecardcatal-value">PEN S/.47,000</span>
                                 </div>
-                                <a href="detail.html?id=GLORY-NEW-580" class="btn-detailcar">VER DETALLE</a>
+                                <a href="{{ url_for('detail', id='GLORY-NEW-580') }}" class="btn-detailcar">VER DETALLE</a>
 
                                 <a href="https://wa.me/51972043502" class="contact-linkwspp">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+                                    <img src="{{ url_for('static', filename='img/whatsapp.svg') }}" alt="WhatsApp">
                                     CONTACTAR
                                 </a>
                             </div>
@@ -418,7 +418,7 @@
                                 <span class="badge-verifiedcatal">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
-                            <img src="img/TRACKERLTZ.jpg" alt="CHEVROLET TRACKER LTZ" class="carcatal-image">
+                            <img src="{{ url_for('static', filename='img/TRACKERLTZ.jpg') }}" alt="CHEVROLET TRACKER LTZ" class="carcatal-image">
                             <div class="cardcatal-body">
                                 <h2 class="carcatal-title">CHEVROLET TRACKER LTZ</h2>
                             
@@ -433,10 +433,10 @@
                                     <span class="pricecardcatal-label">Precio</span>
                                     <span class="pricecardcatal-value">USD $14,500</span>
                                 </div>
-                                <a href="detail.html?id=CHEVROLET-TRACKET-2022" class="btn-detailcar">VER DETALLE</a>
+                                <a href="{{ url_for('detail', id='CHEVROLET-TRACKET-2022') }}" class="btn-detailcar">VER DETALLE</a>
 
                                 <a href="https://wa.me/51972043502" class="contact-linkwspp">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+                                    <img src="{{ url_for('static', filename='img/whatsapp.svg') }}" alt="WhatsApp">
                                     CONTACTAR
                                 </a>
                             </div>
@@ -449,7 +449,7 @@
                                 <span class="badge-verifiedcatal">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
-                            <img src="img/FORLANDF300-1.png" alt="FORLAND F300 3TN 2024" class="carcatal-image">
+                            <img src="{{ url_for('static', filename='img/FORLANDF300-1.png') }}" alt="FORLAND F300 3TN 2024" class="carcatal-image">
                             <div class="cardcatal-body">
                                 <h2 class="carcatal-title">FORLAND F300 3TN</h2>
                             
@@ -464,10 +464,10 @@
                                     <span class="pricecardcatal-label">Precio</span>
                                     <span class="pricecardcatal-value">USD $17,000</span>
                                 </div>
-                                <a href="detail.html?id=FORLAND-300" class="btn-detailcar">VER DETALLE</a>
+                                <a href="{{ url_for('detail', id='FORLAND-300') }}" class="btn-detailcar">VER DETALLE</a>
 
                                 <a href="https://wa.me/51972043502" class="contact-linkwspp">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+                                    <img src="{{ url_for('static', filename='img/whatsapp.svg') }}" alt="WhatsApp">
                                     CONTACTAR
                                 </a>
                             </div>
@@ -480,7 +480,7 @@
                                 <span class="badge-verifiedcatal">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
-                            <img src="img/GLORY580-1.png" alt="DFSK GLORY 580 2024" class="carcatal-image">
+                            <img src="{{ url_for('static', filename='img/GLORY580-1.png') }}" alt="DFSK GLORY 580 2024" class="carcatal-image">
                             <div class="cardcatal-body">
                                 <h2 class="carcatal-title">DFSK GLORY 580</h2>
                             
@@ -495,10 +495,10 @@
                                     <span class="pricecardcatal-label">Precio</span>
                                     <span class="pricecardcatal-value">PEN S/.52,000</span>
                                 </div>
-                                <a href="detail.html?id=GLORY-580" class="btn-detailcar">VER DETALLE</a>
+                                <a href="{{ url_for('detail', id='GLORY-580') }}" class="btn-detailcar">VER DETALLE</a>
 
                                 <a href="https://wa.me/51972043502" class="contact-linkwspp">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+                                    <img src="{{ url_for('static', filename='img/whatsapp.svg') }}" alt="WhatsApp">
                                     CONTACTAR
                                 </a>
                             </div>
@@ -511,7 +511,7 @@
                                 <span class="badge-verifiedcatal">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
-                            <img src="img/chevSPIN.jpg" alt="CHEVROLET SPIN" class="carcatal-image">
+                            <img src="{{ url_for('static', filename='img/chevSPIN.jpg') }}" alt="CHEVROLET SPIN" class="carcatal-image">
                             <div class="cardcatal-body">
                                 <h2 class="carcatal-title">CHEVROLET SPIN</h2>
                             
@@ -526,10 +526,10 @@
                                     <span class="pricecardcatal-label">Precio</span>
                                     <span class="pricecardcatal-value">PEN S/.55,000</span>
                                 </div>
-                                <a href="detail.html?id=CHEVROLET-SPIN-2023" class="btn-detailcar">VER DETALLE</a>
+                                <a href="{{ url_for('detail', id='CHEVROLET-SPIN-2023') }}" class="btn-detailcar">VER DETALLE</a>
 
                                 <a href="https://wa.me/51972043502" class="contact-linkwspp">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+                                    <img src="{{ url_for('static', filename='img/whatsapp.svg') }}" alt="WhatsApp">
                                     CONTACTAR
                                 </a>
                             </div>
@@ -541,7 +541,7 @@
                                 <span class="badge-verifiedcatal">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
-                            <img src="img/TIGUAN.jpg" alt="VOLKSWAGEN TIGUAN 4X4" class="carcatal-image">
+                            <img src="{{ url_for('static', filename='img/TIGUAN.jpg') }}" alt="VOLKSWAGEN TIGUAN 4X4" class="carcatal-image">
                             <div class="cardcatal-body">
                                 <h2 class="carcatal-title">VOLKSWAGEN TIGUAN 4X4</h2>
                             
@@ -556,10 +556,10 @@
                                     <span class="pricecardcatal-label">Precio</span>
                                     <span class="pricecardcatal-value">USD $14,700</span>
                                 </div>
-                                <a href="detail.html?id=VOLKSWAGEN-TIGUAN-2012" class="btn-detailcar">VER DETALLE</a>
+                                <a href="{{ url_for('detail', id='VOLKSWAGEN-TIGUAN-2012') }}" class="btn-detailcar">VER DETALLE</a>
 
                                 <a href="https://wa.me/51972043502" class="contact-linkwspp">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+                                    <img src="{{ url_for('static', filename='img/whatsapp.svg') }}" alt="WhatsApp">
                                     CONTACTAR
                                 </a>
                             </div>
@@ -572,7 +572,7 @@
                                 <span class="badge-verifiedcatal">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
-                            <img src="img/L200-1-2013.png" alt="MITSUBISHI L200 2013 MOD 2014 " class="carcatal-image">
+                            <img src="{{ url_for('static', filename='img/L200-1-2013.png') }}" alt="MITSUBISHI L200 2013 MOD 2014 " class="carcatal-image">
                             <div class="cardcatal-body">
                                 <h2 class="carcatal-title">MITSUBISHI L200</h2>
                             
@@ -587,10 +587,10 @@
                                     <span class="pricecardcatal-label">Precio</span>
                                     <span class="pricecardcatal-value">PEN S/.45,000</span>
                                 </div>
-                                <a href="detail.html?id=MITSUBISHI-L200-2013" class="btn-detailcar">VER DETALLE</a>
+                                <a href="{{ url_for('detail', id='MITSUBISHI-L200-2013') }}" class="btn-detailcar">VER DETALLE</a>
 
                                 <a href="https://wa.me/51972043502" class="contact-linkwspp">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+                                    <img src="{{ url_for('static', filename='img/whatsapp.svg') }}" alt="WhatsApp">
                                     CONTACTAR
                                 </a>
                             </div>
@@ -603,7 +603,7 @@
                                 <span class="badge-verifiedcatal">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
-                            <img src="img/HILUX-2019-1.png" alt="TOYOTA HILUX SRV 2019" class="carcatal-image">
+                            <img src="{{ url_for('static', filename='img/HILUX-2019-1.png') }}" alt="TOYOTA HILUX SRV 2019" class="carcatal-image">
                             <div class="cardcatal-body">
                                 <h2 class="carcatal-title">TOYOTA HILUX SRV 2019</h2>
                             
@@ -618,10 +618,10 @@
                                     <span class="pricecardcatal-label">Precio</span>
                                     <span class="pricecardcatal-value">USD $31,000</span>
                                 </div>
-                                <a href="detail.html?id=TOYOTA-HILUX-2019" class="btn-detailcar">VER DETALLE</a>
+                                <a href="{{ url_for('detail', id='TOYOTA-HILUX-2019') }}" class="btn-detailcar">VER DETALLE</a>
 
                                 <a href="https://wa.me/51972043502" class="contact-linkwspp">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+                                    <img src="{{ url_for('static', filename='img/whatsapp.svg') }}" alt="WhatsApp">
                                     CONTACTAR
                                 </a>
                             </div>
@@ -634,7 +634,7 @@
                                 <span class="badge-verifiedcatal">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
-                            <img src="img/TOYOTA-HILUX-2015.png" alt="TOYOTA HILUX 4X4 2015" class="carcatal-image">
+                            <img src="{{ url_for('static', filename='img/TOYOTA-HILUX-2015.png') }}" alt="TOYOTA HILUX 4X4 2015" class="carcatal-image">
                             <div class="cardcatal-body">
                                 <h2 class="carcatal-title">TOYOTA HILUX 4X4 2015</h2>
                             
@@ -649,10 +649,10 @@
                                     <span class="pricecardcatal-label">Precio</span>
                                     <span class="pricecardcatal-value">PEN S/.25,500</span>
                                 </div>
-                                <a href="detail.html?id=TOYOTA-HILUX-2015" class="btn-detailcar">VER DETALLE</a>
+                                <a href="{{ url_for('detail', id='TOYOTA-HILUX-2015') }}" class="btn-detailcar">VER DETALLE</a>
 
                                 <a href="https://wa.me/51972043502" class="contact-linkwspp">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+                                    <img src="{{ url_for('static', filename='img/whatsapp.svg') }}" alt="WhatsApp">
                                     CONTACTAR
                                 </a>
                             </div>
@@ -665,7 +665,7 @@
                                 <span class="badge-verifiedcatal">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
-                            <img src="img/RENAULT-LOGAN-1.png" alt="RENAULT LOGAN 2018 MOD 2019 " class="carcatal-image">
+                            <img src="{{ url_for('static', filename='img/RENAULT-LOGAN-1.png') }}" alt="RENAULT LOGAN 2018 MOD 2019 " class="carcatal-image">
                             <div class="cardcatal-body">
                                 <h2 class="carcatal-title">RENAULT LOGAN</h2>
                             
@@ -680,10 +680,10 @@
                                     <span class="pricecardcatal-label">Precio</span>
                                     <span class="pricecardcatal-value">PEN S/.29,500</span>
                                 </div>
-                                <a href="detail.html?id=RENAULT-LOGAN-2018" class="btn-detailcar">VER DETALLE</a>
+                                <a href="{{ url_for('detail', id='RENAULT-LOGAN-2018') }}" class="btn-detailcar">VER DETALLE</a>
 
                                 <a href="https://wa.me/51972043502" class="contact-linkwspp">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+                                    <img src="{{ url_for('static', filename='img/whatsapp.svg') }}" alt="WhatsApp">
                                     CONTACTAR
                                 </a>
                             </div>
@@ -696,7 +696,7 @@
                                 <span class="badge-verifiedcatal">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
-                            <img src="img/MITSU-L200-1.png" alt="MITSUBISHI L200 4X4 2025" class="carcatal-image">
+                            <img src="{{ url_for('static', filename='img/MITSU-L200-1.png') }}" alt="MITSUBISHI L200 4X4 2025" class="carcatal-image">
                             <div class="cardcatal-body">
                                 <h2 class="carcatal-title">MITSUBISHI L200 4X4</h2>
                             
@@ -711,10 +711,10 @@
                                     <span class="pricecardcatal-label">Precio</span>
                                     <span class="pricecardcatal-value">USD $35,000</span>
                                 </div>
-                                <a href="detail.html?id=MITSUBISHI-L200-2025" class="btn-detailcar">VER DETALLE</a>
+                                <a href="{{ url_for('detail', id='MITSUBISHI-L200-2025') }}" class="btn-detailcar">VER DETALLE</a>
 
                                 <a href="https://wa.me/51972043502" class="contact-linkwspp">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+                                    <img src="{{ url_for('static', filename='img/whatsapp.svg') }}" alt="WhatsApp">
                                     CONTACTAR
                                 </a>
                             </div>
@@ -727,7 +727,7 @@
                                 <span class="badge-verifiedcatal">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
-                            <img src="img/MAZDA-CX5-1.png" alt="MAZDA CX5 2016 MOD 2017" class="carcatal-image">
+                            <img src="{{ url_for('static', filename='img/MAZDA-CX5-1.png') }}" alt="MAZDA CX5 2016 MOD 2017" class="carcatal-image">
                             <div class="cardcatal-body">
                                 <h2 class="carcatal-title">MAZDA CX5</h2>
                             
@@ -742,10 +742,10 @@
                                     <span class="pricecardcatal-label">Precio</span>
                                     <span class="pricecardcatal-value">PEN S/.55,000</span>
                                 </div>
-                                <a href="detail.html?id=MAZDA-CX5-2016" class="btn-detailcar">VER DETALLE</a>
+                                <a href="{{ url_for('detail', id='MAZDA-CX5-2016') }}" class="btn-detailcar">VER DETALLE</a>
 
                                 <a href="https://wa.me/51972043502" class="contact-linkwspp">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+                                    <img src="{{ url_for('static', filename='img/whatsapp.svg') }}" alt="WhatsApp">
                                     CONTACTAR
                                 </a>
                             </div>
@@ -758,7 +758,7 @@
                                 <span class="badge-verifiedcatal">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
-                            <img src="img/KINGLONG-1.png" alt="KING LONG SANTANA 2024 MOD 2025" class="carcatal-image">
+                            <img src="{{ url_for('static', filename='img/KINGLONG-1.png') }}" alt="KING LONG SANTANA 2024 MOD 2025" class="carcatal-image">
                             <div class="cardcatal-body">
                                 <h2 class="carcatal-title">KING LONG SANTANA</h2>
                             
@@ -773,10 +773,10 @@
                                     <span class="pricecardcatal-label">Precio</span>
                                     <span class="pricecardcatal-value">PEN S/.63,000</span>
                                 </div>
-                                <a href="detail.html?id=KING-LONG-2024" class="btn-detailcar">VER DETALLE</a>
+                                <a href="{{ url_for('detail', id='KING-LONG-2024') }}" class="btn-detailcar">VER DETALLE</a>
 
                                 <a href="https://wa.me/51972043502" class="contact-linkwspp">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+                                    <img src="{{ url_for('static', filename='img/whatsapp.svg') }}" alt="WhatsApp">
                                     CONTACTAR
                                 </a>
                             </div>
@@ -789,7 +789,7 @@
                                 <span class="badge-verifiedcatal">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
-                            <img src="img/KIA-SOLUTO-1.png" alt="KIA SOLUTO SEMIFULL 2021 MOD 2022" class="carcatal-image">
+                            <img src="{{ url_for('static', filename='img/KIA-SOLUTO-1.png') }}" alt="KIA SOLUTO SEMIFULL 2021 MOD 2022" class="carcatal-image">
                             <div class="cardcatal-body">
                                 <h2 class="carcatal-title">KIA SOLUTO SEMIFULL</h2>
                             
@@ -804,10 +804,10 @@
                                     <span class="pricecardcatal-label">Precio</span>
                                     <span class="pricecardcatal-value">PEN S/.37,000</span>
                                 </div>
-                                <a href="detail.html?id=KIA-SOLUTO-SEMIFULL-2021" class="btn-detailcar">VER DETALLE</a>
+                                <a href="{{ url_for('detail', id='KIA-SOLUTO-SEMIFULL-2021') }}" class="btn-detailcar">VER DETALLE</a>
 
                                 <a href="https://wa.me/51972043502" class="contact-linkwspp">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+                                    <img src="{{ url_for('static', filename='img/whatsapp.svg') }}" alt="WhatsApp" style="width: 70px;">
                                     CONTACTAR
                                 </a>
                             </div>
@@ -820,7 +820,7 @@
                                 <span class="badge-verifiedcatal">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
-                            <img src="img/HYUNDAI-VERNA-1.png" alt="HYUNDAI VERNA 2020" class="carcatal-image">
+                            <img src="{{ url_for('static', filename='img/HYUNDAI-VERNA-1.png') }}" alt="HYUNDAI VERNA 2020" class="carcatal-image">
                             <div class="cardcatal-body">
                                 <h2 class="carcatal-title">HYUNDAI VERNA</h2>
                             
@@ -835,10 +835,10 @@
                                     <span class="pricecardcatal-label">Precio</span>
                                     <span class="pricecardcatal-value">PEN S/.35,000</span>
                                 </div>
-                                <a href="detail.html?id=HYUNDAI-VERNA-2020" class="btn-detailcar">VER DETALLE</a>
+                                <a href="{{ url_for('detail', id='HYUNDAI-VERNA-2020') }}" class="btn-detailcar">VER DETALLE</a>
 
                                 <a href="https://wa.me/51972043502" class="contact-linkwspp">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+                                    <img src="{{ url_for('static', filename='img/wspp1.svg') }}" alt="WhatsApp">
                                     CONTACTAR
                                 </a>
                             </div>
@@ -851,7 +851,7 @@
                                 <span class="badge-verifiedcatal">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
-                            <img src="img/JMC-VIGUS-2.png" alt="JMC VIGUS PLUS 4X4 2024" class="carcatal-image">
+                            <img src="{{ url_for('static', filename='img/JMC-VIGUS-2.png') }}" alt="JMC VIGUS PLUS 4X4 2024" class="carcatal-image">
                             <div class="cardcatal-body">
                                 <h2 class="carcatal-title">JMC VIGUS PLUS 4X4</h2>
                             
@@ -866,10 +866,10 @@
                                     <span class="pricecardcatal-label">Precio</span>
                                     <span class="pricecardcatal-value">PEN S/.63,000</span>
                                 </div>
-                                <a href="detail.html?id=JMC-VIGUS-2024" class="btn-detailcar">VER DETALLE</a>
+                                <a href="{{ url_for('detail', id='JMC-VIGUS-2024') }}" class="btn-detailcar">VER DETALLE</a>
 
                                 <a href="https://wa.me/51972043502" class="contact-linkwspp">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+                                    <img src="{{ url_for('static', filename='img/whatsapp.svg') }}" alt="WhatsApp">
                                     CONTACTAR
                                 </a>
                             </div>
@@ -894,20 +894,20 @@
                 </div>
             
                 <div class="item card-feature">
-                    <img class="iconinspeccion" src="img/iconbusqueda.svg">
+                    <img class="iconinspeccion" src="{{ url_for('static', filename='img/iconbusqueda.svg') }}">
                     <h3>Inspección 360°</h3>
                     <p>Evaluación técnica, mecánica y estructural profunda.</p>
                 </div>    
 
                 <div class="item card-feature">
-                    <img class="iconlegal" src="img/iconlegal.svg">
+                    <img class="iconlegal" src="{{ url_for('static', filename='img/iconlegal.svg') }}">
                     <h3>Blindaje Legal</h3>
                     <p>Verificación de documentos, gravámenes y antecedentes.</p>
                 </div>
 
         
                 <div class="item card-feature">
-                    <img class="icontasacion" src="img/icontasacion.svg">        
+                    <img class="icontasacion" src="{{ url_for('static', filename='img/icontasacion.svg') }}">        
                     <h3>Tasación Justa</h3>
                     <p>Precios reales basados en el estado actual del mercado.</p>
                 </div>
@@ -941,7 +941,7 @@
                             </div>
 
                             <div class="image-side">
-                            <img src="img/cardetail3.svg" alt="Imagen del carro">
+                            <img src="{{ url_for('static', filename='img/cardetail3.svg') }}" alt="Imagen del carro">
                         </div>
                 </div>
             </div>
@@ -956,7 +956,7 @@
 
  <!--INICIO FOOTER-->
  <footer class="main-footer">    
-    <img class="logo-footer" src="img/CarroQhatuL.png">
+    <img class="logo-footer" src="{{ url_for('static', filename='img/CarroQhatuL.png') }}">
     <div class="footer-grid">        
         <div class="col-brand">
             <p>Plataforma líder en la Compra y Venta de Vehículos Usados en el Perú.</p>
