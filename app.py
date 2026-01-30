@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from supabase import create_client
-from openai import OpenAI
+# from openai import OpenAI
 import os
 
 app = Flask(__name__)
@@ -12,7 +12,7 @@ SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-client = OpenAI(api_key=OPENAI_API_KEY)
+# client = OpenAI(api_key=OPENAI_API_KEY)
 
 
 # ---------- VISTAS ----------
@@ -157,7 +157,7 @@ def cotizar():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
 
 
 
