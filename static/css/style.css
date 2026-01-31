@@ -2221,9 +2221,390 @@ a:hover {
     }
     /*FIN PAGE CONTACTOS*/
 }
+/*LAPTOPS*/
+@media screen and (min-width: 1024px) and (max-width: 1440px) {
+.menuban_content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 35px 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    width: 90%; /* Ajuste para que no toque los bordes en laptop */
+    max-width: 1100px;
+    margin: -100px auto 0; /* Centrado horizontal */
+}
+
+.icon-grid {
+    display: flex;
+    justify-content: space-between; /* Distribución igual a la imagen */
+    width: 100%;
+    margin-bottom: 40px; /* Espacio entre filas */
+    gap: 10px;
+}
+.icon-item {
+    flex: 1; /* Todos ocupan el mismo espacio */
+    text-align: center;
+}
+
+.icon-item p {
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 10px;
+    color: #444;
+}
+
+.icon-marcas {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between; 
+    width: 100%;
+    gap: 0 !important;
+}
+.icon-marcas .marcas-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: nowrap; /* Evita que las marcas se bajen */
+}
+.icon-carmarc {
+    height: 60px; 
+    width: auto;
+}
+.btn-catalogo {
+    background-color: #ffaa00;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 25px;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    white-space: nowrap; /* Evita que el texto del botón se rompa */
+}
 
 
+.qr-section {
+    margin: 20px auto 60px; /* Centrado y con margen fijo */
+    width: 95%;
+    max-width: 1200px; /* Evita que se estire demasiado en monitores grandes */
+}
 
+.qr-content {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    /* Ajuste de fondo para que cubra todo sin deformarse */
+    background: url(../img/bannerqr.svg) center / cover no-repeat !important; 
+    border-radius: 25px;
+    padding: 20px 50px; /* Más espacio interno */
+    box-shadow: 0px 15px 35px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    min-height: 280px;
+    z-index: 1;
+}
+
+/* El pseudo-elemento para oscurecer el fondo si es necesario */
+.qr-content::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3); /* Un poco más sutil */
+    z-index: -1; 
+}
+
+/* 1. Columna del Logo WhatsApp */
+.qr-image {
+    flex: 0 0 auto; /* No permite que el logo se estire */
+}
+
+.qr-image img {
+    width: 140px; /* Tamaño controlado para laptop */
+    height: auto;
+    filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3));
+}
+
+/* 2. Columna de Texto Central */
+.qr-text {
+    flex: 1;
+    padding: 0 25px;
+    text-align: left;
+    color: white;
+}
+
+.qr-text h2 {
+    font-size: 2.2rem; /* Tamaño de título impactante */
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.qr-text p {
+    font-size: 1.8rem;
+    line-height: 1.4;
+    max-width: 500px; /* Evita líneas de texto demasiado largas */
+}
+
+/* 3. Columna del Código QR */
+.qr-box {
+    flex: 0 0 auto;
+    background: rgba(255, 255, 255, 0.1); /* Ligero fondo para resaltar el área */
+    padding: 15px;
+    border-radius: 20px;
+    backdrop-filter: blur(5px);
+}
+
+.qr-box img {
+    width: 160px; /* Tamaño del QR según tu imagen */
+    height: 160px;
+    border-radius: 15px;
+    background: white; /* Asegura que el QR siempre sea legible */
+    padding: 10px;
+}
+
+.qr-label {
+    margin-top: 10px;
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+}
+/*VIDEOS PARA LAPTOP*/
+/* Contenedor principal: Usamos Grid para control total de columnas */
+.videos-container {
+    display: grid;
+    /* Forzamos 5 columnas en PC y Laptop */
+    grid-template-columns: repeat(5, 1fr); 
+    gap: 15px; /* Espaciado más elegante entre tarjetas */
+    padding: 20px 4vw;
+    justify-content: center;
+}
+
+/* Ajuste de las tarjetas */
+.video-card {
+    position: relative;
+    width: 100%; /* Que ocupe el ancho de su columna de grid */
+    aspect-ratio: 9 / 16; /* Mantiene la proporción vertical de celular automáticamente */
+    height: auto; /* Dejamos que el aspect-ratio mande */
+    border-radius: 18px;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease;
+}
+
+/* Efecto hover opcional para que se vea más profesional */
+.video-card:hover {
+    transform: translateY(-5px);
+}
+
+.video-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.videos-container {
+    gap: 10px;
+    padding: 20px 2vw;
+}
+    
+.play-btn {
+    font-size: 45px; /
+}
+
+.grid-layout {
+    grid-template-columns: repeat(2, 1fr); /* Pasamos a 2 columnas si es muy angosta */
+}
+
+.cta-box {
+    grid-column: span 2;
+    flex-direction: column; /* En laptop pequeña, imagen abajo del form */
+}
+
+.image-side img {
+    max-width: 80%;
+    margin: 0 auto;
+}
+.compra-mosaico {
+    background-color: #f8f9fa;
+    padding: 60px 2vw;
+}
+
+/* Layout de Rejilla */
+.grid-layout {
+    display: grid;
+    /* Definimos 3 columnas fijas para Desktop/Laptop */
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Estilo común para todos los items */
+.item {
+    background: #212529; /* Fondo oscuro como en tu imagen */
+    border-radius: 20px;
+    padding: 30px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Hero Text (La caja principal de bienvenida) */
+.hero-text {
+    grid-column: span 1;
+    background: white;
+    color: #212529;
+}
+
+.hero-text h1 { font-size: 2rem; font-weight: 800; }
+.highlight { color: #ffaa00; }
+
+/* Features (Inspección, Legal, Tasación) */
+.card-feature {
+    background: #2d343a;
+    text-align: left;
+}
+
+.card-feature img {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 15px;
+}
+
+/* Social Proof (+500K) */
+.social-proof {
+    text-align: center;
+}
+
+.social-proof h2 {
+    font-size: 3rem;
+    color: #ffaa00;
+    margin: 0;
+}
+
+/* CAJA ROJA DE COTIZACIÓN (CTA BOX) */
+.cta-box {
+    grid-column: span 2; /* Ocupa 2 columnas para que sea ancha */
+    background: #b30000;
+    flex-direction: row; /* Imagen a un lado, texto al otro */
+    padding: 0;
+    overflow: hidden;
+    align-items: stretch;
+}
+
+.form-side {
+    padding: 40px;
+    flex: 1;
+}
+
+.image-side {
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+}
+
+.image-side img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+/* Ajustes de Input para que no se rompan en laptop */
+.input-infocotiza {
+    margin-bottom: 15px;
+}
+
+.input-infocotiza input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    margin-top: 5px;
+}
+.tm-section-container {
+    background-color: #f8f9fa;
+    padding: 60px 20px;
+}
+
+/* Rejilla de testimonios optimizada para Laptop */
+.tm-grid {
+    display: grid;
+    /* En laptops estándar, forzamos 2 columnas para que las tarjetas respiren */
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 30px;
+    max-width: 1100px; /* Un poco más estrecho para centrar la vista */
+    margin: 0 auto;
+}
+
+/* Tarjeta de testimonio */
+.tm-card {
+    background: #ffffff;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Asegura que todas midan lo mismo */
+}
+
+.tm-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+/* Miniatura del Video */
+.tm-video-thumb {
+    position: relative;
+    width: 100%;
+    /* Mantenemos el formato horizontal para testimonios de este tipo */
+    aspect-ratio: 16 / 9; 
+    background-color: #000;
+}
+
+.tm-video-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Cuerpo del testimonio */
+.tm-body {
+    padding: 25px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.tm-comment {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: #333;
+    font-style: italic;
+    margin-bottom: 15px;
+}
+
+.tm-location {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #0056b3; /* Color corporativo para ubicación */
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+.tm-grid {
+    grid-template-columns: repeat(4, 1fr); 
+}
+/*=====================
+FIN VISTA LAPTOPS
+=======================*/
+}
 .btn-search {
     background: white;
     padding: 10px 25px;
@@ -2234,12 +2615,10 @@ a:hover {
     border: 1px solid #d0d0d0;
     transition: 0.2s;
 }
-
 .btn-search:hover {
     box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
     transform: translateY(-2px);
 }
-
 .page-header {
     height: 400px;
     margin-bottom: 90px;
