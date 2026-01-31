@@ -2864,7 +2864,7 @@ input[type="button"].btn-block {
   color: #8486a0;
   text-align: left;
   list-style: none;
-  background-color: #fff;
+  background-color: #EACF4E;
   background-clip: padding-box;
   border: 1px solid rgba(0, 0, 0, 0.15);
 }
@@ -5668,8 +5668,8 @@ button.bg-dark:hover,
 button.bg-dark:focus {
   background-color: #eeeeee !important;
 }
-.bg-white {
-  background-color: #eeeeee !important;
+.bg-navbarcq{
+  background-color: #FBD333 ! important ;
 }
 .bg-transparent {
   background-color: transparent !important;

@@ -38,44 +38,44 @@
 
     <!--NAVBAR INICIO-->
     <div class="container-fluid position-relative nav-bar p-0">
-    <div class="position-relative px-lg-0" style="z-index: 9;">
-        <nav class="navbar navbar-expand-lg bg-white navbar-dark py-3 py-lg-0 pl-3 pl-lg-5 shadow-sm">
-            <a href="{{ url_for('index') }}" class="navbar-brand">
-                <img href="{{ url_for('index') }}"  class="imglogo" src="{{ url_for('static', filename='img/CarroQhatuL.png') }}" loading="lazy" alt="Logo">
-            </a>
-            <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
-                    <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="navbar-social d-none d-lg-flex ml-4">
-                <a class="social-icon" href="https://www.facebook.com/carroqhatu" target="_blank"><i class="fab fa-facebook"></i></a>
-                <a class="social-icon" href="https://www.tiktok.com/@carroqhatu" target="_blank"><i class="fab fa-tiktok"></i></a>
-                <a class="social-icon" href="https://www.instagram.com/carroqhatu" target="_blank"><i class="fab fa-instagram"></i></a>
-                <a class="social-icon" href="https://www.youtube.com/@revelinobrayan2134" target="_blank"><i class="fab fa-youtube"></i></a>
-            </div>
+        <div class="position-relative px-lg-0" style="z-index: 9;">
+            <nav class="navbar navbar-expand-lg bg-navbarcq navbar-dark py-3 py-lg-0 pl-3 pl-lg-4 shadow-sm p-0">
+                <a href="{{ url_for('index') }}" class="navbar-brand">
+                    <img href="{{ url_for('index') }}"  class="imglogo" src="{{ url_for('static', filename='img/CarroQhatuL.png') }}" loading="lazy" alt="Logo">
+                </a>
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                        <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-social d-none d-lg-flex ml-4">
+                    <a class="social-icon" href="https://www.facebook.com/carroqhatu" target="_blank"><i class="fab fa-facebook"></i></a>
+                    <a class="social-icon" href="https://www.tiktok.com/@carroqhatu" target="_blank"><i class="fab fa-tiktok"></i></a>
+                    <a class="social-icon" href="https://www.instagram.com/carroqhatu" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a class="social-icon" href="https://www.youtube.com/@revelinobrayan2134" target="_blank"><i class="fab fa-youtube"></i></a>
+                </div>
 
-            <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
-                <div class="navbar-nav ml-auto py-0 align-items-center">
-                    <a href="{{ url_for('about') }}" class="nav-item nav-link">Compra un auto</a>
-                    <a href="{{ url_for('service') }}" class="nav-item nav-link">Vende tu auto</a>
-                    <div class="nav-item dropdown">
-                                    <a href="{{ url_for('team') }}" class="nav-link dropdown-toggle" data-toggle="dropdown">Nosotros</a>
-                                    <div class="dropdown-menu rounded-0 m-0">
-                                        <a href="{{ url_for('team') }}" class="dropdown-item">Conócenos</a>
-                                        <a href="{{ url_for('testimonial') }}" class="dropdown-item">Testimonios</a>
-                                        <a href="{{ url_for('booking') }}" class="dropdown-item">Blog</a>
-                                        <a href="{{ url_for('contact') }}" class="dropdown-item">Contáctos</a>
-                                        
-                                    </div>
-                                </div> 
-                    <div class="nav-item ml-lg-3">
-                        <a href="{{ url_for('contact') }}" class="btn-contacto">
-                            Contáctanos <i class="fa fa-headset ml-2"></i>
-                        </a>
+                <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
+                    <div class="navbar-nav ml-auto py-0 align-items-center">
+                        <a href="{{ url_for('about') }}" class="nav-item nav-link">Compra un auto</a>
+                        <a href="{{ url_for('service') }}" class="nav-item nav-link">Vende tu auto</a>
+                        <div class="nav-item dropdown">
+                                        <a href="{{ url_for('team') }}" class="nav-link dropdown-toggle" data-toggle="dropdown">Nosotros</a>
+                                        <div class="dropdown-menu rounded-0 m-0">
+                                            <a href="{{ url_for('team') }}" class="dropdown-item">Conócenos</a>
+                                            <a href="{{ url_for('testimonial') }}" class="dropdown-item">Testimonios</a>
+                                            <a href="{{ url_for('booking') }}" class="dropdown-item">Blog</a>
+                                            <a href="{{ url_for('contact') }}" class="dropdown-item">Contáctos</a>
+                                            
+                                        </div>
+                                    </div> 
+                        <div class="nav-item ml-lg-3">
+                            <a href="{{ url_for('contact') }}" class="btn-contacto">
+                                Contáctanos <i class="fa fa-headset ml-2"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </nav>
-    </div>
+            </nav>
+        </div>
     </div>
     <!--NAVBAR FINAL-->
 
@@ -89,17 +89,72 @@
         </section>
     <!-- Banner Principal Final -->
 
+<!--TARJETAS SERVICIOS PRINCIPALES-->
 
+<!--FIN TARJETAS SERVICIOS PRINCIPALES-->
+<div class="container mb-5">
+    <div class="cards-principal-content">
+        <div class="grid-cards">
+            <div class="card-principalservice destacada">
+                <div class="icono-wrapper">
+                    <img src="{{ url_for('static', filename='img/vehiculosiconprincipal.svg') }}" alt="vehículos" class="icon-menuinspeccion">
+                </div>
+                <h3>¡Inspección 360º!</h3>
+                <ul>
+                <li>✔Revisamos el estado de la carroceria (choques,siniestros,etc).</li>
+                <li>✔Escaneo de sistema electrónico y motor del vehículo.</li>
+                <li>✔Revisión Documentaria(historial de propietarios, deudas, denuncias, papeletas, etc.).</li>
+                <li>✔Tasamos el precio del vehículo.</li>    
+                </ul>    
+                <a class="btn-anuncio" href="{{ url_for('car') }}">                
+                        Quiero una Inspección
+                </a>     
+            </div>
+
+            <div class="card-principalservice destacada">
+                <div class="icono-wrapper">
+                    <img src="{{ url_for('static', filename='img/busquedaicon.svg') }}" alt="Oferta">
+                </div>
+                <h3>Búsqueda</h3>
+                <p class="p-busqueda">Buscamos el vehículo ideal para ti y realizamos una revisión completa (motor, carrocería, sistema eléctrico y documentos) Y te entregamos un informe.</p>    
+                <ul >
+                    <li>✔Asesoramiento antes de comprar.</li>
+                    <li>✔Informe técnico.</li>
+                    <li>✔Tasación real.</li>
+                </ul>
+                <a class="btn-anuncio" href="{{ url_for('car') }}">      
+                        Quiero Buscar
+                </a> 
+            </div>
+
+            <div class="card-principalservice destacada">
+                <div class="icono-wrapper">
+                    <img src="{{ url_for('static', filename='img/anuncioprincipalicon.svg') }}" alt="Inspección">
+                </div>
+                <h3>Publicación ¡En todos lados!</h3>
+                <p>Difundimos tu vehículo a través de nuestros diferentes canales. ¡Llegamos a miles de compradores por ti!</p>                        
+                <ul>
+                    <li>✔Anuncio virtual.</li>
+                    <li>✔Anuncio presencial.</li>
+                    <li>✔Anuncio + Recomiendación.</li>
+                </ul>
+                <a class="btn-anuncio" href="{{ url_for('car') }}">            
+                        Quiero Anunciar
+                </a> 
+            </div>
+        </div>           
+    </div>
+</div>
     <!-- SUBMENU CON ICONOS-->
-                <div class="menuban_content">
+                <div class="menuban_content container mt-5">
                     <div class="icon-grid">
-                        <div class="icon-item">
+                        <!-- <div class="icon-item">
                             <a href="{{ url_for('about') }}">
                             <div class="icon-svg">
-                                <!-- ICONO_COMPRA -->
+                                <!-- ICONO_COMPRA 
                                 <img src="{{ url_for('static', filename='img/compra.svg') }}"  alt="comprar" class="icon-menu">
                             </div>
-                            <p>Compra</p>
+                            <p>Inspección 360º</p>
                             <span class="underline" src="{{ url_for('about') }}"></span>
                             </a>
                             
@@ -107,13 +162,23 @@
                         <div class="icon-item">
                                 <a href="{{ url_for('service') }}">
                                 <div class="icon-svg">
-                                    <!-- ICONO_VENDE -->
+                                    <!-- ICONO_VENDE 
                                     <img src="{{ url_for('static', filename='img/venta.svg') }}" alt="vender" class="icon-menu">
                                 </div>
-                                <p>Vende</p>
+                                <p>Búsqueda</p>
                                 <span class="underline"></span>
                                 </a>                                
                         </div>
+                         <div class="icon-item">
+                                <a href="{{ url_for('service') }}">
+                                <div class="icon-svg">
+                                    <!-- ICONO_VENDE 
+                                    <img src="{{ url_for('static', filename='img/venta.svg') }}" alt="vender" class="icon-menu">
+                                </div>
+                                <p>Anuncio</p>
+                                <span class="underline"></span>
+                                </a>                                
+                        </div> -->
 
                         <div class="icon-item">
                                 <a href="{{ url_for('service') }}">
@@ -161,8 +226,13 @@
                         <input type="text" placeholder="Busca tu auto ideal...">
                         <button class="btn-search">Buscar</button>
                     </div> -->                      
-                    <div class="icon-marcas">
-                        <div class="icon-marca1">
+                    <div class="icon-marcas text-center">
+                         <a class="btn-catalogocontent" href="{{ url_for('car') }}">                
+                            <button href="{{ url_for('car') }}" class="btn-catalogo space-button">
+                                Ir a Catálogo
+                            </button>
+                        </a> 
+                        <!-- <div class="icon-marca1">
                             <img src="{{ url_for('static', filename='img/HYUNDAI.svg') }}"  alt="hyunday" class="icon-carmarc">
                         </div>
                         <div class="icon-marca1">
@@ -185,13 +255,7 @@
                         </div>   
                         <div class="icon-marca1">
                             <img src="{{ url_for('static', filename='img/susuki.svg') }}" alt="susuki" class="icon-carmarc">
-                        </div>    
-                            
-                        <a class="btn-catalogocontent" href="{{ url_for('car') }}">                
-                        <button href="{{ url_for('car') }}" class="btn-catalogo space-button">
-                            Ir a Catálogo
-                        </button>
-                        </a> 
+                        </div>     -->
                     </div>
                 </div>
     <!-- FIN SUBMENU CON ICONOS-->
@@ -224,84 +288,7 @@
         </section>
         <!-- FINAL 3 CARDS INICIALES -->
     
-
-        <!--  CARDS POR QUÉ -->
-        <section class="beneficios-section container">
-            <h2 class="beneficios-title titulo-linea">
-                <span></span>
-               Cómo CarroQhatu te ayuda 
-                <span></span>
-            </h2>
-
-            <div class="beneficios-grid">
-                <!-- CARD 1 -->
-                <div class="beneficio-card">
-                    <img src="{{ url_for('static', filename='img/CQP1.svg') }}" alt="Promoción" class="beneficio-icon">
-                    <h3>Transpariencia y Confianza</h3>
-                    <p>Fortalecemos la confianza en el mercado de vehículos usados con información clara, objetiva y verificable.</p>
-                </div>
-                <!-- CARD 2 -->
-                <div class="beneficio-card">
-                    <img src="{{ url_for('static', filename='img/CQP4.svg') }}" alt="Promoción" class="beneficio-icon">
-                    <h3>Inspección Técnica Integral</h3>
-                    <p>Evaluamos el vehículo en aspectos estructurales, mecánicos, electrónicos y legales antes de la compra.</p>
-                </div>
-
-                <!-- CARD 3 -->
-                <div class="beneficio-card">
-                    <img src="{{ url_for('static', filename='img/CQP2.svg') }}" alt="Inspección" class="beneficio-icon">
-                    <h3>Tasación Justa y Profesional</h3>
-                    <p>Determinamos el valor real del vehículo según su estado, mercado y características, evitando sobreprecios o malas negociaciones.</p>
-                </div>
-
-                <!-- CARD 4 -->
-                <div class="beneficio-card">
-                    <img src="{{ url_for('static', filename='img/CQP3.svg') }}" alt="Compra y venta" class="beneficio-icon">
-                    <h3>Plataforma Omnicanal</h3>
-                    <p>Conectamos compradores y vendedores mediante canales digitales y presenciales bajo criterios de confianza.</p>
-                </div>
-
-                <!-- CARD 5 -->
-                 <div class="beneficio-card">
-                    <img src="{{ url_for('static', filename='img/CQP6.svg') }}" alt="comunidad" class="beneficio-icon">
-                    <h3>Comunidad que Respalda</h3>
-                    <p>Contamos con una comunidad digital de más de medio millón de seguidores que impulsa la difusión responsable de vehículos verificados.</p>
-                 </div>
-
-                <!-- CARD 6 -->
-                 <div class="beneficio-card">
-                    <img src="{{ url_for('static', filename='img/CQP5.svg') }}" alt="comunidad" class="beneficio-icon">
-                    <h3>Acompañamiento Preventivo</h3>
-                    <p>Te asesoramos antes de concretar la compra para evitar malas decisiones.</p>
-                 </div>
-            </div>
-        </section>     
-         <!-- FIN CARDS POR QUÉ-->
-
-         <!--Sección contacto qr-->
-        <section class="qr-section container">
-            <div class="qr-content"> 
-                <!-- Imagen o icono -->
-                <div class="qr-image">
-                    <img src="{{ url_for('static', filename='img/wspp2.svg') }}" alt="App mockup">
-                </div>
-                <!-- Texto -->
-                <div class="qr-text">
-                    <h2 class="text-white">Conéctate con nosotros</h2>
-                    <p>
-                        Escanea el código QR para hablar con un asesor, ver nuestro catálogo 
-                        o absolver tus dudas respecto a la compra y venta.
-                    </p>
-                </div>
-                <div class="qr-box">
-                    <img src="{{ url_for('static', filename='img/qr_carroqhatu.png') }}" alt="QR Whatsapp">
-                    <p class="qr-label">Escanéame</p>
-                </div>
-            </div>
-        </section>
-        <!--fin Sección contacto qr-->
-
-         <!-- INICIO CATÁLOGO-->
+                 <!-- INICIO CATÁLOGO-->
         <section class="mas-vendidos container">
             <h2 class="title-mv titulo-linea">
                 <span></span>
@@ -943,11 +930,89 @@
     
             <div class="contentimg py-5"> 
                 <img class="imgcarros" src="{{ url_for('static', filename='img/about.png') }}" alt="imgCarros">
-            </div>      
+            </div>   
+
+        <!--  CARDS POR QUÉ -->
+        <section class="beneficios-section container">
+            <h2 class="beneficios-title titulo-linea">
+                <span></span>
+               Cómo CarroQhatu te ayuda 
+                <span></span>
+            </h2>
+
+            <div class="beneficios-grid">
+                <!-- CARD 1 -->
+                <div class="beneficio-card">
+                    <img src="{{ url_for('static', filename='img/CQP1.svg') }}" alt="Promoción" class="beneficio-icon">
+                    <h3>Transpariencia y Confianza</h3>
+                    <p>Fortalecemos la confianza en el mercado de vehículos usados con información clara, objetiva y verificable.</p>
+                </div>
+                <!-- CARD 2 -->
+                <div class="beneficio-card">
+                    <img src="{{ url_for('static', filename='img/CQP4.svg') }}" alt="Promoción" class="beneficio-icon">
+                    <h3>Inspección Técnica Integral</h3>
+                    <p>Evaluamos el vehículo en aspectos estructurales, mecánicos, electrónicos y legales antes de la compra.</p>
+                </div>
+
+                <!-- CARD 3 -->
+                <div class="beneficio-card">
+                    <img src="{{ url_for('static', filename='img/CQP2.svg') }}" alt="Inspección" class="beneficio-icon">
+                    <h3>Tasación Justa y Profesional</h3>
+                    <p>Determinamos el valor real del vehículo según su estado, mercado y características, evitando sobreprecios o malas negociaciones.</p>
+                </div>
+
+                <!-- CARD 4 -->
+                <div class="beneficio-card">
+                    <img src="{{ url_for('static', filename='img/CQP3.svg') }}" alt="Compra y venta" class="beneficio-icon">
+                    <h3>Plataforma Omnicanal</h3>
+                    <p>Conectamos compradores y vendedores mediante canales digitales y presenciales bajo criterios de confianza.</p>
+                </div>
+
+                <!-- CARD 5 -->
+                 <div class="beneficio-card">
+                    <img src="{{ url_for('static', filename='img/CQP6.svg') }}" alt="comunidad" class="beneficio-icon">
+                    <h3>Comunidad que Respalda</h3>
+                    <p>Contamos con una comunidad digital de más de medio millón de seguidores que impulsa la difusión responsable de vehículos verificados.</p>
+                 </div>
+
+                <!-- CARD 6 -->
+                 <div class="beneficio-card">
+                    <img src="{{ url_for('static', filename='img/CQP5.svg') }}" alt="comunidad" class="beneficio-icon">
+                    <h3>Acompañamiento Preventivo</h3>
+                    <p>Te asesoramos antes de concretar la compra para evitar malas decisiones.</p>
+                 </div>
+            </div>
+        </section>     
+         <!-- FIN CARDS POR QUÉ-->
+
+         <!--Sección contacto qr-->
+        <section class="qr-section container">
+            <div class="qr-content"> 
+                <!-- Imagen o icono -->
+                <div class="qr-image">
+                    <img src="{{ url_for('static', filename='img/wspp2.svg') }}" alt="App mockup">
+                </div>
+                <!-- Texto -->
+                <div class="qr-text">
+                    <h2 class="text-white">Conéctate con nosotros</h2>
+                    <p>
+                        Escanea el código QR para hablar con un asesor, ver nuestro catálogo 
+                        o absolver tus dudas respecto a la compra y venta.
+                    </p>
+                </div>
+                <div class="qr-box">
+                    <img src="{{ url_for('static', filename='img/qr_carroqhatu.png') }}" alt="QR Whatsapp">
+                    <p class="qr-label">Escanéame</p>
+                </div>
+            </div>
+        </section>
+        <!--fin Sección contacto qr-->
+
+   
              
     <!--VIDEOS Y TIPS-->
         <!-- CARD -->        
-        <h2 class="title-mv titulo-linea title-videos">
+        <h2 class="title-mv titulo-linea title-videos mt-5">
         Videos y Tips
         <span></span>
         </h2>

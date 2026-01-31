@@ -163,11 +163,12 @@ h6,
 }
 .social-icon {
     transition: transform 0.3s ease, color 0.3s ease;
+    transform-style: var(--rojo-carroqhatu);
 }
 
 .social-icon:hover {
     transform: scale(1.2);
-    color: #0c0c0c !important; 
+    color: #bc1313 !important; 
 }
 
 .btn-square {
@@ -398,11 +399,10 @@ body { background-color: #ffffff; font-family: 'Open Sans', sans-serif; color: #
 
 /*FINAL NAVBAR*/
 
-
+.nav-bar{
+    background: #FBD333;
+}
 .navbar-dark .navbar-nav .nav-link {
-    padding: 30px 15px;
-    font-size: 16px;
-    font-weight: 500;
     letter-spacing: 1px;
     color: var(--light);
     outline: none;
@@ -410,7 +410,7 @@ body { background-color: #ffffff; font-family: 'Open Sans', sans-serif; color: #
 
 .navbar-dark .navbar-nav .nav-link:hover,
 .navbar-dark .navbar-nav .nav-link.active {
-    color: var(--primary);
+    color: red;
 }
 /* --- REDES SOCIALES --- */
 .navbar-social {
@@ -428,7 +428,7 @@ body { background-color: #ffffff; font-family: 'Open Sans', sans-serif; color: #
 }
 
 .navbar-social a:hover {
-    color: #c3a600; /* Cambia a amarillo al tocar */
+    color: #f63100;
     transform: translateY(-3px);
 }
 @media (max-width: 991.98px) {
@@ -500,7 +500,7 @@ body { background-color: #ffffff; font-family: 'Open Sans', sans-serif; color: #
     display: flex;
     justify-content:center; 
     flex-direction: column;
-    margin-top: -10vw;
+    margin-top: 20px;
     margin-left: 2vw;
     margin-right: 2vw;
     padding-left: 20vw;
@@ -510,6 +510,20 @@ body { background-color: #ffffff; font-family: 'Open Sans', sans-serif; color: #
     border-radius: 20px;
     padding: 30px;
     box-shadow: 0px 12px 30px rgba(0,0,0,0.1);  
+}
+
+.cards-principal-content{
+    display: flex;
+    justify-content:center; 
+    flex-direction: column;
+    margin-top: -10vw;
+    margin-left: 2vw;
+    margin-right: 2vw;
+    padding-left: 20vw;
+    position: relative;
+    width: auto;
+    border-radius: 20px;
+    padding: 30px;
 }
 
 /*BANNER COMPRA UN AUTO*/
@@ -673,12 +687,21 @@ body { background-color: #ffffff; font-family: 'Open Sans', sans-serif; color: #
     display: flex;
     justify-content: center;
     flex-wrap: nowrap;
-    gap: 40px;
     align-items: flex-start;
     width: 100%;
 }
+.btn-catalogocontent{
+    margin: auto;
+}
 
 .icon-item {
+    flex: 1;
+    display: flex; /* Convertimos el ítem en un contenedor flex */
+    flex-direction: column; /* Alineamos los elementos uno arriba del otro */
+    align-items: center; /* Centrado horizontal (Eje X) */
+    justify-content: center; /* Centrado vertical (Eje Y) */
+    text-align: center;
+    padding: 10px;
     text-align: center;
     cursor: pointer;
     transition: 0.3s ease;
@@ -700,6 +723,7 @@ body { background-color: #ffffff; font-family: 'Open Sans', sans-serif; color: #
     display: flex;
     align-items: center;
     justify-content:center;
+    margin: auto;
 }
 
 /* TEXTO MENU BAJO ICONOS */
@@ -752,7 +776,6 @@ body { background-color: #ffffff; font-family: 'Open Sans', sans-serif; color: #
 .icon-marcas{
     display: flex;
     gap: 20px;
-    padding: 20px 3vw 0;
     flex-wrap: wrap !important;
     flex-shrink: 0;
     width: 100%;
@@ -869,7 +892,7 @@ body { background-color: #ffffff; font-family: 'Open Sans', sans-serif; color: #
             top: calc(100% + 5px);
             left: 0;
             right: 0;
-            background: white;
+            background: #EACF4E;
             border: 1px solid #d6c57f;
             border-radius: 12px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
@@ -1093,8 +1116,8 @@ body { background-color: #ffffff; font-family: 'Open Sans', sans-serif; color: #
 
 /* Iconos */
 .icono-wrapper {
-    width: 70px;
-    height: 70px;
+    width: 95px;
+    height: 95px;
     margin-bottom: 20px;
 }
 
@@ -1109,12 +1132,14 @@ body { background-color: #ffffff; font-family: 'Open Sans', sans-serif; color: #
     margin-bottom: 15px;
     color: #2d3748;
 }
-
 .card-venta p {
-    font-size: 14px;
+    font-size: 12px;
     color: var(--gris-texto);
     line-height: 1.6;
+    padding: 5px;
+    padding-left: 1vw;
 }
+
 
 /* Estilo para la Card Destacada (Inspección) */
 .card-venta.destacada {
@@ -1137,6 +1162,7 @@ body { background-color: #ffffff; font-family: 'Open Sans', sans-serif; color: #
 @media (max-width: 768px) {
     .grid-cards { flex-direction: column; align-items: center; }
     .card-venta { max-width: 90%; }
+    .card-principalservice { max-width: 90%; }
 }
 /*--------------------*/
 .garantia {
@@ -1215,7 +1241,92 @@ body { background-color: #ffffff; font-family: 'Open Sans', sans-serif; color: #
 }
 
 /*-----------------------------------*/
+/* 1. Hacemos que todas las cards tengan la misma altura y sean flex */
+.card-principalservice {
+    display: flex;
+    flex-direction: column;
+    height: 100%; 
+    background: white;
+    border-radius: 16px;
+    padding: 35px 25px;
+    flex: 1;
+    min-width: 260px;
+    max-width: 280px;
+    border: 1px solid #e2e8f0;
+    position: relative;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    z-index: 1;
+    justify-content: flex-start;
+}
+.card-principalservice .btn-anuncio {
+    margin-top: auto; 
+    display: inline-block; 
+    align-self: center;  
+}
+.card-principalservice::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    z-index: -1;
+}
 
+.card-principalservice:hover::after {
+    border-color: var(--amarillo-carroqhatu);
+    transform: scale(1.02);
+}
+
+.card-principalservice:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+.card-principalservice h3 {
+    font-size: 19px;
+    margin-bottom: 15px;
+    color: #2d3748;
+}
+
+.card-principalservice li {
+    font-size: 12px;
+    color: var(--gris-texto);
+    line-height: 1.6;
+    padding: 3px;
+    padding-left: 1vw;
+}
+.texto-cardbusqueda{
+    padding-bottom: 0px;
+}
+.card-principalservice p {
+    font-size: 12px;
+    color: var(--gris-texto);
+    line-height: 1.6;
+    padding: 5px;
+    padding-left: 1vw;
+}
+
+.card-principalservice.destacada {
+    background-color: #f0f4ff; /* Un tono azul muy suave */
+    border-color: var(--azul-kavak);
+}
+
+/* 2. Seleccionamos el último elemento antes del botón (en tu caso, el <ul>) 
+   y le decimos que crezca para ocupar todo el espacio sobrante */
+.card-principalservice ul {
+    flex-grow: 1; 
+}
+.btn-anuncio {
+    margin-top: auto; 
+    text-align: center;
+    width: 100%;
+    background-color: #EACF4E;
+    color:#000;
+    border-radius: 6px;
+}
+/*-----------------------------------*/
 .titulo-principal2 {
     font-size: 32px;
     font-weight: 800;
@@ -1284,7 +1395,6 @@ body { background-color: #ffffff; font-family: 'Open Sans', sans-serif; color: #
 /* ====================== */
 
 .beneficios-section {
-    padding-top: 12vw;
     padding-bottom: 2vw;
 }
 
@@ -1421,9 +1531,6 @@ body { background-color: #ffffff; font-family: 'Open Sans', sans-serif; color: #
     
 }
 /* CONTENEDOR CATÁLOGO */
-.mas-vendidos {
-    margin-top: 10px;
-}
 
 .scroll2{
     padding-top: 2vw;
@@ -2287,7 +2394,7 @@ a:hover {
 
 
 .qr-section {
-    margin: 20px auto 60px; /* Centrado y con margen fijo */
+    margin:auto !important;
     width: 95%;
     max-width: 1200px; /* Evita que se estire demasiado en monitores grandes */
 }
@@ -2601,6 +2708,15 @@ a:hover {
 .tm-grid {
     grid-template-columns: repeat(4, 1fr); 
 }
+.icon-item img, 
+.icon-item .icon-svg { 
+    width: 60px; /* Tamaño fijo para que todos se vean iguales */
+    height: 60px;
+    margin-bottom: 12px; /* Espacio entre el icono y el texto */
+    display: block;
+    margin-left: auto !important; /* Refuerzo de centrado */
+    margin-right: auto !important;
+}
 /*=====================
 FIN VISTA LAPTOPS
 =======================*/
@@ -2637,12 +2753,8 @@ FIN VISTA LAPTOPS
 }
 
 .qr-section {
-    margin-top: 1vw;
-    margin-left: 2vw;
-    margin-right: 2vw;
-    margin-bottom: 5vw;
+    margin: auto;
 }
-
 .qr-content {
     position: relative;
     display: flex;
@@ -3292,7 +3404,7 @@ FIN VISTA LAPTOPS
 
 /* CONTENEDOR CATÁLOGO */
 .mas-vendidos {
-    margin-top: 10px;
+    margin-top: 5vw;
 }
 
 /* GALERÍA GRID */
