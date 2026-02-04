@@ -1,3 +1,133 @@
+.heading-content p {
+    font-weight: bold;
+    font-size: 34px;
+    margin: 0 10px 0 0;
+    color: #050505;
+    position: relative;
+    font-family: "Poppins", sans-serif;
+}
+.heading-content span{
+    color:#B70021;
+}
+.title-respaldo{
+    font-size: 20px;
+    color: #8b8b8b;
+    text-align: center;
+}
+/* Estilo base para las imágenes */
+.circle-service img {
+    transition: all 0.3s ease; /* Hace que la animación sea fluida */
+    cursor: pointer;
+}
+
+/* Efecto al pasar el mouse */
+.circle-service img:hover {
+    transform: scale(1.1); /* Agranda la imagen un 10% */
+    filter: brightness(1.1); /* Le da un toque de luz */
+}
+.fila-respaldo{
+    display: flex;
+    justify-content: center; 
+    align-items: center;     
+    flex-wrap: nowrap;       
+    gap: 60px;               
+    margin: auto;
+}
+.img-respaldo{
+    flex: 0 1 auto;
+    display: flex;
+    justify-content: center;
+}
+
+.img-respaldo img{
+    height: 50px;            /* Altura fija para que todos se vean del mismo tamaño */
+    width: auto;             /* Mantiene la proporción original */
+    object-fit: contain;
+    transition: all 0.3s ease;
+}
+/* Efecto al pasar el mouse */
+.img-respaldo img:hover {
+    filter: grayscale(0%);
+    transform: scale(1.05);
+}
+/* Contenedor principal */
+.grid-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* Estilo de la Tarjeta */
+.card-principalservice {
+    background-color: #f0f4ff; /* Azul muy claro como en tu imagen */
+    border: 1px solid #ccc;
+    border-radius: 25px; /* Bordes redondeados pronunciados */
+    padding: 30px 20px;
+    width: 320px;
+    display: flex;
+    flex-direction: column; /* Alineación vertical */
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+/* Espacio para el ícono */
+.icono-wrapper img {
+    width: 80px;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+/* Títulos */
+.card-principalservice h3 {
+    font-size: 1.5rem;
+    color: #1a2a40;
+    margin-bottom: 15px;
+}
+
+/* Cuerpo de la card (el que empuja al botón) */
+.card-body {
+    flex-grow: 1; /* Esto hace que el texto ocupe todo el espacio disponible */
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.card-body p, .card-body ul {
+    font-size: 0.95rem;
+    color: #444;
+    line-height: 1.6;
+    text-align: left; /* Texto a la izquierda como en la imagen */
+    list-style: none;
+    padding: 0;
+}
+
+/* Estilo del Botón */
+.btn-anuncio {
+    display: inline-block;
+    padding: 10px 20px;
+    border: 2px solid #000;
+    background-color: transparent;
+    color: #000;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    align-self: center; /* Centra el botón horizontalmente */
+    margin-top: auto; /* EMPUJA el botón al final de la tarjeta */
+}
+
+.btn-anuncio:hover {
+    background-color: #000;
+    color: #fff;
+}
+
+
+
+
+
+
 /* =========================
    RESET + BASE RESPONSIVE
 ========================= */
@@ -162,6 +292,7 @@ h6,
     transition: box-shadow .2s;
 }
 .social-icon {
+    color: #1B262C;
     transition: transform 0.3s ease, color 0.3s ease;
     transform-style: var(--rojo-carroqhatu);
 }
@@ -207,7 +338,7 @@ h6,
 }
 
 .imglogo {
-    width: 180px;
+    width: 120px;
     height: auto;
     display: block;
 }
@@ -394,11 +525,35 @@ body { background-color: #ffffff; font-family: 'Open Sans', sans-serif; color: #
     padding: 30px 15px;
 }
 
-
-
-
 /*FINAL NAVBAR*/
+.section-cardsprincipalservice{
+    width: 30%;
+    height: auto;
+    align-items: center;
+    margin: auto;
+}
+.card-inspeccionprincipal{
+    border-radius: 5px;
+    border: 2px solid #3E4A5B;
+}
 
+.card-inspeccionprincipal img{
+    width: 150px;
+    height: auto;
+    display: flex;
+    margin: auto;
+}
+.card-inspeccionprincipal h1{
+    text-align: center;
+    font-weight: bold;
+    font-size: large;
+    color: black;
+}
+.card-inspeccionprincipal p{
+    text-align: center;
+    font-size: 13px;
+    color: #5a5c62;
+}
 .nav-bar{
     background: #FBD333;
 }
@@ -419,6 +574,7 @@ body { background-color: #ffffff; font-family: 'Open Sans', sans-serif; color: #
     align-items: center;
     border-left: 1px solid #ddd; /* Una rayita divisoria elegante */
     padding-left: 20px;
+    margin-left: 100px;
 }
 
 .navbar-social a {
@@ -1490,6 +1646,7 @@ body { background-color: #ffffff; font-family: 'Open Sans', sans-serif; color: #
     font-size: 39px;
     margin-bottom: 25px;
     color:#1b1b1b;
+    font-family: "Poppins", sans-serif;
 }
 .subtitle-mv {
     font-size: 25px;
@@ -1521,7 +1678,7 @@ body { background-color: #ffffff; font-family: 'Open Sans', sans-serif; color: #
 }
 .title-exploracatalog{
     color:#1b1b1b;
-    padding: 5vw
+    padding: 1vw;
 }
 
 .linesubtitle p{ 
@@ -3407,6 +3564,10 @@ FIN VISTA LAPTOPS
     margin-top: 5vw;
 }
 
+.mas-vendidosexplora{
+    margin-top: -2vw;
+}
+
 /* GALERÍA GRID */
 .mv-grid {
     display: grid;
@@ -3554,6 +3715,7 @@ FIN VISTA LAPTOPS
 .detail-linea {    
     display: flex;
     align-items: center;
+    display: none;
 }
 .detail-linea span{
     flex: 1;
