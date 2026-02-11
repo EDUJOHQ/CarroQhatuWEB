@@ -39,7 +39,7 @@
     <!--NAVBAR INICIO-->
     <div class="container-fluid position-relative nav-bar p-0">
         <div class="position-relative px-lg-0" style="z-index: 9;">
-            <nav class="navbar navbar-expand-lg bg-navbarcq navbar-dark pt-2 pb-0 py-lg-0 pl-3 pl-lg-4 shadow-sm p-0">
+            <nav class="navbar navbar-expand-lg bg-navbarcq navbar-dark pt-0 pb-0 py-lg-0 pl-3 pl-lg-4">
                 <a href="{{ url_for('index') }}" class="navbar-brand">
                     <img href="{{ url_for('index') }}"  class="imglogo" src="{{ url_for('static', filename='img/CarroQhatuL.png') }}" loading="lazy" alt="Logo">
                 </a>
@@ -88,55 +88,57 @@
         </section>
     <!-- Banner Principal Final -->
 
-    <!--PRUEBA 1-->
-    <div class="container text-center heading-content m-auto">
+    <!--Cards iniciales service 1-->
+    <div class="container text-center heading-content m-auto title-newauto">
         <div class="row">
             <div class="col-12">
-                <p>
-                    ¿Nuevo <span>Auto</span>?    
+                <p>                       
+                    Nuestros<span>Servicios</span>    
                 </p>
             </div>
         </div>
     </div>
-    <h2 class="title-mv titulo-linea">
+    <h2 class="subtitle-principal titulo-linea">
                 <span></span>
                 Hacemos el trabajo difícil por ti
                 <span></span>
     </h2>
      <div class="container circle-service">
         <div class="row">
-            <div class="col">
+            <div class="col-12 col-md-6 col-lg-4 text-center m-auto">
                 <img src="{{url_for('static', filename='img/inspeccioncircle.svg')}}">
             </div>
-            <div class="col">
+            <div class="col-12 col-md-6 col-lg-4 text-center m-auto">
                 <img src="{{url_for('static', filename='img/busquedacircle.svg')}}">
             </div>
-            <div class="col">
+            <div class="col-12 col-md-6 col-lg-4 text-center m-auto">
                 <img src="{{url_for('static', filename='img/anunciocircle.svg')}}">
             </div>
         </div>
      </div>
-     <!--PRUEBA 1-->
-     <!---->
-    <div class="container-fluid bg-light py-5">    
-        <h1 class="title-respaldo">Respaldados por:</h1>    
-        <div class="fila-respaldo">            
-            <div class="img-respaldo">
-                <img src="{{url_for('static', filename='img/pro_innovate.png')}}" alt="Pro Innovate">
-            </div>
-            <div class="img-respaldo">
-                <img src="{{url_for('static', filename='img/logo_ministerio_de_la_produccion.png')}}" alt="Ministerio de la Producción">
-            </div>
-            <div class="img-respaldo">
-                <img src="{{url_for('static', filename='img/start_up_peru.png')}}" alt="StartUp Perú">
+     <!--FIN Cards iniciales service 1-->
+
+     <!--FILA RESPALDO-->
+    <div class="container-fluid bg-light py-5 respaldo-section">    
+        <h1 class="title-respaldo text-center mb-4">Respaldados por:</h1>    
+        <div class="container">
+            <div class="row justify-content-center align-items-center respaldo-row">
+                <div class="col-12 col-md-6 col-lg-4 d-flex justify-content-center">
+                    <img src="{{url_for('static', filename='img/pro_innovate.png')}}" alt="Pro Innovate" class="img-respaldo">
+                </div>
+                <div class="col-12 col-md-6 col-lg-4 d-flex justify-content-center">
+                    <img src="{{url_for('static', filename='img/logo_ministerio_de_la_produccion.png')}}" alt="Ministerio de la Producción" class="img-respaldo">
+                </div>
+                <div class="col-12 col-md-6 col-lg-4 d-flex justify-content-center">
+                    <img src="{{url_for('static', filename='img/start_up_peru.png')}}" alt="StartUp Perú" class="img-respaldo">
+                </div>
             </div>
         </div>
     </div>
-
-     <!----> 
+     <!--FIN FILA RESPALDO--> 
     
-     <!-- 3 CARDS INICIALES -->
-        <section class="cards-home container">
+     <!--2 CARDS VENDE Y COMPRA INICIALES -->
+        <section class="cards-home container m-auto">
             <div class="cta-grid">
                 <!-- CARD 1 -->
                     <a href="{{ url_for('car') }}">
@@ -144,23 +146,116 @@
                             <img src="{{ url_for('static', filename='img/cardprin1.svg') }}" alt="Catálogo de vehículos">
                         </article>
                     </a>
-                
                 <!-- CARD 2 -->
-                    <a href="{{ url_for('car') }}">
-                        <article class="cta-img-card">
-                            <img src="{{ url_for('static', filename='img/cardprin2.svg') }}" alt="Compra con confianza">
-                        </article>
-                     </a>
-
-                <!-- CARD 3 -->
                     <a href="{{ url_for('service') }}">
-                        <article class="cta-img-card destacado">
-                            <img src="{{ url_for('static', filename='img/cardprin3.svg') }}" alt="Vende tu vehículo">
+                        <article class="cta-img-card">
+                            <img src="{{ url_for('static', filename='img/cardprin3.svg') }}" alt="Catálogo de vehículos">
                         </article>
                     </a>
+
             </div>
         </section>
-        <!-- FINAL 3 CARDS INICIALES -->
+        <!-- FINAL 3 CARDS  VENDE Y COMPRA INICIALES -->
+
+        <!-- IMAGEN SERVICIOS MOBILE-->
+        <div class="container-fluid vista-service-mobil-img">
+            <div class="row">
+                <div class="col m-auto text-center">
+                    <img src="{{url_for('static', filename='img/MOBILEserviciosimg.svg')}}">
+                </div>
+            </div>
+        </div>    
+        <!-- FIN IMAGEN SERVICIOS MOBILE-->
+
+    <!--SECTION DETALLET SERVICE IZQUIERDA-->
+    <section class="servicios-container">
+
+    <!-- IZQUIERDA -->
+    <div class="servicios-visual">
+        <img src="{{url_for('static', filename='img/serviceIMGizq.svg')}}" alt="Auto CarroQhatu">
+    </div>
+
+    <!-- DERECHA -->
+    <div class="servicios-info">
+
+        <!-- CARD GRANDE -->
+        <div class="card-detalleservicios">
+        <h3>Revisión documentaria</h3>
+
+        <div class="content-iconos-detalleservicios">
+            <div class="icono-detalleservicios">
+            <img src="{{url_for('static', filename='img/propietario.png')}}">
+            <span>Historial Propietarios</span>
+            </div>
+            <div class="icono-detalleservicios">
+            <img src="{{url_for('static', filename='img/deudas.png')}}">
+            
+            <span>Deudas</span>
+            </div>
+            <div class="icono-detalleservicios">
+            <img src="{{url_for('static', filename='img/papeletas.png')}}">
+            <span>Papeletas</span>
+            </div>
+            <div class="icono-detalleservicios">
+            <img src="{{url_for('static', filename='img/denuncias.png')}}">
+            <span>Denuncias</span>
+            </div>
+            <div class="icono-detalleservicios">
+            <img src="{{url_for('static', filename='img/legalidad.png')}}">
+            <span>Legalidad</span>
+            </div>
+        </div>
+        </div>
+
+    <!-- CARDS PEQUEÑAS -->
+    <div class="cards-secundarias-detalservice">
+        <div class="card-pequeñas">
+            <h3>Revisión de carrocería</h3>
+            <div class="iconos-card-pequeñas">
+                <img src="{{url_for('static', filename='img/siniestros.png')}}">
+                <span>Siniestros</span>
+            </div>
+            <div class="iconos-card-pequeñas">
+                <img src="{{url_for('static', filename='img/pintura.png')}}">
+                <span>Pintura, Alineado y más.</span>
+            </div>
+        </div>
+
+        <div class="card-pequeñas">
+            <h3>Escaneo del sistema</h3>
+            <div class="iconos-card-pequeñas">
+                <img src="{{url_for('static', filename='img/electronico.png')}}" alt="iconelectronico">
+                <span>Electrónico</span>
+            </div>
+            
+            <div class="iconos-card-pequeñas">
+                <img src="{{url_for('static', filename='img/motor.png')}}" alt="iconmotor">
+                <span>Motor</span>
+            </div>
+            
+            <div class="iconos-card-pequeñas">
+                <img src="{{url_for('static', filename='img/kilometraje.png')}}" alt="iconKM">
+                <span>KM Real</span>
+            </div>
+            
+            <div class="iconos-card-pequeñas">
+                <img src="{{url_for('static', filename='img/frenos.png')}}" alt="iconFrenos">
+                <span>Frenos</span>
+            </div>
+        </div>
+
+        <div class="card-pequeñas">
+            <h3>Tasación del vehículo</h3>
+              <div class="iconos-card-pequeñas">
+            <img src="{{url_for('static', filename='img/tasacionvehiculo.png')}}" alt="icontasacion">
+            <span>Vehículos verificados</span>
+            </div>
+        </div>
+    </div>
+
+  </div>
+</section>
+
 <!--PRUEBA 2
 <div class="grid-cards">
     <div class="card-principalservice">
@@ -1672,15 +1767,7 @@
         });
     </script>
     <!--FIN TESTIMONIOS CLIENTES-->
-   
-    
-
-
-            <div class="contentimg py-5"> 
-                <img class="imgcarros" src="{{ url_for('static', filename='img/about.png') }}" alt="imgCarros">
-            </div>   
-    
-
+  
         <!--  CARDS POR QUÉ -->
         <!-- <section class="beneficios-section container">
             <h2 class="beneficios-title titulo-linea">
@@ -1779,8 +1866,8 @@
 
                 <div class="center-bottom">
                     <h3 class="h3footer destaque-amarillo">¿QUIERES QUE TE CONTACTEMOS?</h3>
-                    <form action="https://formspree.io/f/TU_ID_AQUI" method="POST" class="footer-form">
-                        <input type="text" name="contacto" placeholder="Tu Email o Nº Celular aquí" required>
+                    <form action="https://formspree.io/f/xkovnokp" method="POST" class="footer-form">
+                        <input type="text" name="Datos de contacto del cliente:" placeholder="Tu Email o Nº Celular aquí" required>
                         <button type="submit">ENVIAR</button>
                     </form>
                 </div>

@@ -33,41 +33,10 @@
 </head>
 
 <body>
-     <!-- Topbar Start -->
-    <div class="container-fluid bg-dark py-3 px-lg-5 d-none d-lg-block">
-        <div class="row">
-            <div class="col-md-6 text-center text-lg-left mb-2 mb-lg-0">
-                <div class="d-inline-flex align-items-center">
-                    <a class="text-body pr-3" href=""><i class="fa fa-phone-alt mr-2"></i>+51 972 112 235</a>
-                    <span class="text-body">|</span>
-                    <a class="text-body px-3" href=""><i class="fa fa-envelope mr-2"></i>carroQhatu@example.com</a>
-                </div>
-            </div>
-            <div class="col-md-6 text-center text-lg-right">
-                <div class="d-inline-flex align-items-center">
-                    <a class="text-body px-3" href="https://www.facebook.com/carroqhatu" target="_blank">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a class="text-body px-3" href="https://www.tiktok.com/@carroqhatu" target="_blank">
-                        <i class="fab fa-tiktok"></i>
-                    </a>
-                    <a class="text-body px-3" href="https://www.instagram.com/carroqhatu" target="_blank">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                    <a class="text-body pl-3" href="https://www.youtube.com/@revelinobrayan2134" target="_blank">
-                        <i class="fab fa-youtube"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Topbar End -->
-
-
     <!-- Navbar Start -->
     <div class="container-fluid position-relative nav-bar p-0">
         <div class="position-relative px-lg-1" style="z-index: 1000;" >
-            <nav class="navbar navbar-expand-lg bg-secondary navbar-dark py-3 py-lg-0 pl-3 pl-lg-5">
+            <nav class="navbar navbar-expand-lg bg-navbarcq navbar-dark py-3 py-lg-0 pl-3 pl-lg-5">
                 <a href="{{ url_for('index') }}" class="navbar-brand">
                     <img class="imglogo" src="{{ url_for('static', filename='img/CarroQhatuL.png') }}" loading="lazy" alt="Logo">
                 </a>
@@ -76,10 +45,8 @@
                 </button>
                 <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
                     <div class="navbar-nav ml-auto py-0">
-                        <a href="{{ url_for('index') }}" class="nav-item nav-link">
-                            <img src="{{ url_for('static', filename='img/iconoinicio (1).svg') }}" class="iconhome" loading="lazy">
-                        </a>
-                        <a class="navbar_txtInicio nav-item nav-link" href="{{ url_for('index') }}" class="nav-item nav-link">Inicio</a>
+                        <a class="navbar_txtInicio nav-item nav-link" href="{{ url_for('index') }}" class="nav-item nav-link">Inicio</a>        
+                        <a href="{{ url_for('index') }}" class="nav-item nav-link">Inicio</a>
                         <a href="{{ url_for('about') }}" class="nav-item nav-link">Compra un auto</a>
                         <a href="{{ url_for('service') }}" class="nav-item nav-link">Vende tu auto</a>            
                         <div class="nav-item dropdown">
@@ -126,8 +93,8 @@
             <div class="row">
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                         <div class="car-cardcatalogo">
-                            <div class="card-catalogoheader">
-                                <span class="badge-verifiedcatal">Auto Verificado</span>
+                            <div class="card-catalogoheader">                                
+                                <span class="badge-verifiedcatal"><img class="iconverificado-carpage" src="{{url_for('static', filename='img/verificadoCATALOGO.png')}}">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
                             <a href="{{ url_for('detail', id='HONDA-HR-V-2022') }}">                             
@@ -159,7 +126,7 @@
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                         <div class="car-cardcatalogo">
                             <div class="card-catalogoheader">
-                                <span class="badge-verifiedcatal">Auto Verificado</span>
+                                <span class="badge-verifiedcatal"><img class="iconverificado-carpage" src="{{url_for('static', filename='img/verificadoCATALOGO.png')}}">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
                             <a href="{{ url_for('detail', id='NISSAN-NAVARA') }}">
@@ -192,7 +159,7 @@
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                         <div class="car-cardcatalogo">
                             <div class="card-catalogoheader">
-                                <span class="badge-verifiedcatal">Auto Verificado</span>
+                                <span class="badge-verifiedcatal"><img class="iconverificado-carpage" src="{{url_for('static', filename='img/verificadoCATALOGO.png')}}">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
                             <a href="{{ url_for('detail', id='TOYOTA-RAV4') }}">
@@ -226,7 +193,7 @@
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                         <div class="car-cardcatalogo">
                             <div class="card-catalogoheader">
-                                <span class="badge-verifiedcatal">Auto Verificado</span>
+                                <span class="badge-verifiedcatal"><img class="iconverificado-carpage" src="{{url_for('static', filename='img/verificadoCATALOGO.png')}}">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
                             <a href="{{ url_for('detail', id='TOYOTA-HILUX-2017') }}">
@@ -261,7 +228,7 @@
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                         <div class="car-cardcatalogo">
                             <div class="card-catalogoheader">
-                                <span class="badge-verifiedcatal">Auto Verificado</span>
+                                <span class="badge-verifiedcatal"><img class="iconverificado-carpage" src="{{url_for('static', filename='img/verificadoCATALOGO.png')}}">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
                             <img src="{{ url_for('static', filename='img/L2002.jpg') }}" alt="MITSUBISHI-L200" class="carcatal-image">
@@ -291,7 +258,7 @@
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                         <div class="car-cardcatalogo">
                             <div class="card-catalogoheader">
-                                <span class="badge-verifiedcatal">Auto Verificado</span>
+                                <span class="badge-verifiedcatal"><img class="iconverificado-carpage" src="{{url_for('static', filename='img/verificadoCATALOGO.png')}}">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
                             <img src="{{ url_for('static', filename='img/sportage1.jpg') }}" alt="Kia Sportage" class="carcatal-image">
@@ -322,7 +289,7 @@
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                         <div class="car-cardcatalogo">
                             <div class="card-catalogoheader">
-                                <span class="badge-verifiedcatal">Auto Verificado</span>
+                                <span class="badge-verifiedcatal"><img class="iconverificado-carpage" src="{{url_for('static', filename='img/verificadoCATALOGO.png')}}">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
                             <img src="{{ url_for('static', filename='img/audiq5.jpg') }}" alt="AUDI 15 4X4 2012" class="carcatal-image">
@@ -353,7 +320,7 @@
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                         <div class="car-cardcatalogo">
                             <div class="card-catalogoheader">
-                                <span class="badge-verifiedcatal">Auto Verificado</span>
+                                <span class="badge-verifiedcatal"><img class="iconverificado-carpage" src="{{url_for('static', filename='img/verificadoCATALOGO.png')}}">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
                             <img src="{{ url_for('static', filename='img/TUCSON2019.jpg') }}" alt="HYUNDAI TUCSON 2019" class="carcatal-image">
@@ -384,7 +351,7 @@
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                         <div class="car-cardcatalogo">
                             <div class="card-catalogoheader">
-                                <span class="badge-verifiedcatal">Auto Verificado</span>
+                                <span class="badge-verifiedcatal"><img class="iconverificado-carpage" src="{{url_for('static', filename='img/verificadoCATALOGO.png')}}">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
                             <img src="{{ url_for('static', filename='img/GLORYNEW580-1.png') }}" alt="DFSK GlORY-NEW-580" class="carcatal-image">
@@ -415,7 +382,7 @@
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                         <div class="car-cardcatalogo">
                             <div class="card-catalogoheader">
-                                <span class="badge-verifiedcatal">Auto Verificado</span>
+                                <span class="badge-verifiedcatal"><img class="iconverificado-carpage" src="{{url_for('static', filename='img/verificadoCATALOGO.png')}}">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
                             <img src="{{ url_for('static', filename='img/TRACKERLTZ.jpg') }}" alt="CHEVROLET TRACKER LTZ" class="carcatal-image">
@@ -446,7 +413,7 @@
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                         <div class="car-cardcatalogo">
                             <div class="card-catalogoheader">
-                                <span class="badge-verifiedcatal">Auto Verificado</span>
+                                <span class="badge-verifiedcatal"><img class="iconverificado-carpage" src="{{url_for('static', filename='img/verificadoCATALOGO.png')}}">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
                             <img src="{{ url_for('static', filename='img/FORLANDF300-1.png') }}" alt="FORLAND F300 3TN 2024" class="carcatal-image">
@@ -477,7 +444,7 @@
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                         <div class="car-cardcatalogo">
                             <div class="card-catalogoheader">
-                                <span class="badge-verifiedcatal">Auto Verificado</span>
+                                <span class="badge-verifiedcatal"><img class="iconverificado-carpage" src="{{url_for('static', filename='img/verificadoCATALOGO.png')}}">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
                             <img src="{{ url_for('static', filename='img/GLORY580-1.png') }}" alt="DFSK GLORY 580 2024" class="carcatal-image">
@@ -508,7 +475,7 @@
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                         <div class="car-cardcatalogo">
                             <div class="card-catalogoheader">
-                                <span class="badge-verifiedcatal">Auto Verificado</span>
+                                <span class="badge-verifiedcatal"><img class="iconverificado-carpage" src="{{url_for('static', filename='img/verificadoCATALOGO.png')}}">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
                             <img src="{{ url_for('static', filename='img/chevSPIN.jpg') }}" alt="CHEVROLET SPIN" class="carcatal-image">
@@ -538,7 +505,7 @@
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                         <div class="car-cardcatalogo">
                             <div class="card-catalogoheader">
-                                <span class="badge-verifiedcatal">Auto Verificado</span>
+                                <span class="badge-verifiedcatal"><img class="iconverificado-carpage" src="{{url_for('static', filename='img/verificadoCATALOGO.png')}}">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
                             <img src="{{ url_for('static', filename='img/TIGUAN.jpg') }}" alt="VOLKSWAGEN TIGUAN 4X4" class="carcatal-image">
@@ -569,7 +536,7 @@
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                         <div class="car-cardcatalogo">
                             <div class="card-catalogoheader">
-                                <span class="badge-verifiedcatal">Auto Verificado</span>
+                                <span class="badge-verifiedcatal"><img class="iconverificado-carpage" src="{{url_for('static', filename='img/verificadoCATALOGO.png')}}">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
                             <img src="{{ url_for('static', filename='img/L200-1-2013.png') }}" alt="MITSUBISHI L200 2013 MOD 2014 " class="carcatal-image">
@@ -600,7 +567,7 @@
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                         <div class="car-cardcatalogo">
                             <div class="card-catalogoheader">
-                                <span class="badge-verifiedcatal">Auto Verificado</span>
+                                <span class="badge-verifiedcatal"><img class="iconverificado-carpage" src="{{url_for('static', filename='img/verificadoCATALOGO.png')}}">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
                             <img src="{{ url_for('static', filename='img/HILUX-2019-1.png') }}" alt="TOYOTA HILUX SRV 2019" class="carcatal-image">
@@ -631,7 +598,7 @@
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                         <div class="car-cardcatalogo">
                             <div class="card-catalogoheader">
-                                <span class="badge-verifiedcatal">Auto Verificado</span>
+                                <span class="badge-verifiedcatal"><img class="iconverificado-carpage" src="{{url_for('static', filename='img/verificadoCATALOGO.png')}}">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
                             <img src="{{ url_for('static', filename='img/TOYOTA-HILUX-2015.png') }}" alt="TOYOTA HILUX 4X4 2015" class="carcatal-image">
@@ -662,7 +629,7 @@
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                         <div class="car-cardcatalogo">
                             <div class="card-catalogoheader">
-                                <span class="badge-verifiedcatal">Auto Verificado</span>
+                                <span class="badge-verifiedcatal"><img class="iconverificado-carpage" src="{{url_for('static', filename='img/verificadoCATALOGO.png')}}">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
                             <img src="{{ url_for('static', filename='img/RENAULT-LOGAN-1.png') }}" alt="RENAULT LOGAN 2018 MOD 2019 " class="carcatal-image">
@@ -693,7 +660,7 @@
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                         <div class="car-cardcatalogo">
                             <div class="card-catalogoheader">
-                                <span class="badge-verifiedcatal">Auto Verificado</span>
+                                <span class="badge-verifiedcatal"><img class="iconverificado-carpage" src="{{url_for('static', filename='img/verificadoCATALOGO.png')}}">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
                             <img src="{{ url_for('static', filename='img/MITSU-L200-1.png') }}" alt="MITSUBISHI L200 4X4 2025" class="carcatal-image">
@@ -724,7 +691,7 @@
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                         <div class="car-cardcatalogo">
                             <div class="card-catalogoheader">
-                                <span class="badge-verifiedcatal">Auto Verificado</span>
+                                <span class="badge-verifiedcatal"><img class="iconverificado-carpage" src="{{url_for('static', filename='img/verificadoCATALOGO.png')}}">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
                             <img src="{{ url_for('static', filename='img/MAZDA-CX5-1.png') }}" alt="MAZDA CX5 2016 MOD 2017" class="carcatal-image">
@@ -755,7 +722,7 @@
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                         <div class="car-cardcatalogo">
                             <div class="card-catalogoheader">
-                                <span class="badge-verifiedcatal">Auto Verificado</span>
+                                <span class="badge-verifiedcatal"><img class="iconverificado-carpage" src="{{url_for('static', filename='img/verificadoCATALOGO.png')}}">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
                             <img src="{{ url_for('static', filename='img/KINGLONG-1.png') }}" alt="KING LONG SANTANA 2024 MOD 2025" class="carcatal-image">
@@ -782,11 +749,10 @@
                             </div>
                         </div>
                 </div>
-
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                         <div class="car-cardcatalogo">
                             <div class="card-catalogoheader">
-                                <span class="badge-verifiedcatal">Auto Verificado</span>
+                                <span class="badge-verifiedcatal"><img class="iconverificado-carpage" src="{{url_for('static', filename='img/verificadoCATALOGO.png')}}">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
                             <img src="{{ url_for('static', filename='img/KIA-SOLUTO-1.png') }}" alt="KIA SOLUTO SEMIFULL 2021 MOD 2022" class="carcatal-image">
@@ -817,7 +783,7 @@
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                         <div class="car-cardcatalogo">
                             <div class="card-catalogoheader">
-                                <span class="badge-verifiedcatal">Auto Verificado</span>
+                                <span class="badge-verifiedcatal"><img class="iconverificado-carpage" src="{{url_for('static', filename='img/verificadoCATALOGO.png')}}">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
                             <img src="{{ url_for('static', filename='img/HYUNDAI-VERNA-1.png') }}" alt="HYUNDAI VERNA 2020" class="carcatal-image">
@@ -848,7 +814,7 @@
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                         <div class="car-cardcatalogo">
                             <div class="card-catalogoheader">
-                                <span class="badge-verifiedcatal">Auto Verificado</span>
+                                <span class="badge-verifiedcatal"><img class="iconverificado-carpage" src="{{url_for('static', filename='img/verificadoCATALOGO.png')}}">Auto Verificado</span>
                                 <div class="logo-smallcardcatal"><span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span></div>
                             </div>
                             <img src="{{ url_for('static', filename='img/JMC-VIGUS-2.png') }}" alt="JMC VIGUS PLUS 4X4 2024" class="carcatal-image">
