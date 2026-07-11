@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>CARROQHATU|TESTIMONIOS</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Free HTML Templates" name="keywords">
+    <meta content="Free HTML Templates" name="description">
+
+   <!-- Favicon -->
+    <link href="{{ url_for('static', filename='img/favicon.ico') }}" rel="icon">
+
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Rubik&display=swap" rel="stylesheet"> 
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Libraries Stylesheet -->
+    <link href="{{ url_for('static', filename='lib/owlcarousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css') }}" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->    
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+
+    <!-- Template Stylesheet -->
+    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+</head>
+
+<body>
+    <!-- Navbar Start -->
+    <div class="container-fluid position-relative nav-bar p-0">
+        <div class="position-relative px-lg-1" style="z-index: 1000;" >
+            <nav class="navbar navbar-expand-lg bg-navbarcq navbar-dark py-3 py-lg-0 pl-3 pl-lg-5">
+                <a href="{{ url_for('index') }}" class="navbar-brand">
+                    <img class="imglogo" src="{{ site_config.site_logo|default(url_for('static', filename='img/CarroQhatuL.png')) }}" loading="lazy" alt="Logo">
+                </a>
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
+                    <div class="navbar-nav ml-auto py-0">
+                        <a class="navbar_txtInicio nav-item nav-link" href="{{ url_for('index') }}" class="nav-item nav-link">Inicio</a>        
+                        <a href="{{ url_for('index') }}" class="nav-item nav-link">Inicio</a>
+                        <a href="{{ url_for('about') }}" class="nav-item nav-link">Compra un auto</a>
+                        <a href="{{ url_for('service') }}" class="nav-item nav-link">Vende tu auto</a>
+                        <a href="{{ url_for('asesor') }}" class="nav-item nav-link">Asesor IA</a>            
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Nosotros</a>
+                            <div class="dropdown-menu rounded-0 m-0">
+                                <a href="{{ url_for('team') }}" class="dropdown-item">Conócenos</a>
+                                <a href="{{ url_for('testimonial') }}" class="dropdown-item">Testimonios</a>
+                                <a href="{{ url_for('booking') }}" class="dropdown-item">Blog</a>
+                                <a href="{{ url_for('contact') }}" class="dropdown-item">Contáctos</a>                        
+                            </div>
+                        </div> 
+                        </div class="nav-item ml-lg-3">
+                            <a href="{{ url_for('contact') }}" class="btn-contacto">
+                                Contáctanos<i class="fa fa-headset"></i>
+                            </a>   
+                        </div>
+                     </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+    <!-- Navbar End -->
+
+    <!-- Banner Principal Inicio -->
+            <section class="banner-video-container">
+                <video class="banner-video" autoplay muted loop playsinline>
+                    <source src="{{ url_for('static', filename='img/bannertestimonios.mp4') }}" type="video/mp4">
+                </video>
+                <div class="banner-overlayventa">                    
+                </div>
+            </section>
+    <!-- Banner Principal Final -->
+      <h2 class="linea">
+        <span></span>
+        </h2>
+    <!--INICIO TESTIMONIOS-->     
+        <section class="clientesventa">
+                <div class="d-flex justify-content-between align-items-center flex-wrap mb-4 px-3" style="gap: 15px;">
+                    <h2 class="titulo-principal2 mb-0" style="text-align: left; max-width: 800px; margin-bottom: 0;">Testimonios de clientes que ya
+                        <span>vendieron su auto</span>                     
+                    </h2>
+                    <button class="btn-dejar-opinion" onclick="openOpinionModal()" style="background-color: var(--amarillo-carroqhatu); color: #000; font-family: 'Oswald', sans-serif; font-weight: 700; border: none; padding: 0.6rem 1.5rem; border-radius: 4px; font-size: 1rem; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 0 15px rgba(251, 211, 51, 0.4); transition: all 0.3s ease; text-transform: uppercase;">
+                        <i class="fa-solid fa-star" style="animation: pulse-star 1.5s infinite;"></i> Dejar mi Opinión
+                    </button>
+                </div>
+                
+                <div class="clientesventa-grid">
+                    {% if testimonios %}
+                        {% for t in testimonios %}
+                        <div class="clientesventa-card">
+                            <div class="perfil">                           
+                                <div>
+                                    <h3>{{ t.nombre }}</h3>
+                                    <span>{{ t.relacion }}</span>
+                                </div>
+                            </div>
+                            <div class="rating">
+                                {% for i in range(1, 6) %}
+                                    {% if i <= t.calificacion %}
+                                        <i class="fa-solid fa-star"></i>
+                                    {% else %}
+                                        <i class="fa-regular fa-star" style="color: rgba(255,255,255,0.3);"></i>
+                                    {% endif %}
+                                {% endfor %}
+                                <strong>{{ t.calificacion }}.0</strong>
+                            </div>
+                            <p>
+                                {{ t.comentario }}
+                            </p>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <!-- CARD 1 -->
+                        <div class="clientesventa-card">
+                            <div class="perfil">                           
+                                <div>
+                                    <h3>Anderson Coaquira H.</h3>
+                                    <span>Vendió un Toyota Corolla 2020</span>
+                                </div>
+                            </div>
+                            <div class="rating">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-regular fa-star"></i>
+                                <strong>4.0</strong>
+                            </div>
+                            <p>
+                                Salió todo impecable, cumplieron 100% en todo lo pactado.
+                                Súper rápido todo y la gente siempre muy atenta.
+                            </p>
+                        </div>
+
+                        <!-- CARD 2 -->
+                        <div class="clientesventa-card">
+                            <div class="perfil">                           
+                                <div>
+                                    <h3>Adrian Ticona M.</h3>
+                                    <span>Vendió un Toyota Hilux SRV 2019</span>
+                                </div>
+                            </div>
+                            <div class="rating">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <strong>5.0</strong>
+                            </div>
+                            <p>
+                                Me gustó el trato son muy confiables, vinieron a ver mi carro y me tasaron un buen precio, me mostraron todo detallado y con publicación en redes recibí muchas ofertas. Estoy muy agradecido CarroQhatu!
+                            </p>
+                        </div>
+
+                        <!-- CARD 3 -->
+                        <div class="clientesventa-card">
+                            <div class="perfil">                            
+                                <div>
+                                    <h3>Rosemary Palacios Quispe</h3>
+                                    <span>Vendió Kia Soluto Semifull 2022</span>
+                                </div>
+                            </div>
+                            <div class="rating">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-regular fa-star"></i>
+                                <strong>4.0</strong>
+                            </div>
+                            <p>
+                                Todo se cumplió en tiempo y forma. La atención es excelente, vendi mi auto y también pude renovar a uno mejor con la ayuda de CarroQhatu. Gracias...
+                            </p>
+                        </div>
+                    {% endif %}
+                </div>
+        </section>
+    <!--FIN TESTIMONIOS-->
+        <h2 class="linea">
+        <span></span>
+        </h2>
+    <!--VIDEO TESTIMONIOS-->
+    <section class="tm-section-container container py-5">
+    <div class="tm-grid">
+        
+        <div class="tm-card" onclick="openVideo('https://www.dropbox.com/scl/fi/q82dy3hpbclvvwms4coqv/testimonioahorros.mp4?rlkey=u6lo7fntzs10mk4t0b2jyip9u&st=7m3cvwmy&dl=0&raw=1')">
+            <div class="tm-video-thumb">
+                <img src="{{ url_for('static', filename='img/miniaturavideo1test.svg') }}" alt="Testimonio 1">
+                <div class="tm-play-btn">
+                    <i class="fa-solid fa-play"></i>
+                </div>
+            </div>
+            <div class="tm-body">
+                <p class="tm-comment">"Me generó confianza y me parecieron la mejor opción. ¡Estoy muy agradecido!"</p>
+                <div class="tm-location">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>Juliaca</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="tm-card" onclick="openVideo('https://www.dropbox.com/scl/fi/05mupolm2ouf5qqqs6u5q/videoclienteaqp.mp4?rlkey=uuh6uedjptm6ttite6ucs277l&st=7ccqnhqs&dl=0&raw=1')">
+            <div class="tm-video-thumb">
+                <img src="{{ url_for('static', filename='img/miniaturavideo2test.svg') }}" alt="Testimonio 2">
+                <div class="tm-play-btn">
+                    <i class="fa-solid fa-play"></i>
+                </div>
+            </div>
+            <div class="tm-body">
+                <p class="tm-comment">"Les recomiendo a todos, tuve una mala experiencia en marketplace, pero Carroqhatu me brindó confianza"</p>
+                <div class="tm-location">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>Arequipa</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="tm-card" onclick="openVideo('https://www.dropbox.com/scl/fi/aywirdvnnefcvdq4jywh4/testimoniohilux.mp4?rlkey=6ejb5mwxp224ocm6xnud4jhxg&st=crjy99ht&dl=0&raw=1')">
+            <div class="tm-video-thumb">
+                <img src="{{ url_for('static', filename='img/testimoniocomprahilux.svg') }}" alt="Testimonio 1">
+                <div class="tm-play-btn">
+                    <i class="fa-solid fa-play"></i>
+                </div>
+            </div>
+            <div class="tm-body">
+                <p class="tm-comment">"El servicio es completamente efectivo, logré comprar una camioneta, con la ayuda de CarroQhatu sido posible. ¡Gracias!"</p>
+                <div class="tm-location">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>Arequipa</span>
+                </div>
+            </div>
+        </div>
+
+          <div class="tm-card" onclick="openVideo('https://www.dropbox.com/scl/fi/ddglsl6pvqn0imq2wxc9g/testimonioaqpyjuliaca.mp4?rlkey=6yfqie08kr3ff8fg0f0aft1pp&st=usw81nkd&dl=0&raw=1')">
+            <div class="tm-video-thumb">
+                <img src="{{ url_for('static', filename='img/testimoniocomprarenault.svg') }}" alt="Testimonio 1">
+                <div class="tm-play-btn">
+                    <i class="fa-solid fa-play"></i>
+                </div>
+            </div>
+            <div class="tm-body">
+                <p class="tm-comment">"De corazón le agradezco a CARROQHATU. Dije: "voy a confiar en ellos" y ya tengo mi primer carro!"</p>
+                <div class="tm-location">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>Arequipa / Juliaca</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="videoModal2" class="video-modal2">
+        <div class="video-modal2-content2">
+            <span class="close-btn" onclick="closeVideo()">×</span>
+            <video id="modalVideo2" src="" controls playsinline preload="none"></video>
+        </div>
+    </div>
+
+     <script>
+            function openVideo(src) {
+            const modal = document.getElementById('videoModal2');
+            const video = document.getElementById('modalVideo2');
+
+            video.src = src;
+            video.currentTime = 0;
+            modal.classList.add('active');
+            video.play().catch(() => {
+            console.log('Autoplay bloqueado, requiere interacción');
+            });
+            }
+
+            function closeVideo() {
+            const modal = document.getElementById('videoModal2');
+            const video = document.getElementById('modalVideo2');
+
+            video.pause();
+            video.src = '';
+            modal.classList.remove('active');
+            }
+
+            /* cerrar click afuera */
+            document.getElementById('videoModal2').addEventListener('click', e => {
+            if (e.target.id === 'videoModal2') closeVideo();
+            });
+            </script>
+</section>
+<!--fin vidceo testimonbio-->
+
+<!--section cardtestimonios-->
+    <div class="stats-testimonios" id="stats-section">
+        <div class="row text-center">
+            <div class="col-6 col-md-3">
+                <div class="stat-item">
+                    <div class="stat-num" data-target="500">0</div><span class="stat-symbol">+</span>
+                    <div class="stat-label">Clientes Satisfechos</div>
+                </div>
+            </div>        
+            <div class="col-6 col-md-3">
+                <div class="stat-item">
+                    <div class="stat-num" data-target="98">0</div><span class="stat-symbol">%</span>
+                    <div class="stat-label">Recomendación</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-item">
+                    <div class="stat-num" data-target="4.9" data-decimals="1">0</div>
+                    <div class="stat-label">Calificación Promedio</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-item">
+                    <div class="stat-num" data-target="2">0</div><span class="stat-symbol">h</span>
+                    <div class="stat-label">Respuesta Promedio</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+        const observerOptions = {
+            threshold: 0.5 // La animación inicia cuando se ve el 50% de la sección
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const stats = entry.target.querySelectorAll('.stat-num');
+                    stats.forEach(stat => {
+                        const target = +stat.getAttribute('data-target');
+                        const decimals = stat.getAttribute('data-decimals') || 0;
+                        const duration = 2000; // Duración en milisegundos (2 segundos)
+                        const startTime = performance.now();
+
+                        const updateCount = (currentTime) => {
+                            const elapsed = currentTime - startTime;
+                            const progress = Math.min(elapsed / duration, 1);
+                            
+                            // Efecto de facilidad (easeOutQuad)
+                            const easeProgress = progress * (2 - progress);
+                            
+                            const currentValue = easeProgress * target;
+                            
+                            stat.innerText = currentValue.toFixed(decimals);
+
+                            if (progress < 1) {
+                                requestAnimationFrame(updateCount);
+                            } else {
+                                stat.innerText = target.toLocaleString(); // Valor final exacto
+                            }
+                        };
+
+                        requestAnimationFrame(updateCount);
+                    });
+                    observer.unobserve(entry.target); // Para que solo ocurra una vez
+                }
+            });
+        }, observerOptions);
+
+        const section = document.querySelector('#stats-section');
+        if (section) observer.observe(section);
+    });
+    </script>
+<!--fin section cardtestimonios-->
+        <h2 class="lineamobile">
+        <span></span>
+        </h2>
+    <!--INICIO TESTIMONIOS CLIENTES-->
+            <h2 class="title-mv titulo-linea title-printestimonios">
+            <span></span>
+                Lo que opinan nuestros clientes
+            <span></span>
+            </h2>
+
+        <!--GRUPO POSTERIOR IZQUIERDA-->
+        <section class="comentarios-izq">
+            <div class="testimonios-content">
+                <div class="testimoniosdirec izq">
+                    <!--Grupo principal izquierda-->
+                    <div class="grupo-testi">            
+                        <div class="testimonios-card">
+                            <div class="user">
+                            <img src="{{ url_for('static', filename='img/juan.jpg') }}" alt="Juan Huarachi">
+                                <div class="user-info">
+                                    <strong>Juan Huarachi</strong>
+                                    <span>22 septiembre 2025</span>
+                                </div>
+                            </div>
+                            <p>Buen servicio y trato cordial. Muy confiables CarroQhatu.</p>
+                        </div>
+                        <div class="testimonios-card">
+                            <div class="user">
+                                <img src="{{ url_for('static', filename='img/rosam.jpg') }}" alt="Rosa Mamani">
+                                    <div class="user-info">
+                                        <strong>Rosa Mamani</strong>
+                                        <span>18 octubre 2025</span>
+                                    </div>
+                            </div>
+                            <p>Gracias a la inspección que hacen a los carros compré con seguridad y con total confianza.</p>
+                        </div>
+                        <div class="testimonios-card">
+                            <div class="user">
+                                <img src="{{ url_for('static', filename='img/traveler.jpg') }}" alt="Traveler">
+                                    <div class="user-info">
+                                        <strong>Traveler</strong>
+                                        <span>29 diciembre 2025</span>
+                                    </div>
+                            </div>
+                            <p>Me explicaron cada detalle del vehículo que queria comprar y ellos me acompañaron en la compra, buen servicio me ayudaron bastante.</p>
+                        </div>
+                        <div class="testimonios-card">
+                            <div class="user">
+                                <img src="{{ url_for('static', filename='img/sonia.jpg') }}" alt="Sonia Condori">
+                                    <div class="user-info">
+                                        <strong>Sonia Condori</strong>
+                                        <span>08 enero 2025</span>
+                                    </div>
+                            </div>
+                            <p>La tasación fue justa, me dijeron el porqué así y estuvo bien sustentada. Gracias a eso logré vender rápido.</p>
+                        </div> 
+                        <div class="testimonios-card">
+                            <div class="user">
+                                <img src="{{ url_for('static', filename='img/Edwin.jpg') }}" alt="Edwin Torres">
+                                    <div class="user-info">
+                                        <strong>Edwin Torres</strong>
+                                        <span>07 diciembre 2025</span>
+                                    </div>
+                            </div>
+                            <p>Logré comprar mi primer auto, muy bonito y en buen estado gracias a Carroqhatu.</p>
+                        </div>  
+                        <!--DUPLICADO DIRECCIÓN IZQUIERDA-->
+                        <div class="testimonios-card testimonioscard-nomobil">
+                            <div class="user">
+                                <img src="{{ url_for('static', filename='img/rosam.jpg') }}" alt="Rosa Mamani">
+                                    <div class="user-info">
+                                        <strong>Rosa Mamani</strong>
+                                        <span>18 octubre 2025</span>
+                                    </div>
+                            </div>
+                            <p>Gracias a la inspección que hacen a los carros compré con seguridad y con total confianza.</p>
+                        </div>
+                        <div class="testimonios-card testimonioscard-nomobil">
+                            <div class="user">
+                            <img src="{{ url_for('static', filename='img/juan.jpg') }}" alt="Juan Huarachi">
+                                <div class="user-info">
+                                    <strong>Juan Huarachi</strong>
+                                    <span>22 septiembre 2025</span>
+                                </div>
+                            </div>
+                            <p>Buen servicio y trato cordial. Muy confiables CarroQhatu.</p>
+                        </div>
+                        <div class="testimonios-card testimonioscard-nomobil">
+                            <div class="user">
+                                <img src="{{ url_for('static', filename='img/traveler.jpg') }}" alt="Traveler">
+                                    <div class="user-info">
+                                        <strong>Traveler</strong>
+                                        <span>29 diciembre 2025</span>
+                                    </div>
+                            </div>
+                            <p>Me explicaron cada detalle del vehículo que queria comprar y ellos me acompañaron en la compra, buen servicio me ayudaron bastante.</p>
+                        </div>
+                        <div class="testimonios-card testimonioscard-nomobil">
+                            <div class="user">
+                                <img src="{{ url_for('static', filename='img/sonia.jpg') }}" alt="Sonia Condori">
+                                    <div class="user-info">
+                                        <strong>Sonia Condori</strong>
+                                        <span>08 enero 2025</span>
+                                    </div>
+                            </div>
+                            <p>La tasación fue justa, me dijeron el porqué así y estuvo bien sustentada. Gracias a eso logré vender rápido.</p>
+                        </div> 
+                        <div class="testimonios-card testimonioscard-nomobil">
+                            <div class="user">
+                                <img src="{{ url_for('static', filename='img/edwin.jpg') }}" alt="Edwin Torres">
+                                    <div class="user-info">
+                                        <strong>Edwin Torres</strong>
+                                        <span>07 diciembre 2025</span>
+                                    </div>
+                            </div>
+                            <p>Logré comprar mi primer auto, muy bonito y en buen estado gracias a Carroqhatu.</p>
+                        </div>                 
+                    </div>
+                </div>
+                <div class="testi-pagination">
+                    <span class="dot active"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+            </div>
+        </section>
+        
+
+        <!--GRUPO INFERIOR DERECHA-->
+        <section class="comentarios-der">
+            <div class="testimonios-content">
+                <div class="testimoniosdirec der">
+
+                    <!--Grupo principal derecha-->
+                    <div class="grupo-testi">                    
+                        <div class="testimonios-card">
+                            <div class="user">
+                                <img src="{{ url_for('static', filename='img/victor.jpg') }}" alt="Víctor Quispe M.">
+                                <div class="user-info">
+                                    <strong>Víctor Quispe M.</strong>
+                                    <span>19 agosto 2025</span>
+                                </div>
+                            </div>
+                            <p>Recibí muchas ofertas y me quede con la mejor. Ganao!! Gracias CarroQhatu!!</p>
+                        </div>
+                        <div class="testimonios-card">
+                            <div class="user">
+                                <img src="{{ url_for('static', filename='img/Elena.jpg') }}" alt="Elena C. M.">
+                                <div class="user-info">
+                                    <strong>Elena C. M.</strong>
+                                    <span>03 diciembre 2024</span>
+                                </div>
+                            </div>
+                            <p>Recomendado 100%, mi papá está feliz con su nuevo carro...</p>
+                        </div>
+                        <div class="testimonios-card">
+                            <div class="user">
+                                <img src="{{ url_for('static', filename='img/jose.jpg') }}" alt="José098">
+                                <div class="user-info">
+                                    <strong>José098</strong>
+                                    <span>01 enero 2025</span>
+                                </div>
+                            </div>
+                            <p>Me ayudaron a vender mi vehiculo a un buen precio, muy recomendado muchas gracias CarroQhatu.</p>
+                        </div>
+                        <div class="testimonios-card">
+                            <div class="user">
+                                <img src="{{ url_for('static', filename='img/anthony.jpg') }}" alt="Anthony_6410">
+                                <div class="user-info">
+                                    <strong>Anthony_6410</strong>
+                                    <span>05 noviembre 2024</span>
+                                </div>
+                            </div>
+                            <p>Mi primer auto, muy bonito y en buen estado gracias a Carroqhatu.</p>
+                        </div> 
+                        <div class="testimonios-card">
+                            <div class="user">
+                                <img src="{{ url_for('static', filename='img/martin.png') }}" alt="Martin Zuñiga">
+                                <div class="user-info">
+                                    <strong>Martin Zuñiga</strong>
+                                    <span>13 de Octubre 2025</span>
+                                </div>
+                            </div>
+                            <p>Tenia dudas, pero realmente sorprendieron con su eficiencia.</p>
+                        </div> 
+                        <!--DUPLICADO DIRECCIÓN IZQUIERDA-->
+                        <div class="testimonios-card testimonioscard-nomobil">
+                            <div class="user">
+                                <img src="{{ url_for('static', filename='img/victor.jpg') }}" alt="Víctor Quispe M.">
+                                <div class="user-info">
+                                    <strong>Víctor Quispe M.</strong>
+                                    <span>19 agosto 2025</span>
+                                </div>
+                            </div>
+                            <p>Recibí muchas ofertas y me quede con la mejor. Ganao!! Gracias CarroQhatu!!</p>
+                        </div>
+                        <div class="testimonios-card testimonioscard-nomobil">
+                            <div class="user">
+                                <img src="{{ url_for('static', filename='img/Elena.jpg') }}" alt="Elena C. M.">
+                                <div class="user-info">
+                                    <strong>Elena C. M.</strong>
+                                    <span>03 diciembre 2024</span>
+                                </div>
+                            </div>
+                            <p>Recomendado 100%, mi papá está feliz con su nuevo carro...</p>
+                        </div>
+                        <div class="testimonios-card testimonioscard-nomobil">
+                            <div class="user">
+                                <img src="{{ url_for('static', filename='img/jose.jpg') }}" alt="José098">
+                                <div class="user-info">
+                                    <strong>José098</strong>
+                                    <span>01 enero 2025</span>
+                                </div>
+                            </div>
+                            <p>Me ayudaron a vender mi vehiculo a un buen precio, muy recomendado muchas gracias CarroQhatu.</p>
+                        </div>
+                        <div class="testimonios-card testimonioscard-nomobil">
+                            <div class="user">
+                                <img src="{{ url_for('static', filename='img/anthony.jpg') }}" alt="Anthony_6410">
+                                <div class="user-info">
+                                    <strong>Anthony_6410</strong>
+                                    <span>05 noviembre 2024</span>
+                                </div>
+                            </div>
+                            <p>Mi primer auto, muy bonito y en buen estado gracias a Carroqhatu.</p>
+                        </div> 
+                        <div class="testimonios-card testimonioscard-nomobil">
+                            <div class="user">
+                                <img src="{{ url_for('static', filename='img/martin.png') }}" alt="Martin Zuñiga">
+                                <div class="user-info">
+                                    <strong>Martin Zuñiga</strong>
+                                    <span>13 de Octubre 2025</span>
+                                </div>
+                            </div>
+                            <p>Tenia dudas, pero realmente sorprendieron con su eficiencia.</p>
+                        </div>               
+                    </div>                    
+                </div>                
+                <div class="testi-pagination">
+                    <span class="dot active"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+            </div>
+        </section>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const containers = document.querySelectorAll('.testimoniosdirec');
+
+                containers.forEach((container, index) => {
+                    const dots = container.parentElement.querySelectorAll('.dot');
+                    const cards = container.querySelectorAll('.testimonios-card');
+
+                    container.addEventListener('scroll', () => {
+                        // Calculamos cuál tarjeta está más cerca del centro del contenedor
+                        let closestIndex = 0;
+                        let minDistance = Infinity;
+
+                        cards.forEach((card, i) => {
+                            const rect = card.getBoundingClientRect();
+                            const containerRect = container.getBoundingClientRect();
+                            const distance = Math.abs((rect.left + rect.width / 2) - (containerRect.left + containerRect.width / 2));
+
+                            if (distance < minDistance) {
+                                minDistance = distance;
+                                closestIndex = i;
+                            }
+                        });
+
+                        // Actualizamos los puntos (limitamos al número de puntos que pusiste en el HTML)
+                        dots.forEach((dot, i) => {
+                            if (i === closestIndex % dots.length) {
+                                dot.classList.add('active');
+                            } else {
+                                dot.classList.remove('active');
+                            }
+                        });
+                    });
+                });
+            });
+        </script>
+    <!--FIN TESTIMONIOS CLIENTES-->
+
+    <!--INICIO FOOTER-->
+    <footer class="main-footer">    
+        <img class="logo-footer" src="{{ site_config.site_logo|default(url_for('static', filename='img/CarroQhatuL.png')) }}">
+        <div class="footer-grid">        
+            <div class="col-brand">
+                <p>{{ site_config.about_description|default('Plataforma líder en la Compra y Venta de Vehículos Usados en el Perú.') }}</p>
+                <div class="social-icons">
+                    <a href="#" class="icon-box"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="#" class="icon-box"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="icon-box"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="icon-box"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+                
+                <div class="col-contact">
+                    <h3 class="h3footer">Contacto</h3>
+                    <div class="contact-links">
+                        <a href="tel:{{ site_config.contact_phone|default('+51 972043502')|replace(' ', '') }}"><i class="fa-solid fa-phone"></i> {{ site_config.contact_phone|default('+51 972043502') }}</a>
+                        <a href="mailto:{{ site_config.contact_email|default('rbm.aracayo@gmail.com') }}"><i class="fa-solid fa-envelope"></i> {{ site_config.contact_email|default('rbm.aracayo@gmail.com') }}</a>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-center">
+                <div class="center-top">
+                    <div class="sub-col">
+                        <h3 class="h3footer">Explora</h3>
+                        <ul>
+                            <li><a href="about.html">Comprar auto</a></li>
+                            <li><a href="service.html">Vender mi auto</a></li>
+                            <li><a href="#">Catálogo</a></li>
+                        </ul>
+                    </div>
+                    <div class="sub-col">
+                        <h3 class="h3footer">Soporte</h3>
+                        <ul>
+                            <li><a href="#">Términos y Condiciones</a></li>
+                            <li><a href="#">Privacidad</a></li>
+                            <li><a href="#">Libro de Reclamaciones</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="center-bottom">
+                    <h3 class="h3footer destaque-amarillo">¿QUIERES QUE TE CONTACTEMOS?</h3>
+                    <form action="{{ url_for('footer_contact') }}" method="POST" class="footer-form">
+                        <input type="text" name="contacto" placeholder="Tu Email o Nº Celular aquí" required>
+                        <button type="submit">ENVIAR</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 CarroQhatu • Todos los Derechos Reservados • EdujoHQ • <a href="https://html.design/">Html Templates</a></p>
+        </div>
+    </footer>
+    <!--FIN FOOTER-->
+
+
+    <!-- REGRESO AL INICIO-->
+    <a href="#" class="btn btn-lg btn-subir btn-lg-square back-to-top"><i class="fa fa-angle-double-up"></i></a>
+
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    
+    <script src="{{ url_for('static', filename='lib/easing/easing.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/waypoints/waypoints.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/owlcarousel/owl.carousel.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/tempusdominus/js/moment.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/tempusdominus/js/moment-timezone.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js') }}"></script>
+
+    <!-- Script principal del template -->
+    <!-- MODAL DE OPINIÓN GLASSMORPHISM -->
+    <div id="opinionModal" class="opinion-modal-container">
+        <div class="opinion-modal-content">
+            <span class="opinion-modal-close" onclick="closeOpinionModal()">&times;</span>
+            
+            <div class="text-center mb-4">
+                <h3 class="modal-title-cq">DEJAR MI RECOMENDACIÓN</h3>
+                <p class="modal-subtitle-cq">Comparte tu experiencia con la comunidad de CarroQhatu</p>
+            </div>
+            
+            <form id="opinionForm" onsubmit="submitOpinion(event)">
+                <div class="modal-form-group">
+                    <label for="clientNombre" style="display: block; color: #cbd5e1; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; text-transform: uppercase;">Nombre y Apellidos</label>
+                    <input type="text" id="clientNombre" required placeholder="Ej: Juan Huarachi Torres">
+                </div>
+                
+                <div class="modal-form-group">
+                    <label for="clientRelacion" style="display: block; color: #cbd5e1; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; text-transform: uppercase;">¿Qué operación realizaste?</label>
+                    <input type="text" id="clientRelacion" required placeholder="Ej: Vendió un Toyota Yaris 2018 o Compró un auto">
+                </div>
+
+                <div class="modal-form-group">
+                    <label style="display: block; color: #cbd5e1; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; text-transform: uppercase;">Tu Calificación</label>
+                    <div class="interactive-stars-container">
+                        <input type="hidden" id="clientRating" value="5">
+                        <i class="fa-solid fa-star interactive-star active" data-value="1"></i>
+                        <i class="fa-solid fa-star interactive-star active" data-value="2"></i>
+                        <i class="fa-solid fa-star interactive-star active" data-value="3"></i>
+                        <i class="fa-solid fa-star interactive-star active" data-value="4"></i>
+                        <i class="fa-solid fa-star interactive-star active" data-value="5"></i>
+                    </div>
+                </div>
+
+                <div class="modal-form-group">
+                    <label for="clientComentario" style="display: block; color: #cbd5e1; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; text-transform: uppercase;">Tu Opinión / Recomendación</label>
+                    <textarea id="clientComentario" rows="4" required placeholder="Cuéntanos cómo fue tu trato, la rapidez, la tasación o la inspección de tu vehículo..."></textarea>
+                </div>
+                
+                <div class="alert-info-cq mb-3">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span>Tu opinión será revisada por nuestro equipo para verificar su autenticidad antes de publicarse en la web.</span>
+                </div>
+                
+                <button type="submit" id="btnSubmitOpinion" class="btn-submit-modal-cq">
+                    <span id="btnText">Enviar mi Opinión</span>
+                    <span id="btnSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
+                </button>
+            </form>
+            
+            <div id="successOpinionMsg" class="success-opinion-container" style="display: none;">
+                <div class="text-center py-4">
+                    <i class="fa-solid fa-circle-check fa-4x text-success mb-3" style="color: #10b981 !important;"></i>
+                    <h4 class="text-white font-weight-bold">¡Muchas Gracias!</h4>
+                    <p class="text-muted mt-2 px-3">Tu recomendación ha sido recibida correctamente. Nuestro equipo la revisará muy pronto para publicarla en la web principal.</p>
+                    <button class="btn-submit-modal-cq mt-3" onclick="closeOpinionModal()">Entendido</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Interactive Star and Modal Styles */
+        .opinion-modal-container {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            align-items: center;
+            justify-content: center;
+        }
+        .opinion-modal-container.active {
+            display: flex;
+        }
+        .opinion-modal-content {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border: 1px solid #334155;
+            margin: auto;
+            padding: 2.2rem;
+            width: 90%;
+            max-width: 520px;
+            border-radius: 1.25rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .opinion-modal-close {
+            color: #94a3b8;
+            float: right;
+            font-size: 2rem;
+            font-weight: bold;
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .opinion-modal-close:hover {
+            color: #fff;
+        }
+        .modal-title-cq {
+            color: #fff;
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }
+        .modal-subtitle-cq {
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+        .modal-form-group {
+            margin-bottom: 1.25rem;
+            text-align: left;
+        }
+        .modal-form-group label {
+            display: block;
+            color: #cbd5e1;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .modal-form-group input, .modal-form-group textarea {
+            width: 100%;
+            background-color: rgba(15, 23, 42, 0.6);
+            border: 1px solid #334155;
+            border-radius: 0.5rem;
+            padding: 0.65rem 0.85rem;
+            color: #fff;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+        .modal-form-group input:focus, .modal-form-group textarea:focus {
+            border-color: var(--amarillo-carroqhatu);
+            outline: none;
+            box-shadow: 0 0 10px rgba(251, 211, 51, 0.15);
+        }
+        .interactive-stars-container {
+            display: flex;
+            gap: 8px;
+            font-size: 1.8rem;
+        }
+        .interactive-star {
+            color: #334155;
+            cursor: pointer;
+            transition: transform 0.15s, color 0.15s;
+        }
+        .interactive-star:hover {
+            transform: scale(1.15);
+        }
+        .interactive-star.active {
+            color: #fbbf24;
+            text-shadow: 0 0 12px rgba(251, 191, 36, 0.4);
+        }
+        .alert-info-cq {
+            background-color: rgba(59, 130, 246, 0.08);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
+            font-size: 0.78rem;
+            padding: 0.65rem 0.85rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            line-height: 1.4;
+            text-align: left;
+        }
+        .alert-info-cq i {
+            margin-top: 2px;
+            font-size: 0.9rem;
+        }
+        .btn-submit-modal-cq {
+            width: 100%;
+            background-color: var(--amarillo-carroqhatu);
+            color: #000;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(251, 211, 51, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-submit-modal-cq:hover {
+            background-color: #eab308;
+            box-shadow: 0 6px 20px rgba(251, 211, 51, 0.4);
+            transform: translateY(-1px);
+        }
+        .success-opinion-container {
+            animation: modalFadeIn 0.3s ease-out;
+        }
+        @keyframes pulse-star {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+    </style>
+
+    <!-- JAVASCRIPT CONTROL DE OPINIONES -->
+    <script>
+        function openOpinionModal() {
+            document.getElementById('opinionModal').classList.add('active');
+            document.getElementById('opinionForm').style.display = 'block';
+            document.getElementById('successOpinionMsg').style.display = 'none';
+            document.getElementById('opinionForm').reset();
+            resetInteractiveStars();
+        }
+
+        function closeOpinionModal() {
+            document.getElementById('opinionModal').classList.remove('active');
+        }
+
+        // Close on click outside modal content
+        document.getElementById('opinionModal').addEventListener('click', function(e) {
+            if (e.target.id === 'opinionModal') {
+                closeOpinionModal();
+            }
+        });
+
+        // Interactive Stars logic
+        const stars = document.querySelectorAll('.interactive-star');
+        const ratingInput = document.getElementById('clientRating');
+
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                const val = parseInt(star.getAttribute('data-value'));
+                ratingInput.value = val;
+                updateStarsDisplay(val);
+            });
+
+            star.addEventListener('mouseover', () => {
+                const val = parseInt(star.getAttribute('data-value'));
+                updateStarsDisplay(val);
+            });
+        });
+
+        document.querySelector('.interactive-stars-container').addEventListener('mouseleave', () => {
+            const currentRating = parseInt(ratingInput.value);
+            updateStarsDisplay(currentRating);
+        });
+
+        function updateStarsDisplay(ratingValue) {
+            stars.forEach(star => {
+                const starVal = parseInt(star.getAttribute('data-value'));
+                if (starVal <= ratingValue) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        function resetInteractiveStars() {
+            ratingInput.value = 5;
+            updateStarsDisplay(5);
+        }
+
+        // Form Submit via AJAX
+        function submitOpinion(event) {
+            event.preventDefault();
+            
+            const nombre = document.getElementById('clientNombre').value.trim();
+            const relacion = document.getElementById('clientRelacion').value.trim();
+            const calificacion = document.getElementById('clientRating').value;
+            const comentario = document.getElementById('clientComentario').value.trim();
+            
+            const btnSubmit = document.getElementById('btnSubmitOpinion');
+            const btnText = document.getElementById('btnText');
+            const btnSpinner = document.getElementById('btnSpinner');
+            
+            // UI Loading state
+            btnSubmit.disabled = true;
+            btnText.style.display = 'none';
+            btnSpinner.style.display = 'inline-block';
+            
+            $.ajax({
+                url: '/api/testimonios/nuevo',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    nombre: nombre,
+                    relacion: relacion,
+                    calificacion: calificacion,
+                    comentario: comentario
+                }),
+                success: function(response) {
+                    if (response.success) {
+                        // Show success message inside the modal
+                        document.getElementById('opinionForm').style.display = 'none';
+                        document.getElementById('successOpinionMsg').style.display = 'block';
+                    } else {
+                        alert('Error: ' + response.error);
+                        resetButtonState();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    let errorMsg = 'No se pudo conectar con el servidor.';
+                    if (xhr.responseJSON && xhr.responseJSON.error) {
+                        errorMsg = xhr.responseJSON.error;
+                    }
+                    alert('Error: ' + errorMsg);
+                    resetButtonState();
+                }
+            });
+            
+            function resetButtonState() {
+                btnSubmit.disabled = false;
+                btnText.style.display = 'inline';
+                btnSpinner.style.display = 'none';
+            }
+        }
+    </script>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+
+</html>

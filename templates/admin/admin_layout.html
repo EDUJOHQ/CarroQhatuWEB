@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>CarroQhatu | Panel de Administración</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    
+    <!-- Favicon -->
+    <link href="{{ url_for('static', filename='img/favicon.ico') }}" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Customized Bootstrap Stylesheet (Use existing Bootstrap 4) -->
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- Admin Custom CSS -->
+    <style>
+        :root {
+            --bg-dark: #f8fafc;
+            --bg-card: #ffffff;
+            --primary: #B70021;
+            --primary-glow: rgba(183, 0, 33, 0.1);
+            --accent: #FBD333;
+            --success: #10b981;
+            --danger: #ef4444;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+        }
+
+        /* Sidebar Light Styling */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            background: #ffffff;
+            border-right: 1px solid var(--border-color);
+            z-index: 1030;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.02);
+        }
+
+        .sidebar-brand {
+            padding: 1.5rem;
+            background-color: var(--accent); /* Yellow header */
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-brand img {
+            max-height: 40px;
+            object-fit: contain;
+        }
+
+        .sidebar-menu {
+            padding: 1.5rem 1rem;
+            flex-grow: 1;
+            overflow-y: auto;
+            background-color: #ffffff;
+        }
+
+        .menu-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+            padding-left: 0.75rem;
+            font-weight: 700;
+        }
+
+        .nav-link-admin {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: var(--text-muted);
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.2s ease;
+            text-decoration: none !important;
+            font-weight: 500;
+        }
+
+        .nav-link-admin:hover {
+            color: var(--primary);
+            background-color: rgba(183, 0, 33, 0.05);
+            transform: translateX(4px);
+        }
+
+        .nav-link-admin.active {
+            color: #fff;
+            background-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(183, 0, 33, 0.25);
+        }
+
+        .nav-link-admin.active i {
+            color: #fff;
+        }
+
+        .nav-link-admin i {
+            width: 20px;
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        /* Main Content Styling */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            transition: all 0.3s ease;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Header Light */
+        .top-header {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.01);
+        }
+
+        .db-badge {
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.5rem 0.88rem;
+            border-radius: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid transparent;
+        }
+
+        .db-badge.supabase {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+
+        .db-badge.sqlite {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--accent);
+            border-color: rgba(245, 158, 11, 0.2);
+        }
+
+        .db-badge .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px currentColor;
+        }
+
+        /* Animated Pulsing Status Dot */
+        .db-badge.supabase .status-dot {
+            animation: pulse-green 2s infinite;
+        }
+        
+        .db-badge.sqlite .status-dot {
+            animation: pulse-orange 2s infinite;
+        }
+
+        @keyframes pulse-green {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        @keyframes pulse-orange {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+        }
+
+        /* Cards Styling Light */
+        .card-admin {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+        }
+
+        .card-admin:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Premium Buttons */
+        .btn-admin {
+            border-radius: 0.5rem;
+            padding: 0.6rem 1.25rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none !important;
+        }
+
+        .btn-admin-primary {
+            background-color: var(--primary);
+            color: #fff !important;
+            border: none;
+        }
+
+        .btn-admin-primary:hover {
+            background-color: #921f1f;
+            box-shadow: 0 4px 12px rgba(183, 0, 33, 0.2);
+        }
+
+        .btn-admin-secondary {
+            background-color: transparent;
+            color: var(--text-main) !important;
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-admin-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: var(--text-muted);
+        }
+
+        .btn-admin-danger {
+            background-color: rgba(239, 68, 68, 0.15);
+            color: var(--danger) !important;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-admin-danger:hover {
+            background-color: var(--danger);
+            color: #fff !important;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        /* Tables Customization */
+        .table-admin-container {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .table-admin {
+            margin-bottom: 0;
+            color: var(--text-main);
+        }
+
+        .table-admin th {
+            background-color: rgba(15, 23, 42, 0.3);
+            border-bottom: 2px solid var(--border-color);
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            padding: 1rem;
+        }
+
+        .table-admin td {
+            border-top: 1px solid var(--border-color);
+            padding: 1rem;
+            vertical-align: middle;
+        }
+
+        .table-admin tr:hover {
+            background-color: rgba(0, 0, 0, 0.015);
+        }
+
+        /* Generic overrides for standard classes in light mode */
+        .card, .modal-content {
+            background-color: var(--bg-card) !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-main) !important;
+        }
+
+        /* Force title headers that have .text-white class to use dark text in light mode */
+        h5.text-white, h6.text-white, .card-admin h5.text-white, .card-admin h6.text-white, .main-content h5.text-white, .main-content h6.text-white {
+            color: var(--text-main) !important;
+        }
+
+
+
+        .form-control, .form-select, select, input, textarea {
+            background-color: #ffffff !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-main) !important;
+        }
+
+        .form-control:focus, .form-select:focus, select:focus, input:focus, textarea:focus {
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 0 3px var(--primary-glow) !important;
+        }
+
+        .table {
+            color: var(--text-main) !important;
+        }
+
+        .table th {
+            background-color: #f1f5f9 !important;
+            color: var(--text-muted) !important;
+            border-bottom: 2px solid var(--border-color) !important;
+        }
+
+        .table td {
+            border-top: 1px solid var(--border-color) !important;
+            color: var(--text-main) !important;
+        }
+
+        /* Status Badges */
+        .status-pill {
+            padding: 0.35rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .status-pill.pending {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--accent);
+        }
+
+        .status-pill.contacted {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
+        .status-pill.done {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 991.98px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .toggle-sidebar-btn {
+                display: block !important;
+            }
+        }
+
+        .toggle-sidebar-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-main);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Footer */
+        .admin-footer {
+            margin-top: auto;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            text-align: center;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebarMenu">
+        <div class="sidebar-brand">
+            <a href="{{ url_for('admin_dashboard') }}">
+                <img src="{{ url_for('static', filename='img/CarroQhatuL.png') }}" alt="Logo CarroQhatu">
+            </a>
+        </div>
+        
+        <div class="sidebar-menu">
+            <div class="menu-label">Navegación</div>
+            <a href="{{ url_for('admin_dashboard') }}" class="nav-link-admin {% if request.path == url_for('admin_dashboard') or request.path == '/admin' %}active{% endif %}">
+                <i class="fa-solid fa-chart-line"></i> Resumen
+            </a>
+            <a href="{{ url_for('admin_cotizaciones') }}" class="nav-link-admin {% if request.path == url_for('admin_cotizaciones') %}active{% endif %}">
+                <i class="fa-solid fa-car-side"></i> Cotizaciones
+            </a>
+            <a href="{{ url_for('admin_solicitudes') }}" class="nav-link-admin {% if request.path == url_for('admin_solicitudes') %}active{% endif %}">
+                <i class="fa-solid fa-paper-plane"></i> Solicitudes
+            </a>
+            <a href="{{ url_for('admin_whatsapp_simulador') }}" class="nav-link-admin {% if request.path == url_for('admin_whatsapp_simulador') %}active{% endif %}">
+                <i class="fa-brands fa-whatsapp"></i> WhatsApp IA
+            </a>
+            
+            <div class="menu-label mt-4">Contenido</div>
+            <a href="{{ url_for('admin_vehiculos') }}" class="nav-link-admin {% if request.path == url_for('admin_vehiculos') %}active{% endif %}">
+                <i class="fa-solid fa-car"></i> Catálogo de Autos
+            </a>
+            <a href="{{ url_for('admin_catalogos') }}" class="nav-link-admin {% if request.path == url_for('admin_catalogos') %}active{% endif %}">
+                <i class="fa-solid fa-file-pdf"></i> Catálogos PDF
+            </a>
+            <a href="{{ url_for('admin_publicidad') }}" class="nav-link-admin {% if request.path == url_for('admin_publicidad') %}active{% endif %}">
+                <i class="fa-solid fa-rectangle-ad"></i> Publicidad y Banners
+            </a>
+            <a href="{{ url_for('admin_testimonios') }}" class="nav-link-admin {% if request.path == url_for('admin_testimonios') %}active{% endif %}">
+                <i class="fa-solid fa-star"></i> Testimonios
+            </a>
+            <a href="{{ url_for('admin_configuracion') }}" class="nav-link-admin {% if request.path == url_for('admin_configuracion') %}active{% endif %}">
+                <i class="fa-solid fa-gears"></i> Ajustes Web
+            </a>
+            
+            <div class="menu-label mt-4">Acciones</div>
+            <a href="{{ url_for('index') }}" target="_blank" class="nav-link-admin">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> Ver Web Pública
+            </a>
+            <a href="{{ url_for('admin_logout') }}" class="nav-link-admin text-danger">
+                <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        
+        <!-- Top Navigation Header -->
+        <header class="top-header">
+            <div class="d-flex align-items-center">
+                <button class="toggle-sidebar-btn mr-3" onclick="toggleSidebar()">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <h4 class="mb-0 font-weight-bold" style="color: var(--text-main);">{% block page_title %}Panel de Control{% endblock %}</h4>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <!-- Database status badge -->
+                <div class="db-badge {% if 'Supabase' in db_source|default('Local SQLite') %}supabase{% else %}sqlite{% endif %}" title="Base de Datos Activa">
+                    <span class="status-dot"></span>
+                    <span class="d-none d-sm-inline">{{ db_source|default('Local SQLite') }}</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Flash Alert Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show border-0 shadow" role="alert" style="border-radius: 0.5rem; background-color: {% if category == 'success' %}#10b981{% elif category == 'danger' %}#ef4444{% else %}#3b82f6{% endif %}; color: #fff;">
+                        {{ message }}
+                        <button type="button" class="close text-white" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Child Page Content -->
+        {% block content %}{% endblock %}
+
+        <!-- Admin Footer -->
+        <footer class="admin-footer">
+            <p class="mb-0">&copy; 2026 CarroQhatu • Panel de Control de Contenidos • Todos los derechos reservados.</p>
+        </footer>
+
+    </main>
+
+    <!-- jQuery and Bootstrap JS Bundle (Using existing libraries) -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebarMenu').classList.toggle('active');
+        }
+        
+        // Auto-close alerts after 5 seconds
+        window.setTimeout(function() {
+            $(".alert").fadeTo(500, 0).slideUp(500, function(){
+                $(this).remove(); 
+            });
+        }, 5000);
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

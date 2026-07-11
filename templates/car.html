@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>CARROQHATU | VEHICULOS</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Free HTML Templates" name="keywords">
+    <meta content="Free HTML Templates" name="description">
+
+    <!-- Favicon -->
+    <link href="{{ url_for('static', filename='img/favicon.ico') }}" rel="icon">
+
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Rubik&display=swap" rel="stylesheet"> 
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Libraries Stylesheet -->
+    <link href="{{ url_for('static', filename='lib/owlcarousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css') }}" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->    
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+
+    <!-- Template Stylesheet -->
+    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+</head>
+
+<body>
+    <!-- Navbar Start -->
+    <div class="container-fluid position-relative nav-bar p-0">
+        <div class="position-relative px-lg-1" style="z-index: 1000;" >
+            <nav class="navbar navbar-expand-lg bg-navbarcq navbar-dark py-3 py-lg-0 pl-3 pl-lg-5">
+                <a href="{{ url_for('index') }}" class="navbar-brand">
+                    <img class="imglogo" src="{{ site_config.site_logo|default(url_for('static', filename='img/CarroQhatuL.png')) }}" loading="lazy" alt="Logo">
+                </a>
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
+                    <div class="navbar-nav ml-auto py-0">
+                        <a class="navbar_txtInicio nav-item nav-link" href="{{ url_for('index') }}" class="nav-item nav-link">Inicio</a>        
+                        <a href="{{ url_for('index') }}" class="nav-item nav-link">Inicio</a>
+                        <a href="{{ url_for('about') }}" class="nav-item nav-link">Compra un auto</a>
+                        <a href="{{ url_for('service') }}" class="nav-item nav-link">Vende tu auto</a>
+                        <a href="{{ url_for('asesor') }}" class="nav-item nav-link">Asesor IA</a>            
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Nosotros</a>
+                            <div class="dropdown-menu rounded-0 m-0">
+                                <a href="{{ url_for('team') }}" class="dropdown-item">Conócenos</a>
+                                <a href="{{ url_for('testimonial') }}" class="dropdown-item">Testimonios</a>
+                                <a href="{{ url_for('booking') }}" class="dropdown-item">Blog</a>
+                                <a href="{{ url_for('contact') }}" class="dropdown-item">Contáctos</a>                        
+                            </div>
+                        </div> 
+                        </div class="nav-item ml-lg-3">
+                            <a href="{{ url_for('contact') }}" class="btn-contacto">
+                                Contáctanos<i class="fa fa-headset"></i>
+                            </a>   
+                        </div>
+                     </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+    <!-- Navbar End -->
+     
+    <!-- Banner Principal Inicio -->
+        <section class="banner-video-container">
+            <video class="banner-video" autoplay muted loop playsinline>
+                <source src="{{ url_for('static', filename='img/bannercatalogo.mp4') }}" type="video/mp4" loading="lazy">
+            </video>
+            <div class="banner-overlay">
+            </div>
+        </section>
+    <!-- Banner Principal Final -->
+
+
+
+    <!-- CARROS CATALOGO -->
+    <div class="container-fluid py-5">
+        <div class="container pt-5 pb-3">
+            <h2 class="linea display-4 text-uppercase text-center mb-5 title-ca">
+                <span></span>
+                Encuentra tu carro
+                <span></span>
+            </h2>
+            <div class="row">
+                {% if vehiculos %}
+                    {% for car in vehiculos %}
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                        <div class="car-cardcatalogo">
+                            <div class="card-catalogoheader">
+                                {% if car.verificado == 1 or car.verificado == True %}
+                                <span class="badge-verifiedcatal">
+                                    <img class="iconverificado-carpage" src="{{ url_for('static', filename='img/verificadoCATALOGO.png') }}">Auto Verificado
+                                </span>
+                                {% else %}
+                                <span class="badge-verifiedcatal" style="background-color: #64748b; color: #fff;">
+                                    <i class="fa-solid fa-circle-xmark" style="margin-right: 4px; font-size: 0.85rem;"></i>No Verificado
+                                </span>
+                                {% endif %}
+                                <div class="logo-smallcardcatal">
+                                    <span style="background:var(--amarillo-carroqhatu); padding: 2px; border-radius: 4px;">CarroQhatu</span>
+                                </div>
+                            </div>
+                            
+                            <!-- WhatsApp link with customized pre-filled message -->
+                            {% set wa_message = "Hola CarroQhatu! Estoy interesado en el auto " ~ car.marca|upper ~ " " ~ car.modelo|upper ~ " del año " ~ car.year ~ " con " ~ "{:,}".format(car.km) ~ " km, publicado con precio " ~ car.precio ~ "." %}
+                            <a href="https://wa.me/{{ site_config.contact_phone|default('51972043502')|replace(' ', '')|replace('+', '') }}?text={{ wa_message|urlencode }}" target="_blank" style="text-decoration: none;">
+                                <img src="{{ car.imagen_url }}" alt="{{ car.marca }} {{ car.modelo }}" class="carcatal-image" loading="lazy">
+                                <div class="cardcatal-body">
+                                    <h2 class="carcatal-title">{{ car.marca|upper }} {{ car.modelo|upper }}</h2>
+                                    
+                                    <div class="especif-grid">
+                                        <div class="especif-item">{{ car.year }}</div>
+                                        <div class="especif-item">{{ car.motor }}</div>
+                                        <div class="especif-item">{{ "{:,}".format(car.km) }} km</div>
+                                        <div class="especif-item">{{ car.transmision }}</div>
+                                    </div>
+                                    
+                                    {% if car.descripcion %}
+                                    <p class="carcatal-desc text-muted small mt-2" style="font-size: 0.78rem; line-height: 1.35; margin-bottom: 0.5rem; text-align: left; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.7em;" title="{{ car.descripcion }}">
+                                        {{ car.descripcion }}
+                                    </p>
+                                    {% endif %}
+                                    
+                                    <div class="dividerlinecatag"></div>
+                                    <div class="pricecardcatal-container">
+                                        <span class="pricecardcatal-label">Precio</span>
+                                        <span class="pricecardcatal-value">{{ car.precio }}</span>
+                                    </div>
+                                    <span class="btn-detailcar">CONTACTAR WHATSAPP</span>
+                                    
+                                    <span class="contact-linkwspp" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" loading="lazy" style="width: 20px; height: 20px;">
+                                        CONTACTAR
+                                    </span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="col-12 text-center py-5 text-muted">
+                        <i class="fa-solid fa-car fa-3x mb-3 text-muted"></i>
+                        <p class="mb-0">No hay vehículos disponibles en este momento.</p>
+                        <p class="small text-muted mt-1">Por favor, vuelve a visitarnos pronto o contáctanos por WhatsApp.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <!--FIN CARROS CATALOGO-->
+
+
+
+
+ <!-- About Start -->
+     <section class="compra-mosaico">
+        <div class="container">
+            <div class="grid-layout">
+                
+                <div class="item hero-text">
+                    <h1>Compra tu auto con <span class="highlight">total confianza</span></h1>
+                    <p>Transformamos la incertidumbre en una decisión inteligente y segura.</p>                    
+                </div>
+            
+                <div class="item card-feature">
+                    <img class="iconinspeccion" src="{{ url_for('static', filename='img/iconbusqueda.svg') }}">
+                    <h3>Inspección 360°</h3>
+                    <p>Evaluación técnica, mecánica y estructural profunda.</p>
+                </div>    
+
+                <div class="item card-feature">
+                    <img class="iconlegal" src="{{ url_for('static', filename='img/iconlegal.svg') }}">
+                    <h3>Blindaje Legal</h3>
+                    <p>Verificación de documentos, gravámenes y antecedentes.</p>
+                </div>
+
+        
+                <div class="item card-feature">
+                    <img class="icontasacion" src="{{ url_for('static', filename='img/icontasacion.svg') }}">        
+                    <h3>Tasación Justa</h3>
+                    <p>Precios reales basados en el estado actual del mercado.</p>
+                </div>
+        
+                <div class="item social-proof">
+                    <h2>+500K</h2>
+                    <p>Seguidores nos respaldan en nuestras redes sociales.</p>
+                </div>
+
+                <div class="item cta-box">
+                    <div class="form-side">
+                            <h2 class="formquestion">¿Tienes un auto específico en mente?</h2>
+                            <p class="form-p">Nosotros lo encontramos por ti al mejor precio. ¡Cotiza ahora!</p>
+
+                            <div class="input-infocotiza">
+                                <label class="question1">¿Qué auto buscas?</label>
+                                <input type="text" id="carModel" placeholder="Ejemplo: Hyundai Tucson">
+                            </div>
+
+                            <div class="input-infocotiza">
+                                <label class="question2">Año / Rango de años</label>
+                                <input type="text" id="carYear" placeholder="Ejemplo: 2023 o 2020-2024">
+                            </div>
+
+                            <div class="input-infocotiza">
+                                <label class="question3">Presupuesto aproximado</label>
+                                <input type="text" id="carBudget" placeholder="Ejemplo: 35,000 soles">
+                            </div>
+
+                            <button onclick="sendToWhatsApp()" class="btn-wsppform">Cotizar auto</button>
+                            </div>
+
+                            <div class="image-side">
+                            <img src="{{ url_for('static', filename='img/cardetail3.svg') }}" alt="Imagen del carro">
+                        </div>
+                </div>
+            </div>
+        </div>
+        </section>
+
+    <!---->
+        <h2 class="linea">
+        <span></span>
+        </h2>
+    <!---->
+
+ <!--INICIO FOOTER-->
+ <footer class="main-footer">    
+    <img class="logo-footer" src="{{ site_config.site_logo|default(url_for('static', filename='img/CarroQhatuL.png')) }}">
+    <div class="footer-grid">        
+        <div class="col-brand">
+            <p>{{ site_config.about_description|default('Plataforma líder en la Compra y Venta de Vehículos Usados en el Perú.') }}</p>
+            <div class="social-icons">
+                <a href="#" class="icon-box"><i class="fa-brands fa-tiktok"></i></a>
+                <a href="#" class="icon-box"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="#" class="icon-box"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="icon-box"><i class="fa-brands fa-youtube"></i></a>
+            </div>
+            
+            <div class="col-contact">
+                <h3 class="h3footer">Contacto</h3>
+                <div class="contact-links">
+                    <a href="tel:{{ site_config.contact_phone|default('+51 972043502')|replace(' ', '') }}"><i class="fa-solid fa-phone"></i> {{ site_config.contact_phone|default('+51 972043502') }}</a>
+                    <a href="mailto:{{ site_config.contact_email|default('rbm.aracayo@gmail.com') }}"><i class="fa-solid fa-envelope"></i> {{ site_config.contact_email|default('rbm.aracayo@gmail.com') }}</a>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-center">
+            <div class="center-top">
+                <div class="sub-col">
+                    <h3 class="h3footer">Explora</h3>
+                    <ul>
+                        <li><a href="about.html">Comprar auto</a></li>
+                        <li><a href="service.html">Vender mi auto</a></li>
+                        <li><a href="car.html">Catálogo</a></li>
+                    </ul>
+                </div>
+                <div class="sub-col">
+                    <h3 class="h3footer">Soporte</h3>
+                    <ul>
+                        <li><a href="#">Términos y Condiciones</a></li>
+                        <li><a href="#">Privacidad</a></li>
+                        <li><a href="#">Libro de Reclamaciones</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="center-bottom">
+                <h3 class="h3footer destaque-amarillo">¿QUIERES QUE TE CONTACTEMOS?</h3>
+                <form action="{{ url_for('footer_contact') }}" method="POST" class="footer-form">
+                    <input type="text" name="contacto" placeholder="Tu Email o Nº Celular aquí" required>
+                    <button type="submit">ENVIAR</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p>&copy; 2026 CarroQhatu • Todos los Derechos Reservados</p>
+    </div>
+</footer>
+ <!--FIN FOOTER-->
+
+    <!-- REGRESO AL INICIO-->
+    <a href="#" class="btn btn-lg btn-subir btn-lg-square back-to-top"><i class="fa fa-angle-double-up"></i></a>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="lib/tempusdominus/js/moment.min.js"></script>
+    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+    <script>
+        function sendToWhatsApp() {
+            const phone = "{{ site_config.contact_phone|default('51972043502')|replace(' ', '')|replace('+', '') }}"; // Tu número aquí
+            const model = document.getElementById('carModel').value;
+            const year = document.getElementById('carYear').value;
+            const budget = document.getElementById('carBudget').value;
+
+            if (!model || !budget) {
+                alert("Por favor completa el modelo y tu presupuesto.");
+                return;
+            }
+
+            const text = `*NUEVA SOLICITUD DE COMPRA*%0A%0A` +
+                        `*Vehículo:* ${model}%0A` + 
+                        `*Año:* ${year}%0A` +
+                        `*Presupuesto:* ${budget}`;
+
+            window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+            }
+    </script>
+</body>
+
+</html>

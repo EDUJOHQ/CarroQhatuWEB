@@ -1,0 +1,59 @@
+/* ESTILOS DE LA PÁGINA DE ARTÍCULO */
+.post-header {
+    background-color: #FBD333; /* Tu amarillo */
+    padding: 80px 0 60px;
+    border-bottom: 5px solid #B70021; /* Tu rojo */
+}
+
+.badge-categoria {
+    background-color: #B70021;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+}
+
+.post-content p {
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: #333;
+    margin-bottom: 1.5rem;
+}
+
+.post-content h3 {
+    font-weight: 700;
+    margin-top: 2rem;
+    color: #1a1a1a;
+}
+
+.frase-destacada {
+    border-left: 5px solid #FBD333;
+    padding: 20px 30px;
+    margin: 40px 0;
+    background-color: #fff9e6;
+    font-style: italic;
+    font-size: 1.25rem;
+    color: #444;
+}
+
+.cta-articulo {
+    background-color: #1a1a1a;
+    color: white;
+}
+
+.btn-rojo-qhatu {
+    background-color: #B70021;
+    color: white;
+    font-weight: bold;
+    padding: 12px 30px;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.btn-rojo-qhatu:hover {
+    background-color: #D30026;
+    color: white;
+    transform: scale(1.05);
+}

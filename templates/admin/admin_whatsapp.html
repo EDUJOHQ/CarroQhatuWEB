@@ -1,0 +1,695 @@
+{% extends "admin/admin_layout.html" %}
+
+{% block page_title %}Simulador de WhatsApp IA{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Premium Simulator Layout */
+    .sim-container {
+        display: grid;
+        grid-template-columns: 380px 1fr;
+        gap: 2rem;
+        align-items: start;
+        margin-bottom: 2rem;
+    }
+
+    @media (max-width: 991.98px) {
+        .sim-container {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+    }
+
+    /* Left Column: Phone Mockup */
+    .phone-mockup {
+        background: #111b21;
+        border: 12px solid #222;
+        border-radius: 2.2rem;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 0 2px #444;
+        height: 620px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+    /* WhatsApp Header */
+    .wa-header {
+        background-color: #202c33;
+        padding: 0.75rem 1rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border-bottom: 1px solid #2f3b43;
+        color: #fff;
+    }
+
+    .wa-avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background-color: #00a884;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    .wa-info h6 {
+        margin: 0;
+        font-size: 0.92rem;
+        font-weight: 600;
+    }
+
+    .wa-status {
+        font-size: 0.72rem;
+        color: #8696a0;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .wa-status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background-color: #00e676;
+    }
+
+    /* WhatsApp Chat Body */
+    .wa-chat-body {
+        flex-grow: 1;
+        padding: 1rem;
+        overflow-y: auto;
+        background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
+        background-size: cover;
+        background-blend-mode: overlay;
+        background-color: rgba(11, 20, 26, 0.94);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    /* Chat Bubbles */
+    .wa-bubble {
+        max-width: 82%;
+        padding: 0.55rem 0.8rem;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        line-height: 1.4;
+        position: relative;
+        color: #e9edef;
+        animation: waFadeIn 0.25s ease;
+    }
+
+    @keyframes waFadeIn {
+        from { opacity: 0; transform: translateY(5px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .wa-bubble.bot {
+        background-color: #202c33;
+        align-self: flex-start;
+        border-top-left-radius: 0;
+    }
+
+    .wa-bubble.client {
+        background-color: #005c4b;
+        align-self: flex-end;
+        border-top-right-radius: 0;
+    }
+
+    .wa-time {
+        font-size: 0.65rem;
+        color: #8696a0;
+        margin-top: 3px;
+        display: block;
+        text-align: right;
+    }
+
+    /* WhatsApp Input Footer */
+    .wa-footer {
+        background-color: #202c33;
+        padding: 0.6rem 0.75rem;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        border-top: 1px solid #2f3b43;
+    }
+
+    .wa-input-container {
+        flex-grow: 1;
+        background-color: #2a3942;
+        border-radius: 2rem;
+        padding: 4px 12px;
+        display: flex;
+        align-items: center;
+    }
+
+    .wa-input-field {
+        width: 100%;
+        background: transparent;
+        border: none;
+        color: #e9edef;
+        outline: none;
+        font-size: 0.88rem;
+        padding: 4px 0;
+    }
+
+    .wa-input-field::placeholder {
+        color: #8696a0;
+    }
+
+    .wa-btn-send {
+        background-color: #00a884;
+        color: #fff;
+        border: none;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: transform 0.15s;
+    }
+
+    .wa-btn-send:hover {
+        transform: scale(1.05);
+    }
+
+    /* Right Column: Console/Debugger Panel */
+    .debug-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        height: 620px;
+    }
+
+    .console-card {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 1rem;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .console-header {
+        background-color: rgba(15, 23, 42, 0.4);
+        padding: 0.75rem 1.25rem;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .console-tab-nav {
+        display: flex;
+        gap: 8px;
+    }
+
+    .console-tab-btn {
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.25rem 0.75rem;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .console-tab-btn.active {
+        background-color: var(--primary);
+        color: #fff;
+    }
+
+    .console-body {
+        padding: 1rem;
+        flex-grow: 1;
+        overflow-y: auto;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 0.85rem;
+        background-color: #0b0f19;
+        color: #38bdf8;
+    }
+
+    .log-line {
+        margin-bottom: 6px;
+        border-bottom: 1px solid rgba(255,255,255,0.03);
+        padding-bottom: 4px;
+    }
+
+    .log-time {
+        color: #64748b;
+        margin-right: 6px;
+    }
+
+    /* Lead Detector Card */
+    .lead-detector-card {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 1rem;
+        padding: 1.25rem;
+        transition: all 0.3s ease;
+    }
+
+    .lead-detector-card.active {
+        border-color: var(--success);
+        box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+        animation: glowPulse 2s infinite;
+    }
+
+    @keyframes glowPulse {
+        0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+        70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    .lead-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 10px;
+    }
+
+    .lead-field {
+        background-color: #f1f5f9;
+        padding: 0.5rem 0.75rem;
+        border-radius: 6px;
+        border: 1px solid var(--border-color);
+    }
+
+    .lead-field label {
+        font-size: 0.68rem;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        display: block;
+        margin-bottom: 2px;
+        font-weight: 700;
+    }
+
+    .lead-field span {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-main);
+    }
+
+    /* Sample Preset Chips */
+    .presets-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 10px;
+    }
+
+    .preset-chip {
+        background-color: #f1f5f9;
+        border: 1px solid var(--border-color);
+        color: var(--text-main);
+        font-size: 0.75rem;
+        padding: 0.4rem 0.8rem;
+        border-radius: 2rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .preset-chip:hover {
+        background-color: var(--primary-glow);
+        border-color: var(--primary);
+        color: #fff;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card-admin mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+        <div>
+            <h5 class="font-weight-bold mb-1" style="color: var(--text-main);"><i class="fa-brands fa-whatsapp text-success mr-2"></i> Asistente de WhatsApp IA</h5>
+            <p class="text-muted small mb-0">Simula y prueba la atención del bot conversacional de WhatsApp. Puedes conversar en tiempo real, ver la consola de webhook y comprobar la captura automatizada de prospectos.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn-admin btn-admin-secondary" onclick="clearSession()">
+                <i class="fa-solid fa-trash-can"></i> Limpiar Historial
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="sim-container">
+    <!-- Left Column: Smartphone Simulator -->
+    <div class="phone-mockup">
+        <!-- Header -->
+        <div class="wa-header">
+            <div class="wa-avatar">
+                <i class="fa-solid fa-robot"></i>
+            </div>
+            <div class="wa-info">
+                <h6>Bot CarroQhatu IA</h6>
+                <div class="wa-status">
+                    <span class="wa-status-dot"></span>
+                    <span id="botStatusText">En línea</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat screen -->
+        <div class="wa-chat-body" id="chatContainer">
+            <!-- Initial Greetings -->
+            <div class="wa-bubble bot">
+                ¡Hola! Bienvenido a CarroQhatu 🚗. Te ayudamos a comprar, vender o inspeccionar tu vehículo rápido y de forma segura. ¿En qué servicio estás interesado o qué vehículo de nuestro catálogo buscas?
+                <span class="wa-time">19:30</span>
+            </div>
+        </div>
+
+        <!-- Input Footer -->
+        <div class="wa-footer">
+            <form id="waForm" onsubmit="sendSimulatedMessage(event)" class="w-100 d-flex gap-2 align-items-center mb-0">
+                <div class="wa-input-container">
+                    <input type="text" id="waInput" class="wa-input-field" placeholder="Escribe un mensaje de WhatsApp..." autocomplete="off" required>
+                </div>
+                <button type="submit" id="waSendBtn" class="wa-btn-send">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Right Column: Debug Console & Lead Capturer -->
+    <div class="debug-panel">
+        <!-- 1. Lead Detector status card -->
+        <div class="lead-detector-card" id="leadCard">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h6 class="mb-0 font-weight-bold" style="color: var(--text-main);"><i class="fa-solid fa-address-card text-indigo mr-1"></i> Extractor de Prospecto (Lead)</h6>
+                <span class="badge badge-secondary" id="leadBadge" style="font-size: 0.65rem;">ESPERANDO DATOS</span>
+            </div>
+            <p class="text-muted small mb-3">La IA analiza el diálogo y guarda un prospecto automáticamente cuando el cliente proporciona sus datos de contacto y detalles de interés.</p>
+            
+            <div class="lead-grid">
+                <div class="lead-field">
+                    <label>Nombre Detectado</label>
+                    <span id="leadName">--</span>
+                </div>
+                <div class="lead-field">
+                    <label>Celular / Cel</label>
+                    <span id="leadPhone">--</span>
+                </div>
+                <div class="lead-field" style="grid-column: span 2;">
+                    <label>Interés / Servicio</label>
+                    <span id="leadInterest">--</span>
+                </div>
+                <div class="lead-field" style="grid-column: span 2;">
+                    <label>Presupuesto Estimado</label>
+                    <span id="leadBudget">--</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Logs console and Webhook JSON Payloads -->
+        <div class="console-card flex-grow-1">
+            <div class="console-header">
+                <span class="text-white small font-weight-bold"><i class="fa-solid fa-terminal mr-2"></i> Consola del Webhook</span>
+                <div class="console-tab-nav">
+                    <button class="console-tab-btn active" id="tabLogsBtn" onclick="switchConsoleTab('logs')">LOGS DE IA</button>
+                    <button class="console-tab-btn" id="tabPayloadBtn" onclick="switchConsoleTab('payload')">PAYLOAD RECIBIDO</button>
+                </div>
+            </div>
+            
+            <!-- Tab Body 1: Logs -->
+            <div class="console-body" id="consoleLogs">
+                <div class="log-line">
+                    <span class="log-time">[19:30:00]</span> Asistente IA inicializado con Catálogo en vivo y Base de Datos Local.
+                </div>
+            </div>
+
+            <!-- Tab Body 2: Payload JSON -->
+            <div class="console-body d-none" id="consolePayload" style="color: #a7f3d0;">
+                {
+                   "object": "whatsapp_business_account",
+                   "entry": [
+                      {
+                         "id": "109283749812",
+                         "changes": [
+                            {
+                               "value": {
+                                  "messaging_product": "whatsapp",
+                                  "metadata": {
+                                     "display_phone_number": "51972043502"
+                                  },
+                                  "contacts": [
+                                     {
+                                        "profile": {
+                                           "name": "Cliente de Prueba"
+                                        },
+                                        "wa_id": "51999888777"
+                                     }
+                                  ],
+                                  "messages": [
+                                     {
+                                        "from": "51999888777",
+                                        "id": "wamid.HBgLNTUxOTk5ODg4Nzc3FQIAERg2...",
+                                        "text": {
+                                           "body": ""
+                                        },
+                                        "type": "text"
+                                     }
+                                  ]
+                               },
+                               "field": "messages"
+                            }
+                         ]
+                      }
+                   ]
+                }
+            </div>
+        </div>
+
+        <!-- 3. Suggestion Preset Chips -->
+        <div>
+            <h6 class="small font-weight-bold" style="color: var(--text-main);">Preguntas de Prueba Sugeridas:</h6>
+            <div class="presets-container">
+                <button class="preset-chip" onclick="applyPreset('Hola, qué camionetas pickup tienen disponibles en stock?')">¿Qué camionetas tienen?</button>
+                <button class="preset-chip" onclick="applyPreset('Hola, me llamo Fernando, quiero tasar mi Toyota RAV4 del 2013 con 150000 km')">Tasar mi auto (Con Datos)</button>
+                <button class="preset-chip" onclick="applyPreset('Quiero inspeccionar un auto Toyota Corolla 2021 de un amigo por 16000 dólares')">Inspección de auto externo</button>
+                <button class="preset-chip" onclick="applyPreset('Hola soy Carlos, mi celular es 999111222, busco una Hilux')">Dejar datos de Lead directos</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const chatContainer = document.getElementById('chatContainer');
+    const waInput = document.getElementById('waInput');
+    const waSendBtn = document.getElementById('waSendBtn');
+    const consoleLogs = document.getElementById('consoleLogs');
+    const consolePayload = document.getElementById('consolePayload');
+    const botStatusText = document.getElementById('botStatusText');
+
+    let currentConsoleTab = 'logs';
+    let simulationSessionId = 'sim_' + Math.floor(Math.random() * 1000000);
+
+    function getFormattedTime() {
+        const now = new Date();
+        return now.toTimeString().split(' ')[0];
+    }
+
+    function addLogLine(text) {
+        const time = getFormattedTime();
+        const line = document.createElement('div');
+        line.className = 'log-line';
+        line.innerHTML = `<span class="log-time">[${time}]</span> ${text}`;
+        consoleLogs.appendChild(line);
+        consoleLogs.scrollTop = consoleLogs.scrollHeight;
+    }
+
+    function switchConsoleTab(tab) {
+        currentConsoleTab = tab;
+        if (tab === 'logs') {
+            document.getElementById('tabLogsBtn').classList.add('active');
+            document.getElementById('tabPayloadBtn').classList.remove('active');
+            consoleLogs.classList.remove('d-none');
+            consolePayload.classList.add('d-none');
+        } else {
+            document.getElementById('tabLogsBtn').classList.remove('active');
+            document.getElementById('tabPayloadBtn').classList.add('active');
+            consoleLogs.classList.add('d-none');
+            consolePayload.classList.remove('d-none');
+        }
+    }
+
+    function applyPreset(text) {
+        waInput.value = text;
+        document.getElementById('waForm').dispatchEvent(new Event('submit'));
+    }
+
+    function clearSession() {
+        if (confirm('¿Deseas reiniciar la conversación y limpiar los registros de sesión del bot?')) {
+            simulationSessionId = 'sim_' + Math.floor(Math.random() * 1000000);
+            chatContainer.innerHTML = `
+                <div class="wa-bubble bot">
+                    Sesión reiniciada. ¡Hola! Bienvenido a CarroQhatu 🚗. Te ayudamos a comprar, vender o inspeccionar tu vehículo de forma rápida y segura. ¿En qué servicio estás interesado?
+                    <span class="wa-time">${getFormattedTime().slice(0, 5)}</span>
+                </div>
+            `;
+            
+            // Clear lead card
+            const leadCard = document.getElementById('leadCard');
+            leadCard.classList.remove('active');
+            document.getElementById('leadBadge').innerText = "ESPERANDO DATOS";
+            document.getElementById('leadBadge').style.backgroundColor = '';
+            document.getElementById('leadName').innerText = "--";
+            document.getElementById('leadPhone').innerText = "--";
+            document.getElementById('leadInterest').innerText = "--";
+            document.getElementById('leadBudget').innerText = "--";
+            
+            consoleLogs.innerHTML = `<div class="log-line"><span class="log-time">[${getFormattedTime()}]</span> Sesión de simulación del WhatsApp Webhook reiniciada. Celular virtual asignado: ${simulationSessionId}</div>`;
+        }
+    }
+
+    function updatePayloadJSON(messageText, name) {
+        const payloadTemplate = {
+            "object": "whatsapp_business_account",
+            "entry": [
+                {
+                    "id": "109283749812",
+                    "changes": [
+                        {
+                            "value": {
+                                "messaging_product": "whatsapp",
+                                "metadata": {
+                                    "display_phone_number": "51972043502"
+                                },
+                                "contacts": [
+                                    {
+                                        "profile": {
+                                            "name": name
+                                        },
+                                        "wa_id": "51999888777"
+                                    }
+                                ],
+                                "messages": [
+                                    {
+                                        "from": "51999888777",
+                                        "id": "wamid.HBgLNTUxOTk5ODg4Nzc3FQIAERg2...",
+                                        "text": {
+                                            "body": messageText
+                                        },
+                                        "type": "text"
+                                    }
+                                ]
+                            },
+                            "field": "messages"
+                        }
+                    ]
+                }
+            ]
+        };
+        consolePayload.innerText = JSON.stringify(payloadTemplate, null, 3);
+    }
+
+    function sendSimulatedMessage(event) {
+        event.preventDefault();
+        
+        const messageText = waInput.value.trim();
+        if (!messageText) return;
+
+        // User profile name to simulate
+        const testName = "Cliente de Prueba";
+        
+        // Append user bubble to UI
+        const time = getFormattedTime().slice(0, 5);
+        const userBubble = document.createElement('div');
+        userBubble.className = 'wa-bubble client';
+        userBubble.innerHTML = `${messageText} <span class="wa-time">${time}</span>`;
+        chatContainer.appendChild(userBubble);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+        
+        waInput.value = '';
+        waInput.disabled = true;
+        waSendBtn.disabled = true;
+        
+        // Update visual mock status and log
+        botStatusText.innerText = "Escribiendo...";
+        addLogLine(`Procesando mensaje del usuario: "${messageText}"`);
+        
+        // Update Payload JSON tab
+        updatePayloadJSON(messageText, testName);
+
+        // Call simulator backend API
+        fetch('/admin/api/whatsapp/simular_mensaje', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                message: messageText,
+                celular: simulationSessionId,
+                nombre: testName
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            botStatusText.innerText = "En línea";
+            waInput.disabled = false;
+            waSendBtn.disabled = false;
+            waInput.focus();
+
+            if (data.reply) {
+                // Append bot response
+                const botBubble = document.createElement('div');
+                botBubble.className = 'wa-bubble bot';
+                
+                // Format formatting like bold and line break
+                const formattedReply = data.reply
+                    .replace(/\n/g, '<br>')
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                    
+                botBubble.innerHTML = `${formattedReply} <span class="wa-time">${getFormattedTime().slice(0, 5)}</span>`;
+                chatContainer.appendChild(botBubble);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+                
+                // Add console logs
+                if (data.logs) {
+                    data.logs.forEach(log => {
+                        addLogLine(log);
+                    });
+                }
+                
+                // Check if lead was captured
+                if (data.lead) {
+                    addLogLine(`<span class="text-success font-weight-bold">[LEAD DETECTADO]</span> Ficha de prospecto guardada: ${data.lead.nombre}`);
+                    
+                    // Update UI Lead Detector Card
+                    const leadCard = document.getElementById('leadCard');
+                    leadCard.classList.add('active');
+                    
+                    const badge = document.getElementById('leadBadge');
+                    badge.innerText = "CAPTURA COMPLETA";
+                    badge.style.backgroundColor = "var(--success)";
+                    
+                    document.getElementById('leadName').innerText = data.lead.nombre || '--';
+                    document.getElementById('leadPhone').innerText = data.lead.contacto || '--';
+                    document.getElementById('leadInterest').innerText = data.lead.interes || '--';
+                    document.getElementById('leadBudget').innerText = data.lead.presupuesto || '--';
+                }
+            } else {
+                addLogLine("Error: No se recibió respuesta del Agente IA.");
+            }
+        })
+        .catch(error => {
+            botStatusText.innerText = "En línea";
+            waInput.disabled = false;
+            waSendBtn.disabled = false;
+            console.error('Error:', error);
+            addLogLine(`Error de conexión: ${error.message}`);
+        });
+    }
+</script>
+{% endblock %}

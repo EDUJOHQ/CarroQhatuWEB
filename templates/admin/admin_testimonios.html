@@ -1,0 +1,281 @@
+{% extends "admin/admin_layout.html" %}
+
+{% block page_title %}Administración de Testimonios{% endblock %}
+
+{% block extra_css %}
+<style>
+    .testi-card {
+        background-color: rgba(30, 41, 59, 0.5);
+        border: 1px solid var(--border-color);
+        border-radius: 0.75rem;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        transition: all 0.2s ease;
+    }
+    .testi-card:hover {
+        border-color: rgba(245, 158, 11, 0.4);
+        transform: translateY(-2px);
+    }
+    .nav-tabs-admin {
+        border-bottom: 1px solid var(--border-color) !important;
+        margin-bottom: 1.5rem;
+    }
+    .nav-tabs-admin .nav-link {
+        color: var(--text-muted) !important;
+        border: none !important;
+        background: transparent !important;
+        padding: 0.75rem 1.25rem;
+        font-weight: 600;
+        font-family: 'Outfit', sans-serif;
+        border-bottom: 2px solid transparent !important;
+        transition: all 0.2s ease;
+    }
+    .nav-tabs-admin .nav-link:hover {
+        color: var(--text-main) !important;
+        border-bottom-color: var(--border-color) !important;
+    }
+    .nav-tabs-admin .nav-link.active {
+        color: var(--accent) !important;
+        border-bottom-color: var(--accent) !important;
+    }
+    .star-rating-display {
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+    }
+    .text-comment {
+        font-style: italic;
+        color: #e2e8f0;
+        line-height: 1.5;
+        font-size: 0.9rem;
+    }
+    .badge-tab-count {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: var(--text-main);
+        font-size: 0.75rem;
+        padding: 0.15rem 0.45rem;
+        border-radius: 10px;
+        margin-left: 0.5rem;
+    }
+    .active .badge-tab-count {
+        background-color: rgba(245, 158, 11, 0.2);
+        color: var(--accent);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Left Column: Tabs with Testimonial List -->
+    <div class="col-xl-8 mb-4">
+        <div class="card-admin">
+            <!-- Separación de Testimonios por Pestañas -->
+            <ul class="nav nav-tabs nav-tabs-admin" id="testiTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="pending-tab" data-toggle="tab" data-target="#pendingTesti" type="button" role="tab" aria-controls="pendingTesti" aria-selected="true">
+                        Cola de Aprobación
+                        {% set pending_count = testimonios|rejectattr('aprobado')|list|length %}
+                        <span class="badge-tab-count" id="pendingBadge">{{ pending_count }}</span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="approved-tab" data-toggle="tab" data-target="#approvedTesti" type="button" role="tab" aria-controls="approvedTesti" aria-selected="false">
+                        Opiniones Activas (Web)
+                        {% set approved_count = testimonios|selectattr('aprobado')|list|length %}
+                        <span class="badge-tab-count" id="approvedBadge">{{ approved_count }}</span>
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="testiTabsContent">
+                <!-- Pestaña 1: Pendientes de Aprobación -->
+                <div class="tab-pane fade show active" id="pendingTesti" role="tabpanel" aria-labelledby="pending-tab">
+                    <div id="pendingContainer">
+                        {% if pending_count > 0 %}
+                            {% for t in testimonios if not t.aprobado %}
+                            <div class="testi-card" id="card-testi-{{ t.id }}">
+                                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                                    <div>
+                                        <h6 class="text-white font-weight-bold mb-0">{{ t.nombre }}</h6>
+                                        <span class="text-muted small d-block mb-1">{{ t.relacion }} • <i class="fa-solid fa-clock mr-1"></i>{{ t.created_at }}</span>
+                                        <div class="star-rating-display">
+                                            {% for i in range(1, 6) %}
+                                                {% if i <= t.calificacion %}
+                                                    <i class="fa-solid fa-star text-warning"></i>
+                                                {% else %}
+                                                    <i class="fa-regular fa-star text-muted"></i>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <button onclick="changeStatus({{ t.id }}, 1)" class="btn btn-success btn-sm font-weight-bold" style="border-radius: 0.35rem; display: inline-flex; align-items: center; gap: 4px;">
+                                            <i class="fa-solid fa-circle-check"></i> Aprobar
+                                        </button>
+                                        <button onclick="deleteTestimonio({{ t.id }})" class="btn btn-outline-danger btn-sm font-weight-bold" style="border-radius: 0.35rem; display: inline-flex; align-items: center; gap: 4px;">
+                                            <i class="fa-solid fa-trash-can"></i> Eliminar
+                                        </button>
+                                    </div>
+                                </div>
+                                <hr style="border-color: rgba(255,255,255,0.05); margin: 0.75rem 0;">
+                                <p class="text-comment mb-0">"{{ t.comentario }}"</p>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center py-5 text-muted">
+                                <i class="fa-solid fa-face-smile fa-3x mb-3 text-muted"></i>
+                                <p class="mb-0">No hay testimonios pendientes de revisión.</p>
+                                <p class="small text-muted mt-1">Todas las opiniones enviadas han sido procesadas.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Pestaña 2: Aprobados / Visibles en la Web -->
+                <div class="tab-pane fade" id="approvedTesti" role="tabpanel" aria-labelledby="approved-tab">
+                    <div id="approvedContainer">
+                        {% if approved_count > 0 %}
+                            {% for t in testimonios if t.aprobado %}
+                            <div class="testi-card" id="card-testi-{{ t.id }}">
+                                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                                    <div>
+                                        <h6 class="text-white font-weight-bold mb-0">{{ t.nombre }}</h6>
+                                        <span class="text-muted small d-block mb-1">{{ t.relacion }} • <i class="fa-solid fa-clock mr-1"></i>{{ t.created_at }}</span>
+                                        <div class="star-rating-display">
+                                            {% for i in range(1, 6) %}
+                                                {% if i <= t.calificacion %}
+                                                    <i class="fa-solid fa-star text-warning"></i>
+                                                {% else %}
+                                                    <i class="fa-regular fa-star text-muted"></i>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <button onclick="changeStatus({{ t.id }}, 0)" class="btn btn-warning btn-sm font-weight-bold" style="background-color: var(--accent); border: none; color: #000; border-radius: 0.35rem; display: inline-flex; align-items: center; gap: 4px;">
+                                            <i class="fa-solid fa-eye-slash"></i> Ocultar
+                                        </button>
+                                        <button onclick="deleteTestimonio({{ t.id }})" class="btn btn-outline-danger btn-sm font-weight-bold" style="border-radius: 0.35rem; display: inline-flex; align-items: center; gap: 4px;">
+                                            <i class="fa-solid fa-trash-can"></i> Eliminar
+                                        </button>
+                                    </div>
+                                </div>
+                                <hr style="border-color: rgba(255,255,255,0.05); margin: 0.75rem 0;">
+                                <p class="text-comment mb-0">"{{ t.comentario }}"</p>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center py-5 text-muted">
+                                <i class="fa-regular fa-star-half-stroke fa-3x mb-3 text-muted"></i>
+                                <p class="mb-0">No hay testimonios activos en la web.</p>
+                                <p class="small text-muted mt-1">Las opiniones aprobadas aparecerán aquí y en la página web pública.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Register Testimonial Form -->
+    <div class="col-xl-4 mb-4">
+        <div class="card-admin">
+            <h5 class="text-white mb-3 font-weight-bold"><i class="fa-solid fa-square-plus mr-2 text-indigo"></i> Registro Manual</h5>
+            <p class="text-muted small">Registra un testimonio recibido directamente por WhatsApp, Redes Sociales o Google Maps para publicarlo en la web.</p>
+            
+            <hr style="border-color: var(--border-color); margin: 1.5rem 0;">
+            
+            <form action="{{ url_for('admin_testimonios') }}" method="POST">
+                <!-- Nombre del Cliente -->
+                <div class="form-group mb-3">
+                    <label for="nombre" class="text-muted font-weight-bold small text-uppercase">Nombre del Cliente</label>
+                    <input type="text" id="nombre" name="nombre" class="form-control" style="background-color: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); color: #fff; border-radius: 0.5rem; padding: 0.6rem;" placeholder="Ej: Anderson Coaquira H." required>
+                </div>
+                
+                <!-- Relación / Operación -->
+                <div class="form-group mb-3">
+                    <label for="relacion" class="text-muted font-weight-bold small text-uppercase">Operación Realizada</label>
+                    <input type="text" id="relacion" name="relacion" class="form-control" style="background-color: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); color: #fff; border-radius: 0.5rem; padding: 0.6rem;" placeholder="Ej: Vendió un Toyota Corolla 2020" required>
+                </div>
+
+                <!-- Calificación -->
+                <div class="form-group mb-3">
+                    <label for="calificacion" class="text-muted font-weight-bold small text-uppercase">Calificación (Estrellas)</label>
+                    <select id="calificacion" name="calificacion" class="form-control" style="background-color: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); color: #fff; border-radius: 0.5rem; padding: 0.6rem; height: auto;">
+                        <option value="5">⭐⭐⭐⭐⭐ (5 Estrellas)</option>
+                        <option value="4" selected>⭐⭐⭐⭐ (4 Estrellas)</option>
+                        <option value="3">⭐⭐⭐ (3 Estrellas)</option>
+                        <option value="2">⭐⭐ (2 Estrellas)</option>
+                        <option value="1">⭐ (1 Estrella)</option>
+                    </select>
+                </div>
+
+                <!-- Estado Inicial -->
+                <div class="form-group mb-3">
+                    <label for="aprobado" class="text-muted font-weight-bold small text-uppercase">Estado de Publicación</label>
+                    <select id="aprobado" name="aprobado" class="form-control" style="background-color: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); color: #fff; border-radius: 0.5rem; padding: 0.6rem; height: auto;">
+                        <option value="1" selected>Aprobado (Visible en la web al instante)</option>
+                        <option value="0">Pendiente (Revisar luego en cola de espera)</option>
+                    </select>
+                </div>
+
+                <!-- Comentario / Testimonio -->
+                <div class="form-group mb-4">
+                    <label for="comentario" class="text-muted font-weight-bold small text-uppercase">Comentario del Cliente</label>
+                    <textarea id="comentario" name="comentario" rows="4" class="form-control" style="background-color: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); color: #fff; border-radius: 0.5rem; padding: 0.6rem;" placeholder="Ej: Súper rápido todo y la gente siempre muy atenta..." required></textarea>
+                </div>
+                
+                <button type="submit" class="btn-admin btn-admin-primary w-100 justify-content-center">
+                    <i class="fa-solid fa-floppy-disk"></i> Guardar Testimonio
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function changeStatus(id, newStatus) {
+        $.ajax({
+            url: `/admin/api/testimonios/${id}/approve`,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ aprobado: newStatus }),
+            success: function(response) {
+                if (response.success) {
+                    // Recargar la página para reorganizar los datos de forma limpia
+                    window.location.reload();
+                } else {
+                    alert('Error: ' + response.error);
+                }
+            },
+            error: function(xhr, status, error) {
+                alert('Ocurrió un error al conectar con el servidor.');
+            }
+        });
+    }
+
+    function deleteTestimonio(id) {
+        if (confirm('¿Estás seguro de que deseas eliminar permanentemente esta opinión de cliente?')) {
+            $.ajax({
+                url: `/admin/api/testimonios/${id}/delete`,
+                type: 'POST',
+                success: function(response) {
+                    if (response.success) {
+                        $(`#card-testi-${id}`).fadeOut(400, function() {
+                            $(this).remove();
+                            // Recargar para refrescar conteos de contadores en los tabs
+                            window.location.reload();
+                        });
+                    } else {
+                        alert('Error: ' + response.error);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert('Ocurrió un error al conectar con el servidor.');
+                }
+            });
+        }
+    }
+</script>
+{% endblock %}

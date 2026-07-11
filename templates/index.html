@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>CARROQHATU</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Free HTML Templates" name="keywords">
+    <meta content="Free HTML Templates" name="description">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+
+    <!-- Favicon -->
+    <link href="{{ url_for('static', filename='img/favicon.ico') }}" rel="icon">
+
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Rubik&display=swap" rel="stylesheet"> 
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Libraries Stylesheet -->
+    <link href="{{ url_for('static', filename='lib/owlcarousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css') }}" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->    
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+
+    <!-- Template Stylesheet -->
+    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+</head>    
+<body>
+
+    <!--NAVBAR INICIO-->
+    <div class="container-fluid position-relative nav-bar p-0">
+        <div class="position-relative px-lg-0" style="z-index: 9;">
+            <nav class="navbar navbar-expand-lg bg-navbarcq navbar-dark pt-0 pb-0 py-lg-0 pl-3 pl-lg-4">
+                <a href="{{ url_for('index') }}" class="navbar-brand">
+                    <img href="{{ url_for('index') }}"  class="imglogo" src="{{ url_for('static', filename='img/CarroQhatuL.png') }}" loading="lazy" alt="Logo">
+                </a>
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                        <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-social d-none d-lg-flex">
+                    <a class="social-icon" href="https://www.facebook.com/carroqhatu" target="_blank"><i class="fab fa-facebook"></i></a>
+                    <a class="social-icon" href="https://www.tiktok.com/@carroqhatu" target="_blank"><i class="fab fa-tiktok"></i></a>
+                    <a class="social-icon" href="https://www.instagram.com/carroqhatu" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a class="social-icon" href="https://www.youtube.com/@revelinobrayan2134" target="_blank"><i class="fab fa-youtube"></i></a>
+                </div>
+                <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
+                    <div class="navbar-nav ml-auto py-0 align-items-center">
+                        <a href="{{ url_for('about') }}" class="nav-item nav-link">Compra un auto</a>
+                        <a href="{{ url_for('service') }}" class="nav-item nav-link">Vende tu auto</a>
+                        <a href="{{ url_for('asesor') }}" class="nav-item nav-link">Asesor IA</a>
+                        <div class="nav-item dropdown">
+                                        <a href="{{ url_for('team') }}" class="nav-link dropdown-toggle" data-toggle="dropdown">Nosotros</a>
+                                        <div class="dropdown-menu rounded-0 m-0">
+                                            <a href="{{ url_for('team') }}" class="dropdown-item">Conócenos</a>
+                                            <a href="{{ url_for('testimonial') }}" class="dropdown-item">Testimonios</a>
+                                            <a href="{{ url_for('booking') }}" class="dropdown-item">Blog</a>
+                                            <a href="{{ url_for('contact') }}" class="dropdown-item">Contáctos</a>
+                                            
+                                        </div>
+                                    </div> 
+                        <div class="nav-item ml-lg-3">
+                            <a href="{{ url_for('contact') }}" class="btn-contacto">
+                                Contáctanos <i class="fa fa-headset ml-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+    <!--NAVBAR FINAL-->
+
+    <!-- Banner Principal Inicio -->
+        <section class="banner-video-container">
+            <video class="banner-video" autoplay muted loop playsinline>
+                <source src="{{ url_for('static', filename='videos/Banner_carroqhatuprin.mp4') }}" type="video/mp4">
+            </video>
+            <div class="banner-overlay">
+            </div>
+        </section>
+    <!-- Banner Principal Final -->
+
+    <!--Cards iniciales service 1-->
+    <div class="container text-center heading-content m-auto title-newauto">
+        <div class="row">
+            <div class="col-12">
+                <p>                       
+                    Nuestros<span>Servicios</span>    
+                </p>
+            </div>
+        </div>
+    </div>
+    <h2 class="subtitle-principal titulo-linea">
+                <span></span>
+                Hacemos el trabajo difícil por ti
+                <span></span>
+    </h2>
+     <div class="container circle-service">
+        <div class="row">
+            <div class="col-12 col-md-6 col-lg-4 text-center m-auto">
+                <img src="{{url_for('static', filename='img/inspeccioncircle.svg')}}">
+            </div>
+            <div class="col-12 col-md-6 col-lg-4 text-center m-auto">
+                <img src="{{url_for('static', filename='img/busquedacircle.svg')}}">
+            </div>
+            <div class="col-12 col-md-6 col-lg-4 text-center m-auto">
+                <img src="{{url_for('static', filename='img/anunciocircle.svg')}}">
+            </div>
+        </div>
+     </div>
+     <!--FIN Cards iniciales service 1-->
+
+     <!--FILA RESPALDO-->
+    <div class="container-fluid bg-light py-5 respaldo-section">    
+        <h1 class="title-respaldo text-center mb-4">Respaldados por:</h1>    
+        <div class="container">
+            <div class="row justify-content-center align-items-center respaldo-row">
+                <div class="col-12 col-md-6 col-lg-4 d-flex justify-content-center">
+                    <img src="{{url_for('static', filename='img/pro_innovate.png')}}" alt="Pro Innovate" class="img-respaldo">
+                </div>
+                <div class="col-12 col-md-6 col-lg-4 d-flex justify-content-center">
+                    <img src="{{url_for('static', filename='img/logo_ministerio_de_la_produccion.png')}}" alt="Ministerio de la Producción" class="img-respaldo">
+                </div>
+                <div class="col-12 col-md-6 col-lg-4 d-flex justify-content-center">
+                    <img src="{{url_for('static', filename='img/start_up_peru.png')}}" alt="StartUp Perú" class="img-respaldo">
+                </div>
+            </div>
+        </div>
+    </div>
+     <!--FIN FILA RESPALDO--> 
+    
+     <!--2 CARDS VENDE Y COMPRA INICIALES -->
+        <section class="cards-home container m-auto">
+            <div class="cta-grid">
+                <!-- CARD 1 -->
+                    <a href="{{ url_for('car') }}">
+                        <article class="cta-img-card">
+                            <img src="{{ url_for('static', filename='img/cardprin1.svg') }}" alt="Catálogo de vehículos">
+                        </article>
+                    </a>
+                <!-- CARD 2 -->
+                    <a href="{{ url_for('service') }}">
+                        <article class="cta-img-card">
+                            <img src="{{ url_for('static', filename='img/cardprin3.svg') }}" alt="Catálogo de vehículos">
+                        </article>
+                    </a>
+
+            </div>
+        </section>
+        <!-- FINAL 3 CARDS  VENDE Y COMPRA INICIALES -->
+
+        <!-- IMAGEN SERVICIOS MOBILE-->
+        <div class="container-fluid vista-service-mobil-img">
+            <div class="row">
+                <div class="col m-auto text-center">
+                    <img src="{{url_for('static', filename='img/MOBILEserviciosimg.svg')}}">
+                </div>
+            </div>
+        </div>    
+        <!-- FIN IMAGEN SERVICIOS MOBILE-->
+
+    <!--SECTION DETALLET SERVICE IZQUIERDA-->
+    <section class="servicios-container">
+
+    <!-- IZQUIERDA -->
+    <div class="servicios-visual">
+        <img src="{{url_for('static', filename='img/serviceIMGizq.svg')}}" alt="Auto CarroQhatu">
+    </div>
+
+    <!-- DERECHA -->
+    <div class="servicios-info">
+
+        <!-- CARD GRANDE -->
+        <div class="card-detalleservicios">
+        <h3>Revisión documentaria</h3>
+
+        <div class="content-iconos-detalleservicios">
+            <div class="icono-detalleservicios">
+            <img src="{{url_for('static', filename='img/propietario.png')}}">
+            <span>Historial Propietarios</span>
+            </div>
+            <div class="icono-detalleservicios">
+            <img src="{{url_for('static', filename='img/deudas.png')}}">
+            
+            <span>Deudas</span>
+            </div>
+            <div class="icono-detalleservicios">
+            <img src="{{url_for('static', filename='img/papeletas.png')}}">
+            <span>Papeletas</span>
+            </div>
+            <div class="icono-detalleservicios">
+            <img src="{{url_for('static', filename='img/denuncias.png')}}">
+            <span>Denuncias</span>
+            </div>
+            <div class="icono-detalleservicios">
+            <img src="{{url_for('static', filename='img/legalidad.png')}}">
+            <span>Legalidad</span>
+            </div>
+        </div>
+        </div>
+
+    <!-- CARDS PEQUEÑAS -->
+    <div class="cards-secundarias-detalservice">
+        <div class="card-pequeñas">
+            <h3>Revisión de carrocería</h3>
+            <div class="iconos-card-pequeñas">
+                <img src="{{url_for('static', filename='img/siniestros.png')}}">
+                <span>Siniestros</span>
+            </div>
+            <div class="iconos-card-pequeñas">
+                <img src="{{url_for('static', filename='img/pintura.png')}}">
+                <span>Pintura, Alineado y más.</span>
+            </div>
+        </div>
+
+        <div class="card-pequeñas">
+            <h3>Escaneo del sistema</h3>
+            <div class="iconos-card-pequeñas">
+                <img src="{{url_for('static', filename='img/electronico.png')}}" alt="iconelectronico">
+                <span>Electrónico</span>
+            </div>
+            
+            <div class="iconos-card-pequeñas">
+                <img src="{{url_for('static', filename='img/motor.png')}}" alt="iconmotor">
+                <span>Motor</span>
+            </div>
+            
+            <div class="iconos-card-pequeñas">
+                <img src="{{url_for('static', filename='img/kilometraje.png')}}" alt="iconKM">
+                <span>KM Real</span>
+            </div>
+            
+            <div class="iconos-card-pequeñas">
+                <img src="{{url_for('static', filename='img/frenos.png')}}" alt="iconFrenos">
+                <span>Frenos</span>
+            </div>
+        </div>
+
+        <div class="card-pequeñas">
+            <h3>Tasación del vehículo</h3>
+              <div class="iconos-card-pequeñas">
+            <img src="{{url_for('static', filename='img/tasacionvehiculo.png')}}" alt="icontasacion">
+            <span>Vehículos verificados</span>
+            </div>
+        </div>
+    </div>
+
+  </div>
+</section>
+
+<!--PRUEBA 2
+<div class="grid-cards">
+    <div class="card-principalservice">
+        <div class="icono-wrapper">
+            <img src="{{ url_for('static', filename='img/inspeccion.svg') }}" alt="Inspección">
+        </div>
+        <div class="card-body">
+            <h3>¡Inspección 360º!</h3>
+            <ul>
+                <li>✔ Revisamos el estado de la carrocería.</li>
+                <li>✔ Escaneo de sistema electrónico.</li>
+                <li>✔ Revisión Documentaria completa.</li>
+                <li>✔ Tasamos el precio del vehículo.</li>
+            </ul>
+        </div>
+        <a href="{{ url_for('car') }}" class="btn-anuncio">Quiero una Inspección</a>
+    </div>
+
+    <div class="card-principalservice">
+        <div class="icono-wrapper">
+            <img src="{{ url_for('static', filename='img/busquedaicon.svg') }}" alt="Búsqueda">
+        </div>
+        <div class="card-body">
+            <h3>Búsqueda</h3>
+            <p>Buscamos el vehículo ideal para ti y realizamos una revisión completa. Te entregamos un informe del estado actual.</p>
+            <ul>
+                <li>✔ Asesoramiento antes de comprar.</li>
+                <li>✔ Informe técnico.</li>
+                <li>✔ Tasación real.</li>
+            </ul>
+        </div>
+        <a href="{{ url_for('car') }}" class="btn-anuncio">Quiero Buscar</a>
+    </div>
+
+    <div class="card-principalservice">
+        <div class="icono-wrapper">
+            <img src="{{ url_for('static', filename='img/anuncioprincipalicon.svg') }}" alt="Publicación">
+        </div>
+        <div class="card-body">
+            <h3>Publicación ¡En todos lados!</h3>
+            <p>Difundimos tu vehículo a través de nuestros diferentes canales. ¡Llegamos a miles de compradores por ti!</p>
+            <ul>
+                <li>✔ Anuncio virtual.</li>
+                <li>✔ Anuncio presencial.</li>
+                <li>✔ Anuncio + Recomendación.</li>
+            </ul>
+        </div>
+        <a href="{{ url_for('car') }}" class="btn-anuncio">Quiero Anunciar</a>
+    </div>
+</div>
+<!--PRUEBA 2-->
+
+<!-- 
+<div class="container mb-5 mt-10">
+    <div class="cards-principal-content">
+        <div class="grid-cards">
+            <div class="card-principalservice destacada">
+                <div class="icono-wrapper">
+                    <img src="{{ url_for('static', filename='img/vehiculosiconprincipal.svg') }}" alt="vehículos" class="icon-menuinspeccion">
+                </div>
+                <h3>¡Inspección 360º!</h3>
+                <ul>
+                <li>✔Revisamos el estado de la carroceria (choques,siniestros,etc).</li>
+                <li>✔Escaneo de sistema electrónico y motor del vehículo.</li>
+                <li>✔Revisión Documentaria(historial de propietarios, deudas, denuncias, papeletas, etc.).</li>
+                <li>✔Tasamos el precio del vehículo.</li>    
+                </ul>    
+                <a class="btn-anuncio" href="{{ url_for('car') }}">                
+                        Quiero una Inspección
+                </a>     
+            </div>
+
+            <div class="card-principalservice destacada">
+                <div class="icono-wrapper">
+                    <img src="{{ url_for('static', filename='img/busquedaicon.svg') }}" alt="Oferta">
+                </div>
+                <h3>Búsqueda</h3>
+                <p class="p-busqueda">Buscamos el vehículo ideal para ti y realizamos una revisión completa (motor, carrocería, sistema eléctrico y documentos) Y te entregamos un informe.</p>    
+                <ul >
+                    <li>✔Asesoramiento antes de comprar.</li>
+                    <li>✔Informe técnico.</li>
+                    <li>✔Tasación real.</li>
+                </ul>
+                <a class="btn-anuncio" href="{{ url_for('car') }}">      
+                        Quiero Buscar
+                </a> 
+            </div>
+
+            <div class="card-principalservice destacada">
+                <div class="icono-wrapper">
+                    <img src="{{ url_for('static', filename='img/anuncioprincipalicon.svg') }}" alt="Inspección">
+                </div>
+                <h3>Publicación ¡En todos lados!</h3>
+                <p>Difundimos tu vehículo a través de nuestros diferentes canales. ¡Llegamos a miles de compradores por ti!</p>                        
+                <ul>
+                    <li>✔Anuncio virtual.</li>
+                    <li>✔Anuncio presencial.</li>
+                    <li>✔Anuncio + Recomiendación.</li>
+                </ul>
+                <a class="btn-anuncio" href="{{ url_for('car') }}">            
+                        Quiero Anunciar
+                </a> 
+            </div>
+        </div>           
+    </div>
+</div> -->
+
+
+
+
+
+    <!-- SUBMENU CON ICONOS-->
+                <!-- <div class="menuban_content container mt-5">
+                    <div class="icon-grid">
+                        <!-- <div class="icon-item">
+                            <a href="{{ url_for('about') }}">
+                            <div class="icon-svg">
+                                <!-- ICONO_COMPRA 
+                                <img src="{{ url_for('static', filename='img/compra.svg') }}"  alt="comprar" class="icon-menu">
+                            </div>
+                            <p>Inspección 360º</p>
+                            <span class="underline" src="{{ url_for('about') }}"></span>
+                            </a>
+                            
+                        </div>
+                        <div class="icon-item">
+                                <a href="{{ url_for('service') }}">
+                                <div class="icon-svg">
+                                    <!-- ICONO_VENDE 
+                                    <img src="{{ url_for('static', filename='img/venta.svg') }}" alt="vender" class="icon-menu">
+                                </div>
+                                <p>Búsqueda</p>
+                                <span class="underline"></span>
+                                </a>                                
+                        </div>
+                         <div class="icon-item">
+                                <a href="{{ url_for('service') }}">
+                                <div class="icon-svg">
+                                    <!-- ICONO_VENDE 
+                                    <img src="{{ url_for('static', filename='img/venta.svg') }}" alt="vender" class="icon-menu">
+                                </div>
+                                <p>Anuncio</p>
+                                <span class="underline"></span>
+                                </a>                                
+                        </div> 
+                        
+                        <div class="icon-item">
+                                <a href="{{ url_for('service') }}">
+                                <div class="icon-svg">
+                                    <!-- ICONO_VALUACIÓN 
+                                    <img src="{{ url_for('static', filename='img/inspeccion.svg') }}"  alt="valoracion" class="icon-menu">
+                                </div>
+                                <p>Inspección 360º</p>
+                                <span class="underline"></span>
+                                </a>                            
+                        </div>
+                        <div class="icon-item">
+                                <a href="{{ url_for('service') }}">
+                                <div class="icon-svg">
+                                    <!-- ICONO_VALUACIÓN 
+                                    <img src="{{ url_for('static', filename='img/busquedaicon.svg') }}"  alt="valoracion" class="icon-menu">
+                                </div>
+                                <p>Búsqueda</p>
+                                <span class="underline"></span>
+                                </a>                         
+                        </div>
+                        <div class="icon-item">
+                                <a href="{{ url_for('service') }}">
+                                <div class="icon-svg">
+                                    <!-- ICONO_VALUACIÓN 
+                                    <img src="{{ url_for('static', filename='img/anuncioprincipalicon.svg') }}"  alt="valoracion" class="icon-menu">
+                                </div>
+                                <p>Anuncios</p>
+                                <span class="underline"></span>
+                                </a>                          
+                        </div>
+
+                        <!-- <div class="icon-item">
+                                <a href="{{ url_for('service') }}">
+                                <div class="icon-svg">
+                                    <!-- ICONO_VALUACIÓN 
+                                    <img src="{{ url_for('static', filename='img/valoracion.svg') }}"  alt="valoracion" class="icon-menu">
+                                </div>
+                                <p>Valoración de mi Vehículo</p>
+                                <span class="underline"></span>
+                                </a>                            
+                        </div>
+
+                        <div class="icon-item">
+                            <a href="{{ url_for('car') }}">
+                                <div class="icon-svg">
+                                    <!-- ICONO_VEHÍCULOS 
+                                    <img src="{{ url_for('static', filename='img/vehiculos.svg') }}" alt="vehículos" class="icon-menu">
+                                </div>
+                                <p>Vehículos</p>
+                                <span class="underline"></span>
+                            </a>
+                        </div>
+
+                        <div class="icon-item">
+                            <a href="{{ url_for('inspeccion') }}">
+                                <div class="icon-svg">
+                                    <!-- ICONO_SEGURO 
+                                    <img src="{{ url_for('static', filename='img/seguro.svg') }}" alt="seguro" class="icon-menu">
+                                </div>
+                            </a>
+                            <p>Seguro</p>
+                            <span class="underline"></span>
+                        </div> 
+                        <div class="icon-item">
+                            <div class="icon-svg">
+                                <!-- ICONO_MÁS 
+                                <img src="{{ url_for('static', filename='img/more.svg') }}" alt="comprar" class="icon-menu-more">
+                            </div>
+                            <p>Más</p>
+                            <span class="underline"></span>
+                        </div>
+                    </div>
+                    <!--<div class="search-bar searchbarmenuicon">
+                        <i class="fa fa-search"></i>
+                        <input type="text" placeholder="Busca tu auto ideal...">
+                        <button class="btn-search">Buscar</button>
+                    </div>                  
+                    <div class="icon-marcas text-center">
+                         <a class="btn-catalogocontent" href="{{ url_for('car') }}">                
+                            <button href="{{ url_for('car') }}" class="btn-catalogo space-button">
+                                Ir a Catálogo
+                            </button>
+                        </a> 
+                        <!-- <div class="icon-marca1">
+                            <img src="{{ url_for('static', filename='img/HYUNDAI.svg') }}"  alt="hyunday" class="icon-carmarc">
+                        </div>
+                        <div class="icon-marca1">
+                            <img src="{{ url_for('static', filename='img/TOYOTA.svg') }}" alt="toyota" class="icon-carmarc">
+                        </div>
+                        <div class="icon-marca1">
+                            <img src="{{ url_for('static', filename='img/HONDA.svg') }}" alt="honda" class="icon-carmarc">
+                        </div>
+                        <div class="icon-marca1">
+                            <img src="{{ url_for('static', filename='img/RENAULT.svg') }}" alt="renault" class="icon-carmarc">
+                        </div>
+                        <div class="icon-marca1">
+                            <img src="{{ url_for('static', filename='img/VOLKSWAGEN.svg') }}" alt="ww" class="icon-carmarc">
+                        </div>
+                        <div class="icon-marca1">
+                            <img src="{{ url_for('static', filename='img/FORD.svg') }}" alt="ford" class="icon-carmarc">
+                        </div>
+                        <div class="icon-marca1">
+                            <img src="{{ url_for('static', filename='img/KIA.svg') }}" alt="kia" class="icon-carmarc">
+                        </div>   
+                        <div class="icon-marca1">
+                            <img src="{{ url_for('static', filename='img/susuki.svg') }}" alt="susuki" class="icon-carmarc">
+                        </div>     
+                    </div>
+                </div> -->
+    <!-- FIN SUBMENU CON ICONOS-->
+
+
+       
+    
+    <!-- INICIO CATÁLOGO-->
+        <section class="mas-vendidos container">
+            <h2 class="title-mv titulo-linea">
+                <span></span>
+                Nuestro Catálogo
+                <span></span>
+            </h2>
+            <div class="carousel-wrapper">
+                <button class="mv-arrow left" onclick="mvScroll(-1)">&#10094;</button>
+                <div class="mv-carousel" id="mvCarousel">
+                    {% if vehiculos %}
+                        {% for car in vehiculos %}
+                        {% set wa_message = "Hola CarroQhatu! Estoy interesado en el auto " ~ car.marca|upper ~ " " ~ car.modelo|upper ~ " del año " ~ car.year ~ " con " ~ "{:,}".format(car.km) ~ " km, publicado con precio " ~ car.precio ~ "." %}
+                        <a href="https://wa.me/{{ site_config.contact_phone|default('51972043502')|replace(' ', '')|replace('+', '') }}?text={{ wa_message|urlencode }}" target="_blank" class="text-decoration-none text-dark">
+                            <div class="mv-card">
+                                <img src="{{ car.imagen_url }}" class="mv-img" alt="{{ car.marca }} {{ car.modelo }}">
+                                <h4>{{ car.marca|upper }} {{ car.modelo|upper }}</h4>
+                                <div class="mv-divider"></div>
+                                <p class="mv-price">{{ car.precio }}</p>
+                                <div class="mv-divider"></div>
+                                <p class="mv-month">
+                                    <span><i class="fa fa-road"></i> {{ "{:,}".format(car.km) }} KM</span>
+                                    <span><i class="fa fa-cogs"></i> {{ car.year }}</span>
+                                </p>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-5 text-muted w-100">
+                            <p>No hay vehículos disponibles en este momento.</p>
+                        </div>
+                    {% endif %}
+                </div>
+                <button class="mv-arrow right" onclick="mvScroll(1)">&#10095;</button>
+                <button class="mv2-arrow right">&#10095;</button>
+            </div>
+        </section>
+        
+        <script>
+                const carousel = document.getElementById("mvCarousel");
+
+                function mvScroll(direction) {
+                    const card = carousel.querySelector(".mv-card");
+                    const distance = (card.offsetWidth + 20) * 1; 
+                    smoothScroll(carousel, distance * direction, 600);
+                }
+
+                function smoothScroll(element, change, duration) {
+                    const start = element.scrollLeft;
+                    const startTime = performance.now();
+
+                    function animateScroll(currentTime) {
+                        const elapsed = currentTime - startTime;
+                        const progress = Math.min(elapsed / duration, 1);
+                        const ease = progress < 0.5
+                            ? 4 * progress * progress * progress
+                            : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+                        element.scrollLeft = start + change * ease;
+
+                        if (progress < 1) {
+                            requestAnimationFrame(animateScroll);
+                        }
+                    }
+
+                    requestAnimationFrame(animateScroll);
+                }
+        </script>
+
+        <!-- SECCIÓN DE PROMOCIONES Y PUBLICIDAD DINÁMICA -->
+        {% if publicidad %}
+        <section class="container py-5">
+            <h2 class="title-mv titulo-linea">
+                <span></span>
+                Novedades y Promociones
+                <span></span>
+            </h2>
+            <div class="row justify-content-center mt-4">
+                {% for ad in publicidad %}
+                {% if ad.activo %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card border-0 shadow-sm overflow-hidden" style="border-radius: 1rem; transition: transform 0.2s ease; background: #1e293b; border: 1px solid #334155;">
+                        <a href="{{ ad.enlace_url }}" target="_blank" style="text-decoration: none; display: block;">
+                            <div style="height: 180px; overflow: hidden; background-color: #121824;">
+                                <img src="{{ ad.imagen_url }}" alt="{{ ad.titulo }}" class="card-img-top" style="height: 100%; object-fit: cover; width: 100%;">
+                            </div>
+                            <div class="card-body text-center p-3" style="background-color: #1e293b;">
+                                <h5 class="font-weight-bold text-white mb-2" style="font-family: 'Outfit', sans-serif; font-size: 1.1rem;">{{ ad.titulo }}</h5>
+                                <span class="btn btn-warning btn-sm font-weight-bold" style="background-color: #FBD333; border: none; border-radius: 0.5rem; color: #0f172a; padding: 0.4rem 1rem; font-size: 0.8rem;">Ver Detalle</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+        
+        <!--CATALOGO PARA MOVIL-->   
+        <h2 class="separador-detail detail-linea line-detailcatalogo">
+            <span></span>
+        </h2>
+        <section class="mas-vendidos container scroll2 SCROLLMOBILE">
+            <div class="carousel-wrapper">
+                <div class="mv-carousel">                 
+                <a href="{{ url_for('detail', id='VOLKSWAGEN-TIGUAN-2012') }}">
+                    <div class="mv-card">
+                        <img src="{{ url_for('static', filename='img/TIGUAN.jpg') }}" class="mv-img" alt="Volkswagen Tiguan 4x4 2012 Mod 2013">
+                        <h4>Volkswagen Tiguan 4x4 2012 Mod 2013</h4>
+                        <div class="mv-divider"></div>
+                        <p class="mv-price">$ 14,700<span class="abrev-divisa">USD</span></p>
+                        <div class="mv-divider"></div>
+                        <p class="mv-month">
+                                <span><i class="fa fa-road"></i> 121mil KM </span>                            
+                                <span><i class="fa fa-cogs"></i> 2.0</span>                            
+                        </p>
+                    </div>
+                </a>
+                <a href="{{ url_for('detail', id='MITSUBISHI-L200-2013') }}">
+                    <div class="mv-card">
+                        <img src="{{ url_for('static', filename='img/L2002013.jpg') }}" class="mv-img" alt="Mitsubishi L200 2013 Mod 2014">
+                        <h4>Mitsubishi L200 2013 Mod 2014</h4>
+                        <div class="mv-divider"></div>
+                        <p class="mv-price">S/. 49,500<span class="abrev-divisa">PEN</span></p>
+                        <div class="mv-divider"></div>
+                        <p class="mv-month">
+                            <span><i class="fa fa-road"></i> 105mil KM </span>
+                            <span><i class="fa fa-cogs"></i> 2.5</span>                        
+                        </p>
+                    </div>
+                </a>
+                <a href="{{ url_for('detail', id='TOYOTA-HILUX-2019') }}">
+                    <div class="mv-card">
+                        <img src="{{ url_for('static', filename='img/hiluxsrv20192.jpg') }}" class="mv-img" alt="Toyota Hilux SRV 2019">
+                        <h4>Toyota Hilux SRV 2019</h4>
+                        <div class="mv-divider"></div>
+                        <p class="mv-price">$ 31,000<span class="abrev-divisa">USD</span></p>
+                        <div class="mv-divider"></div>
+                        <p class="mv-month">
+                            <span><i class="fa fa-road"></i> 97mil KM </span>
+                            <span><i class="fa fa-cogs"></i> 2.8</span>                                                       
+                        </p>
+                    </div>
+                </a>
+
+                <a href="{{ url_for('detail', id='TOYOTA-HILUX-2015') }}">
+                    <div class="mv-card">
+                        <img src="{{ url_for('static', filename='img/hilux4x42015.jpg') }}" class="mv-img" alt="Toyota Hilux 4x4 2015">
+                        <h4>Toyota Hilux 4x4 2015</h4>
+                        <div class="mv-divider"></div>
+                        <p class="mv-price">S/. 25,500<span class="abrev-divisa">PEN</span></p>
+                        <div class="mv-divider"></div>
+                        <p class="mv-month">
+                            <span> 
+                                <i class="fa fa-road"></i>193mil KM 
+                            </span>
+                            <span>
+                                <i class="fa fa-cogs"></i>1kd 3.0
+                            </span>                           
+                        </p>
+                    </div>
+                </a>
+                <a href="{{ url_for('detail', id='RENAULT-LOGAN-2018') }}">
+                    <div class="mv-card">
+                        <img src="{{ url_for('static', filename='img/renaultlogan.jpg') }}" class="mv-img" alt="Renault Logan 2018 Mod 2019">
+                        <h4>Renault Logan 2018 Mod 2019</h4>
+                        <div class="mv-divider"></div>
+                        <p class="mv-price">S/. 29,500<span class="abrev-divisa">PEN</span></p>
+                        <div class="mv-divider"></div>
+                        <p class="mv-month">
+                            <span> 
+                                <i class="fa fa-road"></i>58,800 KM 
+                            </span>
+                            <span>
+                                <i class="fa fa-cogs"></i>1.6
+                            </span>                           
+                        </p>
+                    </div>
+                </a>
+                <a href="{{ url_for('detail', id='MITSUBISHI-L200-2025') }}">
+                    <div class="mv-card">
+                        <img src="{{ url_for('static', filename='img/missubishil200.jpg') }}" class="mv-img" alt="Mitsubishi L200 4x4 2025">
+                        <h4>Mitsubishi L200 4x4 2025</h4>
+                        <div class="mv-divider"></div>
+                        <p class="mv-price">$ 35,000<span class="abrev-divisa">USD</span></p>
+                        <div class="mv-divider"></div>
+                        <p class="mv-month">
+                            <span> 
+                                <i class="fa fa-road"></i>13mil KM 
+                            </span>
+                            <span>
+                                <i class="fa fa-cogs"></i>2.4
+                            </span>                           
+                        </p>
+                    </div>
+                </a>
+                <a href="{{ url_for('detail', id='MAZDA-CX5-2016') }}">
+                    <div class="mv-card">
+                        <img src="{{ url_for('static', filename='img/MAZDACX5.jpg') }}" class="mv-img" alt="Mazda CX-5 2016 Mod 2017">
+                        <h4>Mazda CX-5 2016 Mod 2017</h4>
+                        <div class="mv-divider"></div>
+                        <p class="mv-price">S/. 55,000<span class="abrev-divisa">PEN</span></p>
+                        <div class="mv-divider"></div>
+                        <p class="mv-month">
+                            <span>
+                                <i class="fa fa-road"></i>1279 KM 
+                            </span>
+                            <span>
+                                <i class="fa fa-cogs"></i>2.0
+                            </span>
+                        </p>
+                    </div>
+                </a>
+                <a href="{{ url_for('detail', id='KING-LONG-2024') }}">                    
+                    <div class="mv-card">
+                        <img src="{{ url_for('static', filename='img/kinglong.jpg') }}" class="mv-img" alt="King Long Santana 2024 Mod 2025">
+                        <h4>King Long Santana 2024 Mod 2025</h4>
+                        <div class="mv-divider"></div>
+                        <p class="mv-price">S/. 63,000<span class="abrev-divisa">PEN</span></p>
+                        <div class="mv-divider"></div>
+                        <p class="mv-month">
+                            <span>
+                                <i class="fa fa-road"></i>21mil KM 
+                            </span>
+                            <span>
+                                <i class="fa fa-cogs"></i>2.7
+                            </span>
+                        </p>
+                    </div>
+                </a>
+
+                <a href="{{ url_for('detail', id='KIA-SOLUTO-SEMIFULL-2021') }}">
+                    <div class="mv-card">
+                        <img src="{{ url_for('static', filename='img/kiasoluto.jpg') }}" class="mv-img" alt="Kia Soluto SemiFull 2021-2022">
+                        <h4>Kia Soluto SemiFull 2021-2022</h4>
+                        <div class="mv-divider"></div>
+                        <p class="mv-price">S/. 37,000<span class="abrev-divisa">PEN</span></p>
+                        <div class="mv-divider"></div>
+                        <p class="mv-month">
+                            <span>
+                                <i class="fa fa-road"></i>84mil KM 
+                            </span>
+                            <span>
+                                <i class="fa fa-cogs"></i>1.4
+                            </span>
+                        </p>
+                    </div>
+                </a>
+                <a href="{{ url_for('detail', id='HYUNDAI-VERNA-2020') }}">
+                    <div class="mv-card">
+                        <img src="{{ url_for('static', filename='img/hyundaiverna.jpg') }}" class="mv-img" alt="Hyundai Verna 2020">
+                        <h4>Hyundai Verna 2020</h4>
+                        <div class="mv-divider"></div>
+                        <p class="mv-price">S/. 35,000<span class="abrev-divisa">PEN</span></p>
+                        <div class="mv-divider"></div>
+                        <p class="mv-month">
+                            <span>
+                                <i class="fa fa-road"></i>75mil KM 
+                            </span>
+                            <span>
+                                <i class="fa fa-cogs"></i>1.4
+                            </span>
+                        </p>
+                    </div>
+                </a>
+                <a href="{{ url_for('detail', id='JMC-VIGUS-2024') }}">
+                    <div class="mv-card">
+                        <img src="{{ url_for('static', filename='img/JMCVIGUS.png') }}" class="mv-img" alt="JMC VIGUS PLUS 4X4 2024">
+                        <h4>JMC VIGUS PLUS 4X4 2024</h4>
+                        <div class="mv-divider"></div>
+                        <p class="mv-price">S/. 63,000<span class="abrev-divisa">PEN</span></p>
+                        <div class="mv-divider"></div>
+                        <p class="mv-month">
+                            <span>
+                                <i class="fa fa-road"></i>23mil KM 
+                            </span>
+                            <span>
+                                <i class="fa fa-cogs"></i>2.4
+                            </span>
+                        </p>
+                    </div>
+                </a>
+            </div>
+                <button class="mv2-arrow right">&#10095;</button>
+            </div>
+        </section>
+
+        <script>
+        document.querySelectorAll('.carousel-wrapper').forEach(wrapper => {
+            const carousel = wrapper.querySelector('.mv-carousel');
+            const leftBtn = wrapper.querySelector('.left');
+            const rightBtn = wrapper.querySelector('.right');
+
+            function mvScroll(direction) {
+                const card = carousel.querySelector('.mv-card');
+                if (!card) return;
+
+                const distance = card.offsetWidth + 20; // mismo cálculo que tenías
+                smoothScroll(carousel, distance * direction, 600);
+            }
+
+            leftBtn.addEventListener('click', () => mvScroll(-1));
+            rightBtn.addEventListener('click', () => mvScroll(1));
+        });
+
+        function smoothScroll(element, change, duration) {
+            const start = element.scrollLeft;
+            const startTime = performance.now();
+
+            function animateScroll(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+
+                const ease = progress < 0.5
+                    ? 4 * progress * progress * progress
+                    : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+                element.scrollLeft = start + change * ease;
+
+                if (progress < 1) {
+                    requestAnimationFrame(animateScroll);
+                }
+            }
+
+            requestAnimationFrame(animateScroll);
+        }
+        </script>
+    <!--FIN CATALOGO PARA MOVIL-->
+    <!--VIDEOS Y TIPS-->
+        <!-- CARD -->        
+        <h2 class="title-mv titulo-linea title-videos mt-5">
+        Videos y Tips
+        <span></span>
+        </h2>
+        <section class="videos-container">   
+             <!-- MODAL -->
+            <div id="videoModal" class="video-modal">
+                <div class="video-modal-content">
+                    <span class="close-btn" onclick="closeVideo()">X</span>
+                    <video id="modalVideo"
+                        src="{{ url_for('static', filename='videos/video2.mp4') }}"                            
+                        controls
+                        playsinline
+                        preload="none">
+                    </video>
+                </div>
+            </div>   
+
+            <div class="video-card" onclick="openVideo('https://www.dropbox.com/scl/fi/tiysadbc5kk6ugyomliyp/video0.mp4?rlkey=d21x2uwi5ajprwuo9tykcrt6v&st=5jgp60a1&raw=1')">
+            <img src="{{ url_for('static', filename='img/miniaturasomos.svg') }}" alt="Video">
+            <div class="play-btn">▶</div>
+            </div>
+
+            <div class="video-card" onclick="openVideo('https://www.dropbox.com/scl/fi/6fvjdeufbf28v5axg9mlw/videohater.mp4?rlkey=6llmjudgksfxiohhs25bdaa68&st=dcn02wok&raw=1')">
+            <img src="{{ url_for('static', filename='img/miniaturahate.svg') }}" alt="Video">
+            <div class="play-btn">▶</div>
+            </div>
+
+            <div class="video-card" onclick="openVideo('https://www.dropbox.com/scl/fi/q82dy3hpbclvvwms4coqv/testimonioahorros.mp4?rlkey=u6lo7fntzs10mk4t0b2jyip9u&st=7m3cvwmy&dl=0&raw=1')">
+            <img src="{{ url_for('static', filename='img/7añosahorros.svg') }}" alt="Video">
+            <div class="play-btn">▶</div>
+            </div>  
+
+            <div class="video-card" onclick="openVideo('https://www.dropbox.com/scl/fi/05mupolm2ouf5qqqs6u5q/videoclienteaqp.mp4?rlkey=uuh6uedjptm6ttite6ucs277l&st=f0c0co2l&dl=0&raw=1')">
+            <img src="{{ url_for('static', filename='img/opinion2.svg') }}" alt="Video">
+            <div class="play-btn">▶</div>
+            </div>
+
+            <div class="video-card" onclick="openVideo('https://www.dropbox.com/scl/fi/26tyhyucjeebyqdjmz0g3/tailandesoargentino.mp4?rlkey=aldwmmsvda39nc88zsx76oo9p&st=w7zyhx4b&dl=0&raw=1')">
+            <img src="{{ url_for('static', filename='img/TAIOARG.svg') }}" alt="Video">
+            <div class="play-btn">▶</div>
+            </div>  
+           
+
+            <script>
+            function openVideo(src) {
+                const modal = document.getElementById('videoModal');
+                const video = document.getElementById('modalVideo');
+
+                if (!modal || !video) {
+                    console.error("No se encontró el modal o el elemento de video en el HTML");
+                    return;
+                }
+
+                video.src = src;
+                video.load(); // Indispensable para Dropbox
+                modal.classList.add('active');
+                
+                // Intentar reproducir (el navegador puede pedir un clic extra)
+                video.play().catch(error => console.log("Reproducción manual requerida"));
+            }
+            function closeVideo() {
+            const modal = document.getElementById('videoModal');
+            const video = document.getElementById('modalVideo');
+
+            video.pause();
+            video.src = '';
+            modal.classList.remove('active');
+            }
+
+            /* cerrar click afuera */
+            document.getElementById('videoModal').addEventListener('click', e => {
+            if (e.target.id === 'videoModal') closeVideo();
+            });
+            </script>
+        </section>
+    <!--FIN VIDEOS-->
+
+    <!--Sección contacto qr-->
+        <section class="qr-section container mb-5">
+            <div class="qr-content mb-5"> 
+                <!-- Imagen o icono -->
+                <div class="qr-image">
+                    <img src="{{ url_for('static', filename='img/wspp2.svg') }}" alt="App mockup">
+                </div>
+                <!-- Texto -->
+                <div class="qr-text">
+                    <h2 class="text-white">Conéctate con nosotros</h2>
+                    <p>
+                        Escanea el código QR para hablar con un asesor, ver nuestro catálogo 
+                        o absolver tus dudas respecto a la compra y venta.
+                    </p>
+                </div>
+                <div class="qr-box">
+                    <img src="{{ url_for('static', filename='img/qr_carroqhatu.png') }}" alt="QR Whatsapp">
+                    <p class="qr-label">Escanéame</p>
+                </div>
+            </div>
+        </section>
+    <!--fin Sección contacto qr-->
+
+    <!--INICIO TESTIMONIOS CLIENTES-->
+            <h2 class="title-mv titulo-linea title-videos">
+            Lo que opinan nuestros clientes
+            <span></span>
+            </h2>
+    <!--GRUPO POSTERIOR IZQUIERDA-->
+        <section class="comentarios-izq">
+            <div class="testimonios-content">
+                <div class="testimoniosdirec izq">
+                    <!--Grupo principal izquierda-->
+                    <div class="grupo-testi">            
+                        <div class="testimonios-card">
+                            <div class="user">
+                            <img src="{{ url_for('static', filename='img/juan.jpg') }}" alt="Juan Huarachi">
+                                <div class="user-info">
+                                    <strong>Juan Huarachi</strong>
+                                    <span>22 septiembre 2025</span>
+                                </div>
+                            </div>
+                            <p>Buen servicio y trato cordial. Muy confiables CarroQhatu.</p>
+                        </div>
+                        <div class="testimonios-card">
+                            <div class="user">
+                                <img src="{{ url_for('static', filename='img/rosam.jpg') }}" alt="Rosa Mamani">
+                                    <div class="user-info">
+                                        <strong>Rosa Mamani</strong>
+                                        <span>18 octubre 2025</span>
+                                    </div>
+                            </div>
+                            <p>Gracias a la inspección que hacen a los carros compré con seguridad y con total confianza.</p>
+                        </div>
+                        <div class="testimonios-card">
+                            <div class="user">
+                                <img src="{{ url_for('static', filename='img/traveler.jpg') }}" alt="Traveler">
+                                    <div class="user-info">
+                                        <strong>Traveler</strong>
+                                        <span>29 diciembre 2025</span>
+                                    </div>
+                            </div>
+                            <p>Me explicaron cada detalle del vehículo que queria comprar y ellos me acompañaron en la compra, buen servicio me ayudaron bastante.</p>
+                        </div>
+                        <div class="testimonios-card">
+                            <div class="user">
+                                <img src="{{ url_for('static', filename='img/sonia.jpg') }}" alt="Sonia Condori">
+                                    <div class="user-info">
+                                        <strong>Sonia Condori</strong>
+                                        <span>08 enero 2025</span>
+                                    </div>
+                            </div>
+                            <p>La tasación fue justa, me dijeron el porqué así y estuvo bien sustentada. Gracias a eso logré vender rápido.</p>
+                        </div> 
+                        <div class="testimonios-card">
+                            <div class="user">
+                                <img src="{{ url_for('static', filename='img/Edwin.jpg') }}" alt="Edwin Torres">
+                                    <div class="user-info">
+                                        <strong>Edwin Torres</strong>
+                                        <span>07 diciembre 2025</span>
+                                    </div>
+                            </div>
+                            <p>Logré comprar mi primer auto, muy bonito y en buen estado gracias a Carroqhatu.</p>
+                        </div>  
+                        <!--DUPLICADO DIRECCIÓN IZQUIERDA-->
+                        <div class="testimonios-card testimonioscard-nomobil">
+                            <div class="user">
+                                <img src="{{ url_for('static', filename='img/rosam.jpg') }}" alt="Rosa Mamani">
+                                    <div class="user-info">
+                                        <strong>Rosa Mamani</strong>
+                                        <span>18 octubre 2025</span>
+                                    </div>
+                            </div>
+                            <p>Gracias a la inspección que hacen a los carros compré con seguridad y con total confianza.</p>
+                        </div>
+                        <div class="testimonios-card testimonioscard-nomobil">
+                            <div class="user">
+                            <img src="{{ url_for('static', filename='img/juan.jpg') }}" alt="Juan Huarachi">
+                                <div class="user-info">
+                                    <strong>Juan Huarachi</strong>
+                                    <span>22 septiembre 2025</span>
+                                </div>
+                            </div>
+                            <p>Buen servicio y trato cordial. Muy confiables CarroQhatu.</p>
+                        </div>
+                        <div class="testimonios-card testimonioscard-nomobil">
+                            <div class="user">
+                                <img src="{{ url_for('static', filename='img/traveler.jpg') }}" alt="Traveler">
+                                    <div class="user-info">
+                                        <strong>Traveler</strong>
+                                        <span>29 diciembre 2025</span>
+                                    </div>
+                            </div>
+                            <p>Me explicaron cada detalle del vehículo que queria comprar y ellos me acompañaron en la compra, buen servicio me ayudaron bastante.</p>
+                        </div>
+                        <div class="testimonios-card testimonioscard-nomobil">
+                            <div class="user">
+                                <img src="{{ url_for('static', filename='img/sonia.jpg') }}" alt="Sonia Condori">
+                                    <div class="user-info">
+                                        <strong>Sonia Condori</strong>
+                                        <span>08 enero 2025</span>
+                                    </div>
+                            </div>
+                            <p>La tasación fue justa, me dijeron el porqué así y estuvo bien sustentada. Gracias a eso logré vender rápido.</p>
+                        </div> 
+                        <div class="testimonios-card testimonioscard-nomobil">
+                            <div class="user">
+                                <img src="{{ url_for('static', filename='img/Edwin.jpg') }}" alt="Edwin Torres">
+                                    <div class="user-info">
+                                        <strong>Edwin Torres</strong>
+                                        <span>07 diciembre 2025</span>
+                                    </div>
+                            </div>
+                            <p>Logré comprar mi primer auto, muy bonito y en buen estado gracias a Carroqhatu.</p>
+                        </div>                 
+                    </div>
+                </div>
+                <div class="testi-pagination">
+                    <span class="dot active"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+            </div>
+        </section>
+    <!--GRUPO INFERIOR DERECHA-->
+    <section class="comentarios-der">
+        <div class="testimonios-content">
+            <div class="testimoniosdirec der">
+
+                <!--Grupo principal derecha-->
+                <div class="grupo-testi">                    
+                    <div class="testimonios-card">
+                        <div class="user">
+                            <img src="{{ url_for('static', filename='img/victor.jpg') }}" alt="Víctor Quispe M.">
+                            <div class="user-info">
+                                <strong>Víctor Quispe M.</strong>
+                                <span>19 agosto 2025</span>
+                            </div>
+                        </div>
+                        <p>Recibí muchas ofertas y me quede con la mejor. Ganao!! Gracias CarroQhatu!!</p>
+                    </div>
+                    <div class="testimonios-card">
+                        <div class="user">
+                            <img src="{{ url_for('static', filename='img/Elena.jpg') }}" alt="Elena C. M.">
+                            <div class="user-info">
+                                <strong>Elena C. M.</strong>
+                                <span>03 diciembre 2024</span>
+                            </div>
+                        </div>
+                        <p>Recomendado 100%, mi papá está feliz con su nuevo carro...</p>
+                    </div>
+                    <div class="testimonios-card">
+                        <div class="user">
+                            <img src="{{ url_for('static', filename='img/jose.jpg') }}" alt="José Huarachi">
+                            <div class="user-info">
+                                <strong>José098</strong>
+                                <span>01 enero 2025</span>
+                            </div>
+                        </div>
+                        <p>Me ayudaron a vender mi vehiculo a un buen precio, muy recomendado muchas gracias CarroQhatu.</p>
+                    </div>
+                    <div class="testimonios-card">
+                        <div class="user">
+                            <img src="{{ url_for('static', filename='img/anthony.jpg') }}" alt="Anthony Mendoza">
+                            <div class="user-info">
+                                <strong>Anthony_6410</strong>
+                                <span>05 noviembre 2024</span>
+                            </div>
+                        </div>
+                        <p>Mi primer auto, muy bonito y en buen estado gracias a Carroqhatu.</p>
+                    </div> 
+                    <div class="testimonios-card">
+                        <div class="user">
+                            <img src="{{ url_for('static', filename='img/martin.png') }}" alt="Martin Zuñiga">
+                            <div class="user-info">
+                                <strong>Martin Zuñiga</strong>
+                                <span>13 de Octubre 2025</span>
+                            </div>
+                        </div>
+                        <p>Tenia dudas, pero realmente sorprendieron con su eficiencia.</p>
+                    </div> 
+                    <!--DUPLICADO DIRECCIÓN IZQUIERDA-->
+                    <div class="testimonios-card testimonioscard-nomobil">
+                        <div class="user">
+                            <img src="{{ url_for('static', filename='img/victor.jpg') }}" alt="Víctor Quispe M.">
+                            <div class="user-info">
+                                <strong>Víctor Quispe M.</strong>
+                                <span>19 agosto 2025</span>
+                            </div>
+                        </div>
+                        <p>Recibí muchas ofertas y me quede con la mejor. Ganao!! Gracias CarroQhatu!!</p>
+                    </div>
+                    <div class="testimonios-card testimonioscard-nomobil">
+                        <div class="user">
+                            <img src="{{ url_for('static', filename='img/Elena.jpg') }}" alt="Elena C. M.">
+                            <div class="user-info">
+                                <strong>Elena C. M.</strong>
+                                <span>03 diciembre 2024</span>
+                            </div>
+                        </div>
+                        <p>Recomendado 100%, mi papá está feliz con su nuevo carro...</p>
+                    </div>
+                    <div class="testimonios-card testimonioscard-nomobil">
+                        <div class="user">
+                            <img src="{{ url_for('static', filename='img/jose.jpg') }}" alt="José Huarachi">
+                            <div class="user-info">
+                                <strong>José098</strong>
+                                <span>01 enero 2025</span>
+                            </div>
+                        </div>
+                        <p>Me ayudaron a vender mi vehiculo a un buen precio, muy recomendado muchas gracias CarroQhatu.</p>
+                    </div>
+                    <div class="testimonios-card testimonioscard-nomobil">
+                        <div class="user">
+                            <img src="{{ url_for('static', filename='img/anthony.jpg') }}" alt="Anthony Mendoza">
+                            <div class="user-info">
+                                <strong>Anthony_6410</strong>
+                                <span>05 noviembre 2024</span>
+                            </div>
+                        </div>
+                        <p>Mi primer auto, muy bonito y en buen estado gracias a Carroqhatu.</p>
+                    </div> 
+                    <div class="testimonios-card testimonioscard-nomobil">
+                        <div class="user">
+                            <img src="{{ url_for('static', filename='img/martin.png') }}" alt="Martin Zuñiga">
+                            <div class="user-info">
+                                <strong>Martin Zuñiga</strong>
+                                <span>13 de Octubre 2025</span>
+                            </div>
+                        </div>
+                        <p>Tenia dudas, pero realmente sorprendieron con su eficiencia.</p>
+                    </div>               
+                </div>                    
+            </div>                
+            <div class="testi-pagination">
+                <span class="dot active"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </div>
+        </div>
+    </section>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const containers = document.querySelectorAll('.testimoniosdirec');
+
+            containers.forEach((container, index) => {
+                const dots = container.parentElement.querySelectorAll('.dot');
+                const cards = container.querySelectorAll('.testimonios-card');
+
+                container.addEventListener('scroll', () => {
+                    // Calculamos cuál tarjeta está más cerca del centro del contenedor
+                    let closestIndex = 0;
+                    let minDistance = Infinity;
+
+                    cards.forEach((card, i) => {
+                        const rect = card.getBoundingClientRect();
+                        const containerRect = container.getBoundingClientRect();
+                        const distance = Math.abs((rect.left + rect.width / 2) - (containerRect.left + containerRect.width / 2));
+
+                        if (distance < minDistance) {
+                            minDistance = distance;
+                            closestIndex = i;
+                        }
+                    });
+
+                    // Actualizamos los puntos (limitamos al número de puntos que pusiste en el HTML)
+                    dots.forEach((dot, i) => {
+                        if (i === closestIndex % dots.length) {
+                            dot.classList.add('active');
+                        } else {
+                            dot.classList.remove('active');
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+    <!--FIN TESTIMONIOS CLIENTES-->
+  
+        <!--  CARDS POR QUÉ -->
+        <!-- <section class="beneficios-section container">
+            <h2 class="beneficios-title titulo-linea">
+                <span></span>
+               Cómo CarroQhatu te ayuda 
+                <span></span>
+            </h2>
+
+            <div class="beneficios-grid">
+                <!-- CARD 1
+                <div class="beneficio-card">
+                    <img src="{{ url_for('static', filename='img/CQP1.svg') }}" alt="Promoción" class="beneficio-icon">
+                    <h3>Transpariencia y Confianza</h3>
+                    <!-- <p class="d-none">Fortalecemos la confianza en el mercado de vehículos usados con información clara, objetiva y verificable.</p> 
+                </div>
+                <!-- CARD 2 
+                <div class="beneficio-card">
+                    <img src="{{ url_for('static', filename='img/CQP4.svg') }}" alt="Promoción" class="beneficio-icon">
+                    <h3>Inspección Técnica Integral</h3>
+                    <p>Evaluamos el vehículo en aspectos estructurales, mecánicos, electrónicos y legales antes de la compra.</p>
+                </div>
+
+                <!-- CARD 3 
+                <div class="beneficio-card">
+                    <img src="{{ url_for('static', filename='img/CQP2.svg') }}" alt="Inspección" class="beneficio-icon">
+                    <h3>Tasación Justa y Profesional</h3>
+                    <p>Determinamos el valor real del vehículo según su estado, mercado y características, evitando sobreprecios o malas negociaciones.</p>
+                </div>
+
+                <!-- CARD 4 
+                <div class="beneficio-card">
+                    <img src="{{ url_for('static', filename='img/CQP3.svg') }}" alt="Compra y venta" class="beneficio-icon">
+                    <h3>Plataforma Omnicanal</h3>
+                    <p>Conectamos compradores y vendedores mediante canales digitales y presenciales bajo criterios de confianza.</p>
+                </div>
+
+                <!-- CARD 5 
+                 <div class="beneficio-card">
+                    <img src="{{ url_for('static', filename='img/CQP6.svg') }}" alt="comunidad" class="beneficio-icon">
+                    <h3>Comunidad que Respalda</h3>
+                    <p>Contamos con una comunidad digital de más de medio millón de seguidores que impulsa la difusión responsable de vehículos verificados.</p>
+                 </div>
+
+                <!-- CARD 6 
+                 <div class="beneficio-card">
+                    <img src="{{ url_for('static', filename='img/CQP5.svg') }}" alt="comunidad" class="beneficio-icon">
+                    <h3>Acompañamiento Preventivo</h3>
+                    <p>Te asesoramos antes de concretar la compra para evitar malas decisiones.</p>
+                 </div>
+            </div>
+        </section>      -->
+         <!-- FIN CARDS POR QUÉ -->
+
+         
+    <!--INICIO FOOTER-->
+    <footer class="main-footer">    
+        <img class="logo-footer" src="{{ url_for('static', filename='img/CarroQhatuL.png') }}">
+        <div class="footer-grid">        
+            <div class="col-brand">
+                <p>Plataforma líder en la Compra y Venta de Vehículos Usados en el Perú.</p>
+                <div class="social-icons">
+                    <a href="#" class="icon-box"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="#" class="icon-box"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="icon-box"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="icon-box"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+                
+                <div class="col-contact">
+                    <h3 class="h3footer">Contacto</h3>
+                    <div class="contact-links">
+                        <a href="tel:+51972043502"><i class="fa-solid fa-phone"></i> +51 972043502</a>
+                        <a href="mailto:rbm.aracayo@gmail.com"><i class="fa-solid fa-envelope"></i> rbm.aracayo@gmail.com</a>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-center">
+                <div class="center-top">
+                    <div class="sub-col">
+                        <h3 class="h3footer">Explora</h3>
+                        <ul>
+                            <li><a href="about.html">Comprar auto</a></li>
+                            <li><a href="service.html">Vender mi auto</a></li>
+                            <li><a href="#">Catálogo</a></li>
+                        </ul>
+                    </div>
+                    <div class="sub-col">
+                        <h3 class="h3footer">Soporte</h3>
+                        <ul>
+                            <li><a href="#">Términos y Condiciones</a></li>
+                            <li><a href="#">Privacidad</a></li>
+                            <li><a href="#">Libro de Reclamaciones</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="center-bottom">
+                    <h3 class="h3footer destaque-amarillo">¿QUIERES QUE TE CONTACTEMOS?</h3>
+                    <form action="https://formspree.io/f/xzdadwzk" method="POST" class="footer-form">
+                        <input type="text" name="Datos de contacto del cliente:" placeholder="Tu Email o Nº Celular aquí" required>
+                        <button type="submit">ENVIAR</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 CarroQhatu • Todos los Derechos Reservados • EdujoHQ • <a href="https://html.design/">Html Templates</a></p>
+        </div>
+    </footer>
+    <!--FIN FOOTER-->
+
+
+    <!-- REGRESO AL INICIO-->
+    <a href="#" class="btn btn-lg btn-subir btn-lg-square back-to-top"><i class="fa fa-angle-double-up"></i></a>
+
+   <!-- jQuery (solo una versión) -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+    <!-- Bootstrap 4 (solo una versión, con Popper incluido) -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Librerías adicionales -->
+    <script src="{{ url_for('static', filename='lib/easing/easing.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/waypoints/waypoints.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/owlcarousel/owl.carousel.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/tempusdominus/js/moment.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/tempusdominus/js/moment-timezone.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js') }}"></script>
+
+    <!-- Script principal del template -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    
+</div>
+</body>
+
+</html>

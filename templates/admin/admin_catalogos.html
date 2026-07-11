@@ -1,0 +1,90 @@
+{% extends "admin/admin_layout.html" %}
+
+{% block page_title %}Administrar Catálogos{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Left Column: Upload Form -->
+    <div class="col-lg-5 mb-4">
+        <div class="card-admin">
+            <h5 class="text-white mb-3 font-weight-bold"><i class="fa-solid fa-cloud-arrow-up mr-2 text-indigo"></i> Subir Nuevo Catálogo</h5>
+            <p class="text-muted small">Sube archivos PDF con información, precios y detalles de vehículos para que tus clientes los descarguen.</p>
+            
+            <hr style="border-color: var(--border-color); margin: 1.5rem 0;">
+            
+            <form action="{{ url_for('admin_catalogos') }}" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="titulo" class="text-muted font-weight-bold small text-uppercase">Título del Catálogo</label>
+                    <input type="text" id="titulo" name="titulo" class="form-control" style="background-color: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); color: #fff; border-radius: 0.5rem; padding: 0.75rem;" placeholder="Ej: Catálogo SUV Toyota 2026" required>
+                </div>
+                
+                <div class="form-group mt-4">
+                    <label for="catalogo_pdf" class="text-muted font-weight-bold small text-uppercase">Archivo PDF</label>
+                    <div class="custom-file" style="overflow: hidden;">
+                        <input type="file" id="catalogo_pdf" name="catalogo_pdf" class="custom-file-input" accept=".pdf" required onchange="updateFileNameLabel(this)">
+                        <label class="custom-file-label" for="catalogo_pdf" style="background-color: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); color: var(--text-muted); border-radius: 0.5rem; padding: 0.75rem; text-align: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">Seleccionar archivo .pdf...</label>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-admin btn-admin-primary w-100 justify-content-center mt-4">
+                    <i class="fa-solid fa-upload"></i> Subir Catálogo
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Right Column: Existing Catalogs List -->
+    <div class="col-lg-7 mb-4">
+        <div class="card-admin h-100">
+            <h5 class="text-white mb-4 font-weight-bold"><i class="fa-solid fa-folder-open mr-2 text-warning"></i> Catálogos Disponibles</h5>
+            
+            {% if catalogos %}
+            <div class="row">
+                {% for cat in catalogos %}
+                <div class="col-md-6 mb-4">
+                    <div class="p-3 border rounded-3 d-flex flex-column justify-content-between h-100" style="background-color: rgba(15, 23, 42, 0.3); border-color: var(--border-color) !important; border-radius: 0.75rem;">
+                        <div class="text-center py-3" style="font-size: 2.5rem; color: #ef4444;">
+                            <i class="fa-solid fa-file-pdf"></i>
+                        </div>
+                        <div class="text-center">
+                            <h6 class="text-white font-weight-bold mb-1 text-truncate" title="{{ cat.titulo }}">{{ cat.titulo }}</h6>
+                            <p class="text-muted small mb-3">PDF Documento</p>
+                        </div>
+                        <div class="d-flex gap-2 justify-content-center">
+                            <!-- Download Button -->
+                            <a href="{{ cat.archivo_url }}" target="_blank" class="btn-admin btn-admin-secondary py-2 px-3 small" title="Descargar/Ver">
+                                <i class="fa-solid fa-download"></i> Ver
+                            </a>
+                            <!-- Delete Button Form -->
+                            <form action="{{ url_for('admin_delete_catalog', catalogo_id=cat.id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este catálogo permanentemente?');">
+                                <button type="submit" class="btn-admin btn-admin-danger py-2 px-3 small" title="Eliminar">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-5 text-muted my-auto">
+                <i class="fa-solid fa-file-excel fa-2x mb-3 text-muted"></i>
+                <p class="mb-0">No hay catálogos subidos todavía.</p>
+                <p class="small text-muted mt-1">Usa el formulario de la izquierda para agregar uno.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function updateFileNameLabel(input) {
+        const fileName = input.files[0] ? input.files[0].name : "Seleccionar archivo .pdf...";
+        const label = input.nextElementSibling;
+        label.innerText = fileName;
+        label.style.color = "#fff";
+    }
+</script>
+{% endblock %}

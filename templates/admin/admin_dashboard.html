@@ -1,0 +1,170 @@
+{% extends "admin/admin_layout.html" %}
+
+{% block page_title %}Resumen del Sitio{% endblock %}
+
+{% block content %}
+<!-- Metrics Grid -->
+<section class="row mb-4">
+    <!-- Total Cotizaciones -->
+    <div class="col-xl-4 col-md-6 mb-4">
+        <div class="card-admin d-flex justify-content-between align-items-center">
+            <div>
+                <span class="text-muted font-weight-bold text-uppercase" style="font-size: 0.8rem; letter-spacing: 0.05em;">Total Cotizaciones</span>
+                <h2 class="mt-2 mb-0 text-white font-weight-bold">{{ total_cotizaciones }}</h2>
+            </div>
+            <div style="font-size: 2.5rem; color: var(--primary); opacity: 0.8;">
+                <i class="fa-solid fa-car-side"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Solicitudes -->
+    <div class="col-xl-4 col-md-6 mb-4">
+        <div class="card-admin d-flex justify-content-between align-items-center">
+            <div>
+                <span class="text-muted font-weight-bold text-uppercase" style="font-size: 0.8rem; letter-spacing: 0.05em;">Total Solicitudes</span>
+                <h2 class="mt-2 mb-0 text-white font-weight-bold">{{ total_solicitudes }}</h2>
+            </div>
+            <div style="font-size: 2.5rem; color: #3b82f6; opacity: 0.8;">
+                <i class="fa-solid fa-paper-plane"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Solicitudes Pendientes -->
+    <div class="col-xl-4 col-md-6 mb-4">
+        <div class="card-admin d-flex justify-content-between align-items-center">
+            <div>
+                <span class="text-muted font-weight-bold text-uppercase" style="font-size: 0.8rem; letter-spacing: 0.05em;">Pendientes de Contacto</span>
+                <h2 class="mt-2 mb-0 {% if pending_solicitudes > 0 %}text-warning{% else %}text-white{% endif %} font-weight-bold">{{ pending_solicitudes }}</h2>
+            </div>
+            <div style="font-size: 2.5rem; color: var(--accent); opacity: 0.8;">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Main Row (Recent Activity and popular brands) -->
+<div class="row">
+    <!-- Left Column: Recent Activity Tables -->
+    <div class="col-xl-8 mb-4">
+        <!-- Recent Cotizaciones Card -->
+        <div class="card-admin mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="text-white mb-0 font-weight-bold"><i class="fa-solid fa-clock mr-2 text-indigo"></i> Últimas Cotizaciones</h5>
+                <a href="{{ url_for('admin_cotizaciones') }}" class="btn-admin btn-admin-secondary py-1 px-2" style="font-size: 0.8rem;">Ver Todas</a>
+            </div>
+            
+            {% if recent_cotizaciones %}
+            <div class="table-responsive">
+                <table class="table table-admin">
+                    <thead>
+                        <tr>
+                            <th>Vehículo</th>
+                            <th>Año</th>
+                            <th>Kilometraje</th>
+                            <th>Rango Estimado</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in recent_cotizaciones %}
+                        <tr>
+                            <td class="font-weight-bold text-white">{{ c.marca|title }} {{ c.modelo|title }}</td>
+                            <td>{{ c.year }}</td>
+                            <td>{{ "{:,}".format(c.km) }} km</td>
+                            <td style="color: var(--success); font-weight: 600;">S/. {{ "{:,}".format(c.precio_min) }} - S/. {{ "{:,}".format(c.precio_max) }}</td>
+                            <td class="text-muted small">{{ c.created_at }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-4 text-muted">
+                <i class="fa-solid fa-info-circle mr-1"></i> No hay cotizaciones registradas aún.
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Recent Solicitudes Card -->
+        <div class="card-admin">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="text-white mb-0 font-weight-bold"><i class="fa-solid fa-bell mr-2 text-blue"></i> Nuevas Solicitudes</h5>
+                <a href="{{ url_for('admin_solicitudes') }}" class="btn-admin btn-admin-secondary py-1 px-2" style="font-size: 0.8rem;">Ver Todas</a>
+            </div>
+
+            {% if recent_solicitudes %}
+            <div class="table-responsive">
+                <table class="table table-admin">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Contacto</th>
+                            <th>Detalles</th>
+                            <th>Estado</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in recent_solicitudes %}
+                        <tr>
+                            <td class="font-weight-bold text-white">{{ s.nombre }}</td>
+                            <td>{{ s.contacto }}</td>
+                            <td class="text-muted text-truncate" style="max-width: 220px;">
+                                <span class="badge badge-secondary mr-1 text-uppercase">{{ s.tipo }}</span>
+                                {% if s.tipo == 'servicio' %}
+                                    {{ s.datos_parsed.servicio|title }} - {{ s.datos_parsed.mensaje or 'Sin mensaje' }}
+                                {% else %}
+                                    {{ s.datos_parsed.mensaje or 'Sin detalles' }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="status-pill {% if s.estado == 'Pendiente' %}pending{% elif s.estado == 'Contactado' %}contacted{% else %}done{% endif %}">
+                                    <span class="status-dot"></span> {{ s.estado }}
+                                </span>
+                            </td>
+                            <td class="text-muted small">{{ s.created_at }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-4 text-muted">
+                <i class="fa-solid fa-info-circle mr-1"></i> No hay solicitudes recibidas aún.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Right Column: Popular Brands -->
+    <div class="col-xl-4 mb-4">
+        <div class="card-admin h-100">
+            <h5 class="text-white mb-4 font-weight-bold"><i class="fa-solid fa-fire mr-2 text-warning"></i> Marcas más Cotizadas</h5>
+            
+            {% if top_brands %}
+            <div class="d-flex flex-column gap-4 mt-2">
+                {% for brand, count in top_brands %}
+                {% set percent = (count / total_cotizaciones * 100)|round|int %}
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="font-weight-bold text-white">{{ brand }}</span>
+                        <span class="text-muted small">{{ count }} ({% if percent == 0 %}1{% else %}{{ percent }}{% endif %}%)</span>
+                    </div>
+                    <div class="progress" style="height: 8px; background-color: rgba(255, 255, 255, 0.05); border-radius: 4px;">
+                        <div class="progress-bar" role="progressbar" style="width: {{ percent }}%; background-color: var(--primary); border-radius: 4px;" aria-valuenow="{{ percent }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-5 text-muted">
+                <i class="fa-solid fa-info-circle mr-1"></i> Sin estadísticas de marcas disponibles.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

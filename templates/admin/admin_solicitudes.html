@@ -1,0 +1,308 @@
+{% extends "admin/admin_layout.html" %}
+
+{% block page_title %}Solicitudes y Mensajes{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Styling tabs */
+    .nav-tabs-custom {
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 1.5rem;
+    }
+    
+    .nav-tabs-custom .nav-link {
+        color: var(--text-muted);
+        border: none;
+        background: none;
+        font-weight: 600;
+        padding: 0.75rem 1.25rem;
+        transition: all 0.2s ease;
+        border-bottom: 3px solid transparent;
+    }
+    
+    .nav-tabs-custom .nav-link:hover {
+        color: var(--text-main);
+        border-bottom-color: var(--border-color);
+    }
+    
+    .nav-tabs-custom .nav-link.active {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+        background: none;
+    }
+
+    /* Dropdown status styling inside table */
+    .status-select {
+        background-color: rgba(15, 23, 42, 0.5);
+        color: #fff;
+        border: 1px solid var(--border-color);
+        border-radius: 0.5rem;
+        padding: 0.35rem 0.5rem;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: border-color 0.2s ease;
+    }
+    
+    .status-select:focus {
+        border-color: var(--primary);
+        outline: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="card-admin mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+        <div>
+            <h5 class="text-white font-weight-bold mb-1">Gestión de Solicitudes</h5>
+            <p class="text-muted small mb-0">Gestiona los contactos de clientes, solicitudes de tasación y peticiones de inspección.</p>
+        </div>
+        <div>
+            <a href="{{ url_for('admin_export_solicitudes') }}" class="btn-admin btn-admin-primary bg-success" style="border: none;">
+                <i class="fa-solid fa-file-csv"></i> Exportar a CSV
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Tabs Navigation -->
+<ul class="nav nav-tabs nav-tabs-custom" id="solicitudesTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <a class="nav-link active" id="servicios-tab" data-toggle="tab" href="#servicios" role="tab" aria-controls="servicios" aria-selected="true">
+            <i class="fa-solid fa-screwdriver-wrench mr-2"></i> Inspecciones y Servicios ({% set count = solicitudes|selectattr('tipo', 'equalto', 'servicio')|list|length %}{{ count }})
+        </a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" id="contacto-tab" data-toggle="tab" href="#contacto" role="tab" aria-controls="contacto" aria-selected="false">
+            <i class="fa-solid fa-address-book mr-2"></i> Suscripciones Footer ({% set count = solicitudes|selectattr('tipo', 'equalto', 'contacto')|list|length %}{{ count }})
+        </a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" id="whatsapp-tab" data-toggle="tab" href="#whatsapp" role="tab" aria-controls="whatsapp" aria-selected="false">
+            <i class="fa-brands fa-whatsapp mr-2"></i> Prospectos WhatsApp ({% set count = solicitudes|selectattr('tipo', 'equalto', 'whatsapp_lead')|list|length %}{{ count }})
+        </a>
+    </li>
+</ul>
+
+<!-- Tabs Content -->
+<div class="tab-content" id="solicitudesTabsContent">
+    
+    <!-- Tab 1: Servicios e Inspecciones -->
+    <div class="tab-pane fade show active" id="servicios" role="tabpanel" aria-labelledby="servicios-tab">
+        <div class="table-admin-container">
+            {% set s_list = solicitudes|selectattr('tipo', 'equalto', 'servicio')|list %}
+            {% if s_list %}
+            <div class="table-responsive">
+                <table class="table table-admin">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>WhatsApp / Celular</th>
+                            <th>Ciudad</th>
+                            <th>Servicio Solicitado</th>
+                            <th>Mensaje del Cliente</th>
+                            <th>Estado</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in s_list %}
+                        <tr>
+                            <td class="text-muted small">#{{ s.id }}</td>
+                            <td class="font-weight-bold text-white">{{ s.nombre }}</td>
+                            <td>
+                                <a href="https://wa.me/{{ s.contacto|replace(' ', '')|replace('+', '') }}" target="_blank" class="text-success font-weight-bold" style="text-decoration: none;">
+                                    <i class="fa-brands fa-whatsapp"></i> {{ s.contacto }}
+                                </a>
+                            </td>
+                            <td><span class="text-capitalize">{{ s.datos_parsed.ciudad|default('No especificada') }}</span></td>
+                            <td>
+                                <span class="badge badge-info py-1 px-2" style="background-color: var(--primary-glow); color: #818cf8; border: 1px solid rgba(129,140,248,0.2);">
+                                    {% if s.datos_parsed.servicio == 'inspeccion' %}
+                                        Inspección Técnica
+                                    {% elif s.datos_parsed.servicio == 'tasacion' %}
+                                        Tasación de Vehículo
+                                    {% elif s.datos_parsed.servicio == 'busqueda' %}
+                                        Búsqueda Personalizada
+                                    {% else %}
+                                        {{ s.datos_parsed.servicio|default('Servicio') }}
+                                    {% endif %}
+                                </span>
+                            </td>
+                            <td class="text-muted" style="max-width: 250px; font-size: 0.9rem;">{{ s.datos_parsed.mensaje or 'Sin observaciones' }}</td>
+                            <td>
+                                <select class="status-select" onchange="updateStatus('{{ s.id }}', this)">
+                                    <option value="Pendiente" {% if s.estado == 'Pendiente' %}selected{% endif %}>🟡 Pendiente</option>
+                                    <option value="Contactado" {% if s.estado == 'Contactado' %}selected{% endif %}>🔵 Contactado</option>
+                                    <option value="Finalizado" {% if s.estado == 'Finalizado' %}selected{% endif %}>🟢 Finalizado</option>
+                                </select>
+                            </td>
+                            <td class="text-muted small">{{ s.created_at }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5 text-muted">
+                <i class="fa-solid fa-check-circle fa-2x mb-3 text-success"></i>
+                <p class="mb-0">No hay solicitudes de servicios registradas.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Tab 2: Suscripciones y Contacto Rápido -->
+    <div class="tab-pane fade" id="contacto" role="tabpanel" aria-labelledby="contacto-tab">
+        <div class="table-admin-container">
+            {% set c_list = solicitudes|selectattr('tipo', 'equalto', 'contacto')|list %}
+            {% if c_list %}
+            <div class="table-responsive">
+                <table class="table table-admin">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Medio de Contacto (Email / Celular)</th>
+                            <th>Tipo</th>
+                            <th>Estado</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in c_list %}
+                        <tr>
+                            <td class="text-muted small">#{{ c.id }}</td>
+                            <td class="font-weight-bold text-white">
+                                {% if '@' in c.contacto %}
+                                    <a href="mailto:{{ c.contacto }}" class="text-white" style="text-decoration: underline;">{{ c.contacto }}</a>
+                                {% else %}
+                                    <a href="https://wa.me/{{ c.contacto|replace(' ', '')|replace('+', '') }}" target="_blank" class="text-success" style="text-decoration: none;">
+                                        <i class="fa-brands fa-whatsapp"></i> {{ c.contacto }}
+                                    </a>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge badge-warning" style="background-color: rgba(245, 158, 11, 0.1); color: var(--accent);">Suscriptor Footer</span>
+                            </td>
+                            <td>
+                                <select class="status-select" onchange="updateStatus('{{ c.id }}', this)">
+                                    <option value="Pendiente" {% if c.estado == 'Pendiente' %}selected{% endif %}>🟡 Pendiente</option>
+                                    <option value="Contactado" {% if c.estado == 'Contactado' %}selected{% endif %}>🔵 Contactado</option>
+                                    <option value="Finalizado" {% if c.estado == 'Finalizado' %}selected{% endif %}>🟢 Finalizado</option>
+                                </select>
+                            </td>
+                            <td class="text-muted small">{{ c.created_at }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5 text-muted">
+                <i class="fa-solid fa-check-circle fa-2x mb-3 text-success"></i>
+                <p class="mb-0">No hay suscripciones registradas aún.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Tab 3: Prospectos WhatsApp IA -->
+    <div class="tab-pane fade" id="whatsapp" role="tabpanel" aria-labelledby="whatsapp-tab">
+        <div class="table-admin-container">
+            {% set w_list = solicitudes|selectattr('tipo', 'equalto', 'whatsapp_lead')|list %}
+            {% if w_list %}
+            <div class="table-responsive">
+                <table class="table table-admin">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Celular WhatsApp</th>
+                            <th>Interés / Consulta</th>
+                            <th>Detalles / Observaciones</th>
+                            <th>Estado</th>
+                            <th>Fecha de Registro</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for w in w_list %}
+                        <tr>
+                            <td class="text-muted small">#{{ w.id }}</td>
+                            <td class="font-weight-bold text-white">{{ w.nombre }}</td>
+                            <td>
+                                <a href="https://wa.me/{{ w.contacto|replace(' ', '')|replace('+', '') }}" target="_blank" class="text-success font-weight-bold" style="text-decoration: none;">
+                                    <i class="fa-brands fa-whatsapp"></i> {{ w.contacto }}
+                                </a>
+                            </td>
+                            <td>
+                                <span class="badge badge-warning" style="background-color: rgba(245, 158, 11, 0.1); color: var(--accent); border: 1px solid rgba(245, 158, 11, 0.2);">
+                                    {{ w.datos_parsed.servicio|default('Interés General') }}
+                                </span>
+                            </td>
+                            <td class="text-muted" style="max-width: 300px; font-size: 0.9rem;">
+                                {{ w.datos_parsed.mensaje|default('Capturado por Agente IA') }}
+                            </td>
+                            <td>
+                                <select class="status-select" onchange="updateStatus('{{ w.id }}', this)">
+                                    <option value="Pendiente" {% if w.estado == 'Pendiente' %}selected{% endif %}>🟡 Pendiente</option>
+                                    <option value="Contactado" {% if w.estado == 'Contactado' %}selected{% endif %}>🔵 Contactado</option>
+                                    <option value="Finalizado" {% if w.estado == 'Finalizado' %}selected{% endif %}>🟢 Finalizado</option>
+                                </select>
+                            </td>
+                            <td class="text-muted small">{{ w.created_at }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5 text-muted">
+                <i class="fa-brands fa-whatsapp fa-2x mb-3 text-muted"></i>
+                <p class="mb-0">No hay prospectos de WhatsApp registrados aún.</p>
+                <p class="small text-muted mt-1">Usa el simulador de WhatsApp IA para registrar los primeros contactos de prueba.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function updateStatus(solicitudId, selectElement) {
+        const nuevoEstado = selectElement.value;
+        
+        // Show temporary visual loading
+        selectElement.style.opacity = "0.5";
+        
+        fetch(`/admin/api/solicitudes/${solicitudId}/status`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ estado: nuevoEstado }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            selectElement.style.opacity = "1";
+            if (data.success) {
+                // Flash success outline briefly
+                selectElement.style.borderColor = "var(--success)";
+                setTimeout(() => {
+                    selectElement.style.borderColor = "var(--border-color)";
+                }, 1000);
+            } else {
+                alert("Error al actualizar el estado: " + (data.error || "Ocurrió un error"));
+                location.reload();
+            }
+        })
+        .catch(error => {
+            selectElement.style.opacity = "1";
+            console.error('Error:', error);
+            alert("Error de conexión al servidor.");
+            location.reload();
+        });
+    }
+</script>
+{% endblock %}

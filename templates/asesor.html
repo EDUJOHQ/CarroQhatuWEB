@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <title>CARROQHATU | ASESOR IA</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <!-- Favicon -->
+    <link href="{{ url_for('static', filename='img/favicon.ico') }}" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Rubik:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"> 
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Customized Bootstrap Stylesheet -->    
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+
+    <style>
+        /* Asesor IA Premium Chat Styles */
+        :root {
+            --bg-chat-dark: #0b0f19;
+            --bg-glass-card: rgba(30, 41, 59, 0.45);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --primary-glow-ia: rgba(251, 211, 51, 0.15);
+            --text-muted-ia: #94a3b8;
+            --text-main-ia: #f8fafc;
+        }
+
+        body {
+            background-color: var(--bg-chat-dark);
+            color: var(--text-main-ia);
+            font-family: 'Rubik', sans-serif;
+        }
+
+        .asesor-header-banner {
+            padding: 4rem 1rem 2rem;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(251, 211, 51, 0.05) 0%, rgba(11, 15, 25, 0) 100%);
+        }
+
+        .asesor-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            color: #fff;
+            text-transform: uppercase;
+        }
+
+        .asesor-title span {
+            color: var(--amarillo-carroqhatu);
+        }
+
+        .asesor-subtitle {
+            color: var(--text-muted-ia);
+            font-size: 1rem;
+            max-width: 600px;
+            margin: 0.5rem auto 0;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* Chat Container Glassmorphism */
+        .chat-wrapper {
+            max-width: 900px;
+            margin: 0 auto 5rem;
+            background: var(--bg-glass-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-glass);
+            border-radius: 1.25rem;
+            overflow: hidden;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            height: 650px;
+        }
+
+        .chat-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-glass);
+            background-color: rgba(15, 23, 42, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-bot-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .bot-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background-color: var(--amarillo-carroqhatu);
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            box-shadow: 0 0 10px rgba(251, 211, 51, 0.3);
+        }
+
+        .bot-status-name h5 {
+            margin: 0;
+            font-size: 1rem;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .bot-status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: var(--text-muted-ia);
+        }
+
+        .status-dot-pulse {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background-color: #10b981;
+            box-shadow: 0 0 8px #10b981;
+            animation: pulse-dot-ia 2s infinite;
+        }
+
+        @keyframes pulse-dot-ia {
+            0% { transform: scale(0.9); opacity: 0.6; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.6; }
+        }
+
+        /* Message Area */
+        .chat-messages-area {
+            flex-grow: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .message-bubble {
+            max-width: 78%;
+            padding: 0.95rem 1.2rem;
+            border-radius: 1rem;
+            font-size: 0.92rem;
+            line-height: 1.5;
+            position: relative;
+            animation: bubbleFadeIn 0.3s ease-out;
+        }
+
+        @keyframes bubbleFadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-bubble.assistant {
+            background-color: rgba(15, 23, 42, 0.7);
+            border: 1px solid var(--border-glass);
+            color: #f1f5f9;
+            align-self: flex-start;
+            border-top-left-radius: 0.2rem;
+        }
+
+        .message-bubble.user {
+            background-color: var(--amarillo-carroqhatu);
+            color: #000;
+            font-weight: 500;
+            align-self: flex-end;
+            border-top-right-radius: 0.2rem;
+            box-shadow: 0 4px 12px rgba(251, 211, 51, 0.15);
+        }
+
+        .chat-timestamp {
+            font-size: 0.7rem;
+            color: var(--text-muted-ia);
+            margin-top: 4px;
+            display: block;
+            text-align: right;
+        }
+
+        .user .chat-timestamp {
+            color: rgba(0,0,0,0.5);
+        }
+
+        /* Typing indicator styling */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 8px;
+        }
+
+        .typing-indicator span {
+            width: 7px;
+            height: 7px;
+            background-color: #94a3b8;
+            border-radius: 50%;
+            animation: bounce-dots 1.3s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) { animation-delay: 0.15s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes bounce-dots {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* Chips Container */
+        .chips-welcome-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-self: flex-start;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .chips-welcome-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted-ia);
+            font-weight: 700;
+        }
+
+        .chips-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .suggest-chip {
+            background-color: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-glass);
+            border-radius: 2rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.82rem;
+            color: #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .suggest-chip:hover {
+            background-color: rgba(251, 211, 51, 0.1);
+            border-color: var(--amarillo-carroqhatu);
+            color: var(--amarillo-carroqhatu);
+            transform: translateY(-1px);
+        }
+
+        /* Input Area styling */
+        .chat-input-area {
+            padding: 1rem 1.5rem;
+            background-color: rgba(15, 23, 42, 0.5);
+            border-top: 1px solid var(--border-glass);
+        }
+
+        .chat-input-group {
+            display: flex;
+            gap: 12px;
+            background-color: rgba(15, 23, 42, 0.7);
+            border: 1px solid var(--border-glass);
+            border-radius: 2rem;
+            padding: 4px 4px 4px 1.25rem;
+            align-items: center;
+            transition: border-color 0.2s;
+        }
+
+        .chat-input-group:focus-within {
+            border-color: var(--amarillo-carroqhatu);
+        }
+
+        .chat-input-field {
+            flex-grow: 1;
+            background: transparent;
+            border: none;
+            color: #fff;
+            padding: 0.6rem 0;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .chat-input-field::placeholder {
+            color: var(--text-muted-ia);
+        }
+
+        .btn-send-chat {
+            background-color: var(--amarillo-carroqhatu);
+            color: #000;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 10px rgba(251, 211, 51, 0.2);
+        }
+
+        .btn-send-chat:hover {
+            transform: scale(1.05);
+            background-color: #eab308;
+        }
+
+        .btn-send-chat:disabled {
+            background-color: #334155;
+            color: #64748b;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .chat-disclaimer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--text-muted-ia);
+            margin-top: 8px;
+        }
+
+        /* Recommended Vehicles Grid Inside Chat */
+        .recom-vehicles-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+            width: 100%;
+            animation: bubbleFadeIn 0.4s ease-out;
+        }
+
+        .recom-vehicles-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--amarillo-carroqhatu);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .recom-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 12px;
+        }
+
+        .recom-card {
+            background-color: #1e293b;
+            border: 1px solid var(--border-glass);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.2s ease;
+        }
+
+        .recom-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(251, 211, 51, 0.3);
+        }
+
+        .recom-img-wrapper {
+            height: 120px;
+            position: relative;
+            background-color: #0f172a;
+            overflow: hidden;
+        }
+
+        .recom-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .recom-city-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background-color: rgba(0,0,0,0.65);
+            color: #fff;
+            font-size: 0.68rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .recom-body {
+            padding: 0.75rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .recom-car-name {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 2px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .recom-price {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--amarillo-carroqhatu);
+            margin-bottom: 6px;
+        }
+
+        .recom-specs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px;
+            font-size: 0.7rem;
+            color: var(--text-muted-ia);
+            margin-bottom: 8px;
+        }
+
+        .recom-spec-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .btn-recom-wspp {
+            background-color: #10b981;
+            color: #fff;
+            border: none;
+            padding: 0.4rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: background-color 0.2s;
+            width: 100%;
+            margin-top: auto;
+            text-decoration: none !important;
+        }
+
+        .btn-recom-wspp:hover {
+            background-color: #059669;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar Start -->
+    <div class="container-fluid position-relative nav-bar p-0">
+        <div class="position-relative px-lg-1" style="z-index: 1000;" >
+            <nav class="navbar navbar-expand-lg bg-navbarcq navbar-dark py-3 py-lg-0 pl-3 pl-lg-5">
+                <a href="{{ url_for('index') }}" class="navbar-brand">
+                    <img class="imglogo" src="{{ site_config.site_logo|default(url_for('static', filename='img/CarroQhatuL.png')) }}" loading="lazy" alt="Logo">
+                </a>
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
+                    <div class="navbar-nav ml-auto py-0">
+                        <a href="{{ url_for('index') }}" class="nav-item nav-link">Inicio</a>
+                        <a href="{{ url_for('about') }}" class="nav-item nav-link">Compra un auto</a>
+                        <a href="{{ url_for('service') }}" class="nav-item nav-link">Vende tu auto</a>
+                        <a href="{{ url_for('asesor') }}" class="nav-item nav-link active">Asesor IA</a>
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Nosotros</a>
+                            <div class="dropdown-menu rounded-0 m-0">
+                                <a href="{{ url_for('team') }}" class="dropdown-item">Conócenos</a>
+                                <a href="{{ url_for('testimonial') }}" class="dropdown-item">Testimonios</a>
+                                <a href="{{ url_for('booking') }}" class="dropdown-item">Blog</a>
+                                <a href="{{ url_for('contact') }}" class="dropdown-item">Contáctos</a>                        
+                            </div>
+                        </div> 
+                        </div class="nav-item ml-lg-3">
+                            <a href="{{ url_for('contact') }}" class="btn-contacto">
+                                Contáctanos<i class="fa fa-headset"></i>
+                            </a>   
+                        </div>
+                     </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+    <!-- Navbar End -->
+
+    <!-- Header Section -->
+    <header class="asesor-header-banner">
+        <h1 class="asesor-title">Asesor Vehicular <span>Inteligente</span></h1>
+        <p class="asesor-subtitle">Conversa con nuestro asistente con inteligencia artificial y encuentra el vehículo de nuestro inventario que se adapte perfectamente a tu presupuesto y necesidades.</p>
+    </header>
+
+    <!-- Chat Container -->
+    <div class="container px-2 px-sm-3">
+        <div class="chat-wrapper">
+            <!-- Chat Header -->
+            <div class="chat-header">
+                <div class="chat-bot-profile">
+                    <div class="bot-avatar">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div class="bot-status-name">
+                        <h5>Asesor CarroQhatu</h5>
+                        <div class="bot-status-indicator">
+                            <span class="status-dot-pulse"></span>
+                            <span>En línea • Asesorando</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-right d-none d-sm-block">
+                    <span class="badge badge-warning" style="background-color: var(--amarillo-carroqhatu); color: #000; font-size: 0.72rem; font-weight: 700; border-radius: 4px; padding: 4px 8px;">CATÁLOGO EN VIVO</span>
+                </div>
+            </div>
+
+            <!-- Messages Screen -->
+            <div class="chat-messages-area" id="chatWindow">
+                <!-- Welcome Bot Bubble -->
+                <div class="message-bubble assistant">
+                    <p class="mb-0">¡Hola! Bienvenido a CarroQhatu. Soy tu asesor automotriz virtual con Inteligencia Artificial. </p>
+                    <p class="mb-0 mt-2">Dime, ¿qué tipo de vehículo buscas, cuál es tu presupuesto aproximado, o en qué ciudad te encuentras? Estoy listo para recomendarte las mejores opciones de nuestro inventario actual.</p>
+                    
+                    <!-- Chips welcome screen -->
+                    <div class="chips-welcome-container" id="welcomeChips">
+                        <span class="chips-welcome-title">Prueba preguntando:</span>
+                        <div class="chips-list">
+                            <div class="suggest-chip" onclick="sendSuggestion('Recomiéndame una camioneta pickup 4x4 de trabajo')">
+                                <i class="fa-solid fa-truck-pickup mr-1"></i> Camioneta 4x4
+                            </div>
+                            <div class="suggest-chip" onclick="sendSuggestion('Busco un auto familiar en Arequipa')">
+                                <i class="fa-solid fa-location-dot mr-1"></i> Autos en Arequipa
+                            </div>
+                            <div class="suggest-chip" onclick="sendSuggestion('Quiero ver opciones de autos por menos de $18,000')">
+                                <i class="fa-solid fa-dollar-sign mr-1"></i> Menos de $18,000
+                            </div>
+                            <div class="suggest-chip" onclick="sendSuggestion('¿Tienen vehículos con transmisión automática?')">
+                                <i class="fa-solid fa-gears mr-1"></i> Transmisión Automática
+                            </div>
+                        </div>
+                    </div>
+                    <span class="chat-timestamp" id="initTime"></span>
+                </div>
+            </div>
+
+            <!-- Chat Input form -->
+            <div class="chat-input-area">
+                <form id="chatForm" onsubmit="sendMessage(event)">
+                    <div class="chat-input-group">
+                        <input type="text" id="userInput" class="chat-input-field" placeholder="Escribe tu consulta aquí..." autocomplete="off" required>
+                        <button type="submit" id="btnSend" class="btn-send-chat">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </form>
+                <p class="chat-disclaimer">El Asesor IA procesa nuestro stock de vehículos en tiempo real. La disponibilidad de los autos está sujeta a ventas del día.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Start -->
+    <footer class="main-footer">    
+        <img class="logo-footer" src="{{ site_config.site_logo|default(url_for('static', filename='img/CarroQhatuL.png')) }}">
+        <div class="footer-grid">        
+            <div class="col-brand">
+                <p>{{ site_config.about_description|default('Plataforma líder en la Compra y Venta de Vehículos Usados en el Perú.') }}</p>
+                <div class="social-icons">
+                    <a href="#" class="icon-box"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="#" class="icon-box"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="icon-box"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="icon-box"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+                
+                <div class="col-contact">
+                    <h3 class="h3footer">Contacto</h3>
+                    <div class="contact-links">
+                        <a href="tel:{{ site_config.contact_phone|default('+51 972043502')|replace(' ', '') }}"><i class="fa-solid fa-phone"></i> {{ site_config.contact_phone|default('+51 972043502') }}</a>
+                        <a href="mailto:{{ site_config.contact_email|default('rbm.aracayo@gmail.com') }}"><i class="fa-solid fa-envelope"></i> {{ site_config.contact_email|default('rbm.aracayo@gmail.com') }}</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-center">
+                <div class="center-top">
+                    <div class="sub-col">
+                        <h3 class="h3footer">Explora</h3>
+                        <ul>
+                            <li><a href="{{ url_for('about') }}">Comprar auto</a></li>
+                            <li><a href="{{ url_for('service') }}">Vender mi auto</a></li>
+                            <li><a href="{{ url_for('car') }}">Catálogo</a></li>
+                        </ul>
+                    </div>
+                    <div class="sub-col">
+                        <h3 class="h3footer">Soporte</h3>
+                        <ul>
+                            <li><a href="#">Términos y Condiciones</a></li>
+                            <li><a href="#">Privacidad</a></li>
+                            <li><a href="#">Libro de Reclamaciones</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="center-bottom">
+                    <h3 class="h3footer destaque-amarillo">¿QUIERES QUE TE CONTACTEMOS?</h3>
+                    <form action="{{ url_for('footer_contact') }}" method="POST" class="footer-form">
+                        <input type="text" name="contacto" placeholder="Tu Email o Nº Celular aquí" required>
+                        <button type="submit">ENVIAR</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 CarroQhatu • Todos los Derechos Reservados</p>
+        </div>
+    </footer>
+    <!-- Footer End -->
+
+    <!-- JAVASCRIPT & UTILITIES -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Chat State
+        const messagesHistory = [];
+        const chatWindow = document.getElementById('chatWindow');
+        const userInput = document.getElementById('userInput');
+        const btnSend = document.getElementById('btnSend');
+
+        // Set initial timestamp
+        document.getElementById('initTime').innerText = getCurrentTime();
+
+        function getCurrentTime() {
+            const now = new Date();
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // 12 instead of 0
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            return `${hours}:${minutes} ${ampm}`;
+        }
+
+        function scrollToBottom() {
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        // Suggested Chips
+        function sendSuggestion(text) {
+            userInput.value = text;
+            document.getElementById('welcomeChips').style.display = 'none';
+            document.getElementById('chatForm').dispatchEvent(new Event('submit'));
+        }
+
+        // Form Submit Handler
+        function sendMessage(event) {
+            if (event) event.preventDefault();
+            
+            const messageText = userInput.value.trim();
+            if (!messageText) return;
+
+            // Clear welcome chips on first user message
+            const chips = document.getElementById('welcomeChips');
+            if (chips) chips.style.display = 'none';
+
+            // Append User Message to Chat Bubble
+            appendMessageBubble(messageText, 'user');
+            userInput.value = '';
+
+            // Add to messages history
+            messagesHistory.push({ role: 'user', content: messageText });
+
+            // Append Bot Typing Indicator
+            const typingBubble = appendTypingIndicator();
+            scrollToBottom();
+
+            // API Call
+            $.ajax({
+                url: '/api/asesor/chat',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ messages: messagesHistory }),
+                success: function(response) {
+                    // Remove Typing Indicator
+                    typingBubble.remove();
+
+                    if (response.respuesta) {
+                        // Append Assistant message
+                        appendMessageBubble(response.respuesta, 'assistant');
+                        messagesHistory.push({ role: 'assistant', content: response.respuesta });
+
+                        // Render Recommended Cars if any
+                        if ((response.recomendados && response.recomendados.length > 0) || (response.externos && response.externos.length > 0)) {
+                            renderCarCards(response.recomendados || [], response.externos || []);
+                        }
+                    } else {
+                        appendMessageBubble('Ocurrió una inconsistencia en la respuesta del asistente. Por favor intenta de nuevo.', 'assistant');
+                    }
+                    scrollToBottom();
+                },
+                error: function(xhr, status, error) {
+                    typingBubble.remove();
+                    let errMsg = 'No se pudo conectar con el servidor del Asesor IA.';
+                    if (xhr.responseJSON && xhr.responseJSON.error) {
+                        errMsg = xhr.responseJSON.error;
+                    }
+                    appendMessageBubble('Lo siento, en este momento tengo problemas de conexión. Detalle: ' + errMsg, 'assistant');
+                    scrollToBottom();
+                }
+            });
+        }
+
+        function appendMessageBubble(text, role) {
+            const bubble = document.createElement('div');
+            bubble.className = `message-bubble ${role}`;
+            
+            // Reemplazar saltos de línea por <br> para formatear correctamente los saltos del LLM
+            const formattedText = text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            bubble.innerHTML = `<p class="mb-0">${formattedText}</p><span class="chat-timestamp">${getCurrentTime()}</span>`;
+            chatWindow.appendChild(bubble);
+            scrollToBottom();
+            return bubble;
+        }
+
+        function appendTypingIndicator() {
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble assistant';
+            bubble.innerHTML = `<div class="typing-indicator"><span></span><span></span><span></span></div>`;
+            chatWindow.appendChild(bubble);
+            return bubble;
+        }
+
+        function renderCarCards(cars, externalCars) {
+            const container = document.createElement('div');
+            container.className = 'recom-vehicles-container';
+            
+            let html = '';
+
+            // 1. Render internal stock recommendations
+            if (cars && cars.length > 0) {
+                html += `
+                    <div class="recom-vehicles-title">
+                        <i class="fa-solid fa-car-side text-warning"></i> Autos en Stock (CarroQhatu):
+                    </div>
+                    <div class="recom-grid mb-3">
+                `;
+                cars.forEach(car => {
+                    const waNumber = "{{ site_config.contact_phone|default('51972043502')|replace(' ', '')|replace('+', '') }}";
+                    const carTitle = `${car.marca} ${car.modelo} ${car.year}`.toUpperCase();
+                    const waMessage = `Hola CarroQhatu! El Asesor IA me recomendó este auto de su catálogo: ${carTitle} por el precio de ${car.precio}. Quisiera más información sobre el vehículo.`;
+                    const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(waMessage)}`;
+                    const kmFormatted = Number(car.km).toLocaleString('en-US');
+
+                    html += `
+                        <div class="recom-card">
+                            <div class="recom-img-wrapper">
+                                <img src="${car.imagen_url}" class="recom-img" alt="${carTitle}">
+                                <span class="recom-city-badge">${car.ciudad}</span>
+                            </div>
+                            <div class="recom-body">
+                                <h6 class="recom-car-name" title="${carTitle}">${carTitle}</h6>
+                                <div class="recom-price">${car.precio}</div>
+                                <div class="recom-specs">
+                                    <div class="recom-spec-item"><i class="fa-solid fa-road"></i> ${kmFormatted} km</div>
+                                    <div class="recom-spec-item"><i class="fa-solid fa-gears"></i> ${car.transmision}</div>
+                                    <div class="recom-spec-item" style="grid-column: span 2;"><i class="fa-solid fa-circle-info"></i> Motor ${car.motor}</div>
+                                </div>
+                                <a href="${waUrl}" target="_blank" class="btn-recom-wspp">
+                                    <i class="fa-brands fa-whatsapp"></i> Preguntar Stock
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            }
+
+            // 2. Render external market recommendations
+            if (externalCars && externalCars.length > 0) {
+                html += `
+                    <div class="recom-vehicles-title" style="color: #60a5fa !important; margin-top: 10px;">
+                        <i class="fa-solid fa-globe text-primary"></i> Alternativas del Mercado General:
+                    </div>
+                    <div class="recom-grid">
+                `;
+                externalCars.forEach(car => {
+                    const waNumber = "{{ site_config.contact_phone|default('51972043502')|replace(' ', '')|replace('+', '') }}";
+                    const carTitle = `${car.marca} ${car.modelo} ${car.year}`.toUpperCase();
+                    const isNew = car.tipo === '0km';
+                    
+                    const waMessage = `Hola CarroQhatu! El Asesor IA me recomendó este auto del mercado externo (${isNew ? 'Nuevo 0KM' : 'Usado'}): ${carTitle} con precio aproximado de ${car.precio}. Quisiera contratar su servicio de búsqueda e inspección para comprar este modelo de forma segura.`;
+                    const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(waMessage)}`;
+
+                    const badgeText = isNew ? "NUEVO 0KM" : "USADO EXTERNO";
+                    const badgeBg = isNew ? "background-color: #3b82f6;" : "background-color: #64748b;";
+                    const btnText = isNew ? "Ayudar a Comprar" : "Inspeccionar Auto";
+                    const btnColor = isNew ? "background-color: #3b82f6;" : "background-color: #2563eb;";
+
+                    const gradientHeader = `
+                        <div class="d-flex align-items-center justify-content-center flex-column" style="height: 100%; background: linear-gradient(135deg, #1e3a8a, #0f172a); color: #fff; text-align: center; width: 100%;">
+                            <i class="${isNew ? 'fa-solid fa-wand-magic-sparkles' : 'fa-solid fa-magnifying-glass-chart'} fa-2x mb-1" style="color: #60a5fa;"></i>
+                            <span style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; color: #93c5fd;">${badgeText}</span>
+                        </div>
+                    `;
+
+                    html += `
+                        <div class="recom-card" style="border-color: rgba(96, 165, 250, 0.2);">
+                            <div class="recom-img-wrapper">
+                                ${gradientHeader}
+                                <span class="recom-city-badge" style="${badgeBg}">${badgeText}</span>
+                            </div>
+                            <div class="recom-body">
+                                <h6 class="recom-car-name" title="${carTitle}">${carTitle}</h6>
+                                <div class="recom-price" style="color: #60a5fa;">${car.precio}</div>
+                                <div class="recom-specs">
+                                    <div class="recom-spec-item"><i class="fa-solid fa-road"></i> ${car.km}</div>
+                                    <div class="recom-spec-item"><i class="fa-solid fa-gears"></i> ${car.transmision}</div>
+                                    <div class="recom-spec-item" style="grid-column: span 2;"><i class="fa-solid fa-circle-question"></i> Sugerencia de la IA</div>
+                                </div>
+                                <a href="${waUrl}" target="_blank" class="btn-recom-wspp" style="${btnColor}">
+                                    <i class="fa-brands fa-whatsapp"></i> ${btnText}
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            }
+
+            container.innerHTML = html;
+            chatWindow.appendChild(container);
+            scrollToBottom();
+        }
+    </script>
+</body>
+
+</html>

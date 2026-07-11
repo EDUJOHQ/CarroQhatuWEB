@@ -1,0 +1,183 @@
+{% extends "admin/admin_layout.html" %}
+
+{% block page_title %}Catálogo de Vehículos{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Left Column: Add Car Form -->
+    <div class="col-xl-4 mb-4">
+        <div class="card-admin">
+            <h5 class="text-white mb-3 font-weight-bold"><i class="fa-solid fa-square-plus mr-2 text-indigo"></i> Agregar Vehículo</h5>
+            <p class="text-muted small">Registra un nuevo vehículo en el catálogo para que se muestre automáticamente en la web pública.</p>
+            
+            <hr style="border-color: var(--border-color); margin: 1.5rem 0;">
+            
+            <form action="{{ url_for('admin_vehiculos') }}" method="POST" enctype="multipart/form-data">
+                <!-- Marca -->
+                <div class="form-group mb-3">
+                    <label for="marca" class="text-muted font-weight-bold small text-uppercase">Marca</label>
+                    <input type="text" id="marca" name="marca" class="form-control" style="background-color: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); color: #fff; border-radius: 0.5rem; padding: 0.6rem;" placeholder="Ej: Toyota" required>
+                </div>
+                
+                <!-- Modelo -->
+                <div class="form-group mb-3">
+                    <label for="modelo" class="text-muted font-weight-bold small text-uppercase">Modelo</label>
+                    <input type="text" id="modelo" name="modelo" class="form-control" style="background-color: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); color: #fff; border-radius: 0.5rem; padding: 0.6rem;" placeholder="Ej: Hilux 4x4 SRV" required>
+                </div>
+
+                <div class="row">
+                    <!-- Año -->
+                    <div class="col-6 form-group mb-3">
+                        <label for="year" class="text-muted font-weight-bold small text-uppercase">Año</label>
+                        <input type="text" id="year" name="year" class="form-control" style="background-color: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); color: #fff; border-radius: 0.5rem; padding: 0.6rem;" placeholder="Ej: 2021" required>
+                    </div>
+                    <!-- Motor -->
+                    <div class="col-6 form-group mb-3">
+                        <label for="motor" class="text-muted font-weight-bold small text-uppercase">Motor</label>
+                        <input type="text" id="motor" name="motor" class="form-control" style="background-color: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); color: #fff; border-radius: 0.5rem; padding: 0.6rem;" placeholder="Ej: 2.8 cc" required>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Kilometraje -->
+                    <div class="col-6 form-group mb-3">
+                        <label for="km" class="text-muted font-weight-bold small text-uppercase">Kilometraje</label>
+                        <input type="number" id="km" name="km" class="form-control" style="background-color: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); color: #fff; border-radius: 0.5rem; padding: 0.6rem;" placeholder="Ej: 45000" required>
+                    </div>
+                    <!-- Transmisión -->
+                    <div class="col-6 form-group mb-3">
+                        <label for="transmision" class="text-muted font-weight-bold small text-uppercase">Transmisión</label>
+                        <select id="transmision" name="transmision" class="form-control" style="background-color: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); color: #fff; border-radius: 0.5rem; padding: 0.6rem; height: auto;">
+                            <option value="Mecánica">Mecánica</option>
+                            <option value="Automática">Automática</option>
+                            <option value="Secuencial">Secuencial</option>
+                            <option value="Semiautomática">Semiautomática</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Precio -->
+                <div class="form-group mb-3">
+                    <label for="precio" class="text-muted font-weight-bold small text-uppercase">Precio de Venta</label>
+                    <input type="text" id="precio" name="precio" class="form-control" style="background-color: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); color: #fff; border-radius: 0.5rem; padding: 0.6rem;" placeholder="Ej: USD $21,500 o PEN S/.72,000" required>
+                </div>
+
+                <div class="row">
+                    <!-- Ciudad -->
+                    <div class="col-6 form-group mb-3">
+                        <label for="ciudad" class="text-muted font-weight-bold small text-uppercase">Ciudad / Sede</label>
+                        <input type="text" id="ciudad" name="ciudad" class="form-control" style="background-color: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); color: #fff; border-radius: 0.5rem; padding: 0.6rem;" placeholder="Ej: Juliaca" required>
+                    </div>
+                    <!-- Verificación -->
+                    <div class="col-6 form-group mb-3">
+                        <label for="verificado" class="text-muted font-weight-bold small text-uppercase">Verificación</label>
+                        <select id="verificado" name="verificado" class="form-control" style="background-color: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); color: #fff; border-radius: 0.5rem; padding: 0.6rem; height: auto;">
+                            <option value="1">Verificado</option>
+                            <option value="0">No Verificado</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Foto del Auto -->
+                <div class="form-group mb-3">
+                    <label class="text-muted font-weight-bold small text-uppercase">Foto del Vehículo</label>
+                    <div class="custom-file" style="overflow: hidden;">
+                        <input type="file" id="imagen_auto" name="imagen_auto" class="custom-file-input" accept="image/*" required onchange="updateImageFileName(this)">
+                        <label class="custom-file-label" for="imagen_auto" style="background-color: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); color: var(--text-muted); border-radius: 0.5rem; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Subir foto (.jpg, .png)...</label>
+                    </div>
+                </div>
+
+                <!-- Descripción Adicional -->
+                <div class="form-group mb-4">
+                    <label for="descripcion" class="text-muted font-weight-bold small text-uppercase">Descripción Adicional</label>
+                    <textarea id="descripcion" name="descripcion" rows="3" class="form-control" style="background-color: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); color: #fff; border-radius: 0.5rem; padding: 0.6rem;" placeholder="Ej: Único dueño, mantenimientos al día, láminas de seguridad, etc..."></textarea>
+                </div>
+                
+                <button type="submit" class="btn-admin btn-admin-primary w-100 justify-content-center">
+                    <i class="fa-solid fa-car"></i> Publicar en el Catálogo
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Right Column: Catalog List -->
+    <div class="col-xl-8 mb-4">
+        <div class="card-admin h-100">
+            <h5 class="text-white mb-4 font-weight-bold"><i class="fa-solid fa-list mr-2 text-warning"></i> Catálogo de Autos en la Web</h5>
+            
+            {% if vehiculos %}
+            <div class="row">
+                {% for car in vehiculos %}
+                <div class="col-md-6 col-xl-4 mb-4">
+                    <div class="border rounded-3 d-flex flex-column justify-content-between h-100 overflow-hidden" style="background-color: rgba(15, 23, 42, 0.3); border-color: var(--border-color) !important; border-radius: 0.75rem;">
+                        <!-- Car Image header -->
+                        <div style="height: 140px; overflow: hidden; position: relative; background-color: #121824;">
+                            <img src="{{ car.imagen_url }}" alt="{{ car.marca }} {{ car.modelo }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            {% if car.verificado == 1 or car.verificado == True %}
+                            <span class="position-absolute badge badge-warning" style="top: 10px; left: 10px; background-color: var(--accent); color: #000; font-weight: 700; font-size: 0.7rem; border-radius: 0.25rem;">
+                                <i class="fa-solid fa-circle-check"></i> Verificado
+                            </span>
+                            {% else %}
+                            <span class="position-absolute badge badge-secondary" style="top: 10px; left: 10px; background-color: rgba(100, 116, 139, 0.85); color: #fff; font-weight: 700; font-size: 0.7rem; border-radius: 0.25rem;">
+                                <i class="fa-solid fa-circle-xmark"></i> No Verificado
+                            </span>
+                            {% endif %}
+                            <span class="position-absolute badge badge-secondary" style="top: 10px; right: 10px; background-color: rgba(0,0,0,0.6); font-size: 0.7rem;">
+                                {{ car.ciudad|title }}
+                            </span>
+                        </div>
+
+                        <!-- Car body specs -->
+                        <div class="p-3">
+                            <h6 class="text-white font-weight-bold mb-1 text-truncate" title="{{ car.marca }} {{ car.modelo }}">
+                                {{ car.marca|upper }} {{ car.modelo|upper }}
+                            </h6>
+                            <div class="text-muted small mb-2 font-weight-bold" style="color: var(--success) !important; font-size: 0.95rem;">
+                                {{ car.precio }}
+                            </div>
+                            
+                            <div class="d-flex flex-wrap gap-2 text-muted small mt-2" style="font-size: 0.75rem;">
+                                <span class="mr-2"><i class="fa-solid fa-calendar-days mr-1"></i>{{ car.year }}</span>
+                                <span class="mr-2"><i class="fa-solid fa-gauge mr-1"></i>{{ "{:,}".format(car.km) }} km</span>
+                                <span class="mr-2"><i class="fa-solid fa-gears mr-1"></i>{{ car.transmision }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="p-3 border-top d-flex gap-2 justify-content-center" style="border-color: var(--border-color) !important; background-color: rgba(15, 23, 42, 0.2);">
+                            <a href="{{ url_for('car') }}" target="_blank" class="btn-admin btn-admin-secondary py-1 px-2 text-decoration-none" style="font-size: 0.75rem;">
+                                <i class="fa-solid fa-eye"></i> Ver Web
+                            </a>
+                            
+                            <form action="{{ url_for('admin_delete_vehiculo', vehiculo_id=car.id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas quitar este vehículo del catálogo?');" class="mb-0">
+                                <button type="submit" class="btn-admin btn-admin-danger py-1 px-2" style="font-size: 0.75rem;">
+                                    <i class="fa-solid fa-trash-can"></i> Eliminar
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-5 text-muted my-auto">
+                <i class="fa-solid fa-car fa-3x mb-3 text-muted"></i>
+                <p class="mb-0">El catálogo de vehículos está vacío.</p>
+                <p class="small text-muted mt-1">Usa el formulario de la izquierda para publicar tu primer auto.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function updateImageFileName(input) {
+        const fileName = input.files[0] ? input.files[0].name : "Subir foto (.jpg, .png)...";
+        const label = input.nextElementSibling;
+        label.innerText = fileName;
+        label.style.color = "#fff";
+    }
+</script>
+{% endblock %}

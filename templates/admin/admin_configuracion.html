@@ -1,0 +1,98 @@
+{% extends "admin/admin_layout.html" %}
+
+{% block page_title %}Ajustes del Sitio Web{% endblock %}
+
+{% block content %}
+<section class="card-admin mb-4">
+    <h5 class="text-white font-weight-bold mb-1"><i class="fa-solid fa-gears mr-2 text-indigo"></i> Configuración General</h5>
+    <p class="text-muted small mb-0">Modifica la información de contacto, imágenes y videos de la página web de manera dinámica.</p>
+</section>
+
+<form action="{{ url_for('admin_configuracion') }}" method="POST" enctype="multipart/form-data" class="row">
+    <!-- Left Column: Contact and Slogan Info -->
+    <div class="col-lg-7 mb-4">
+        <div class="card-admin h-100">
+            <h6 class="text-white font-weight-bold mb-4"><i class="fa-solid fa-address-card mr-2 text-warning"></i> Información de Contacto y Textos</h6>
+            
+            <!-- Phone Number -->
+            <div class="form-group mb-4">
+                <label for="contact_phone" class="text-muted font-weight-bold small text-uppercase">Teléfono / WhatsApp de Contacto</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text border-0" style="background-color: rgba(15, 23, 42, 0.5); color: var(--text-muted); border-radius: 0.5rem 0 0 0.5rem;"><i class="fa-solid fa-phone"></i></span>
+                    </div>
+                    <input type="text" id="contact_phone" name="contact_phone" class="form-control" style="background-color: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); color: #fff; border-radius: 0 0.5rem 0.5rem 0; padding: 0.75rem;" placeholder="Ej: +51 972043502" value="{{ config.contact_phone|default('') }}">
+                </div>
+            </div>
+            
+            <!-- Email Address -->
+            <div class="form-group mb-4">
+                <label for="contact_email" class="text-muted font-weight-bold small text-uppercase">Correo Electrónico de Contacto</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text border-0" style="background-color: rgba(15, 23, 42, 0.5); color: var(--text-muted); border-radius: 0.5rem 0 0 0.5rem;"><i class="fa-solid fa-envelope"></i></span>
+                    </div>
+                    <input type="email" id="contact_email" name="contact_email" class="form-control" style="background-color: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); color: #fff; border-radius: 0 0.5rem 0.5rem 0; padding: 0.75rem;" placeholder="Ej: contacto@carroqhatu.pe" value="{{ config.contact_email|default('') }}">
+                </div>
+            </div>
+            
+            <!-- Description / About Slogan -->
+            <div class="form-group mb-4">
+                <label for="about_description" class="text-muted font-weight-bold small text-uppercase">Descripción Corta / Slogan (Pie de Página)</label>
+                <textarea id="about_description" name="about_description" rows="4" class="form-control" style="background-color: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); color: #fff; border-radius: 0.5rem; padding: 0.75rem;" placeholder="Slogan descriptivo de la empresa...">{{ config.about_description|default('') }}</textarea>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Right Column: Media Files Uploaders (Logo, Banner) -->
+    <div class="col-lg-5 mb-4">
+        <div class="card-admin d-flex flex-column h-100 justify-content-between">
+            <div>
+                <h6 class="text-white font-weight-bold mb-4"><i class="fa-solid fa-images mr-2 text-indigo"></i> Archivos Multimedia del Sitio</h6>
+                
+                <!-- Website Brand Logo -->
+                <div class="form-group mb-4">
+                    <label class="text-muted font-weight-bold small text-uppercase">Logo Principal de la Marca</label>
+                    <div class="d-flex align-items-center gap-3 mb-3 p-3 rounded" style="background-color: rgba(15, 23, 42, 0.3); border: 1px solid var(--border-color);">
+                        <img src="{{ config.site_logo|default('/static/img/CarroQhatuL.png') }}" alt="Logo Actual" style="max-height: 40px; max-width: 100%; object-fit: contain;">
+                        <span class="text-muted small">Logo actual en uso</span>
+                    </div>
+                    <div class="custom-file">
+                        <input type="file" id="site_logo" name="site_logo" class="custom-file-input" accept="image/*" onchange="updateFileLabel(this)">
+                        <label class="custom-file-label" for="site_logo" style="background-color: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); color: var(--text-muted); border-radius: 0.5rem; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Subir nuevo logo...</label>
+                    </div>
+                </div>
+                
+                <!-- Video Banner -->
+                <div class="form-group mb-4">
+                    <label class="text-muted font-weight-bold small text-uppercase">Video Banner Principal (Home / Contacto)</label>
+                    <div class="d-flex align-items-center gap-2 mb-3 p-2 rounded" style="background-color: rgba(15, 23, 42, 0.3); border: 1px solid var(--border-color); font-size: 0.85rem; color: var(--text-muted);">
+                        <i class="fa-solid fa-circle-play text-indigo" style="font-size: 1.2rem;"></i>
+                        <span class="text-truncate" title="{{ config.banner_video }}">{{ config.banner_video|default('Banner_carroqhatuprin.mp4') }}</span>
+                    </div>
+                    <div class="custom-file">
+                        <input type="file" id="banner_video" name="banner_video" class="custom-file-input" accept="video/mp4" onchange="updateFileLabel(this)">
+                        <label class="custom-file-label" for="banner_video" style="background-color: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); color: var(--text-muted); border-radius: 0.5rem; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Subir nuevo video .mp4...</label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Save button at the bottom of the card -->
+            <button type="submit" class="btn-admin btn-admin-primary w-100 justify-content-center py-3 mt-4">
+                <i class="fa-solid fa-floppy-disk"></i> Guardar Todos los Cambios
+            </button>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function updateFileLabel(input) {
+        const fileName = input.files[0] ? input.files[0].name : "Seleccionar archivo...";
+        const label = input.nextElementSibling;
+        label.innerText = fileName;
+        label.style.color = "#fff";
+    }
+</script>
+{% endblock %}
