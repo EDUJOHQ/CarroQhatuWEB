@@ -146,20 +146,26 @@
                     transform: scale(1.05);
                     box-shadow: 0 6px 20px rgba(251, 211, 51, 0.6);
                 }
+                #cq-chatbot-window, #cq-chatbot-window * {
+                    box-sizing: border-box !important;
+                }
                 #cq-chatbot-window {
-                    position: absolute;
-                    bottom: 80px;
-                    right: 0;
-                    width: 350px;
-                    height: 480px;
-                    background-color: #0b0f19;
-                    border: 1px solid rgba(255, 255, 255, 0.1);
-                    border-radius: 15px;
-                    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+                    position: fixed !important;
+                    bottom: 170px !important;
+                    right: 30px !important;
+                    width: 350px !important;
+                    min-width: 350px !important;
+                    max-width: calc(100vw - 60px) !important;
+                    height: 480px !important;
+                    background-color: #0b0f19 !important;
+                    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                    border-radius: 15px !important;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
                     display: none;
                     flex-direction: column;
                     overflow: hidden;
                     transition: all 0.3s ease;
+                    z-index: 10000 !important;
                 }
                 .cq-chatbot-header {
                     background-color: #1e293b;
@@ -333,7 +339,7 @@
             if (windowEl.is(':visible')) {
                 windowEl.fadeOut(200);
             } else {
-                windowEl.fadeIn(200, function() {
+                windowEl.css('display', 'flex').hide().fadeIn(200, function() {
                     input.focus();
                 });
                 scrollToBottom();
