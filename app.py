@@ -23,12 +23,10 @@ if SUPABASE_URL and SUPABASE_KEY:
         print("WARNING: No se pudo inicializar el cliente de Supabase:", init_err)
 
 def get_gemini_key():
-    key_env = os.getenv("GEMINI_API_KEY")
-    if key_env:
-        return key_env
-    # Obfuscated fallback key to bypass GitHub Push Protection
-    reversed_key = "g3AHlZuibcpE2uIJwNPOMTM0BVj9vgXRrzwowtljuixK6NR8bA.QA"
-    return reversed_key[::-1]
+    key = os.getenv("GEMINI_API_KEY")
+    if not key:
+        raise RuntimeError("Falta configurar GEMINI_API_KEY")
+    return key
 
 # ---------- VISTAS ----------
 @app.route("/")
@@ -587,7 +585,10 @@ def explicar():
         precio_max = data.get('max', 0)
 
         OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-        GEMINI_API_KEY = get_gemini_key()
+        try:
+            GEMINI_API_KEY = get_gemini_key()
+        except RuntimeError:
+            GEMINI_API_KEY = None
         if GEMINI_API_KEY or OPENAI_API_KEY:
             from openai import OpenAI
             if GEMINI_API_KEY:
@@ -1106,7 +1107,10 @@ def api_asesor_chat():
         """
         
         OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-        GEMINI_API_KEY = get_gemini_key()
+        try:
+            GEMINI_API_KEY = get_gemini_key()
+        except RuntimeError:
+            GEMINI_API_KEY = None
         respuesta_texto = ""
         
         if GEMINI_API_KEY or OPENAI_API_KEY:
@@ -1375,7 +1379,7 @@ def send_outgoing_whatsapp(to_number, body_text):
                 "type": "text",
                 "text": {"body": body_text}
             }
-            r = requests.post(url, json=payload, headers=headers)
+            r = requests.post(url, json=payload, headers=headers, timeout=10)
             print("INFO (whatsapp): Respuesta de Meta API:", r.status_code, r.text)
         except Exception as e:
             print("ERROR (whatsapp): Error enviando mensaje por Meta API:", e)
@@ -1390,7 +1394,7 @@ def send_outgoing_whatsapp(to_number, body_text):
                 "To": f"whatsapp:{to_number}" if not to_number.startswith("whatsapp:") else to_number,
                 "Body": body_text
             }
-            r = requests.post(url, data=payload, auth=auth)
+            r = requests.post(url, data=payload, auth=auth, timeout=10)
             print("INFO (whatsapp): Respuesta de Twilio API:", r.status_code, r.text)
         except Exception as e:
             print("ERROR (whatsapp): Error enviando mensaje por Twilio API:", e)
@@ -1449,7 +1453,10 @@ def process_whatsapp_ai_logic(phone_number, sender_name, message_body):
     """
     
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-    GEMINI_API_KEY = get_gemini_key()
+    try:
+        GEMINI_API_KEY = get_gemini_key()
+    except RuntimeError:
+        GEMINI_API_KEY = None
     respuesta_texto = ""
     
     if GEMINI_API_KEY or OPENAI_API_KEY:
@@ -1808,7 +1815,8 @@ def inject_site_config():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.getenv("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
 
  
 
