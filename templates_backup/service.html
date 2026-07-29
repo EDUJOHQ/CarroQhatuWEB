@@ -94,6 +94,7 @@
                 <div class="chevron"></div>
             </div>
             <ul class="dropdown-menu" id="menu-year">
+                <li onclick="selectItem('year', '2026')">2026</li>
                 <li onclick="selectItem('year', '2025')">2025</li>
                 <li onclick="selectItem('year', '2024')">2024</li>
                 <li onclick="selectItem('year', '2023')">2023</li>
@@ -465,7 +466,11 @@
     }
     // ---------- EXPLICAR IA------------------
     function explicarIA() {
-    document.getElementById("ia-respuesta").innerHTML = "Analizando con IA...";
+    const iaBox = document.getElementById("ia-respuesta");
+    if (!iaBox) return;
+
+    iaBox.style.display = "block";
+    iaBox.innerHTML = '<div style="display:flex; align-items:center; gap:8px;"><i class="fa fa-spinner fa-spin" style="color:#4f46e5;"></i> <span>Analizando factores de valoración de tu vehículo...</span></div>';
 
     console.log("Enviando a IA:", ultimaCotizacion);
 
@@ -476,16 +481,15 @@
     })
         .then(res => res.json())
         .then(res => {
-        if (res.respuesta) {
-            document.getElementById("ia-respuesta").innerText = res.respuesta;
-        } else {
-            throw new Error("Respuesta IA inválida");
-        }
+            if (res.respuesta) {
+                iaBox.innerHTML = '<div style="display:flex; gap:10px; align-items:flex-start;"><i class="fa fa-robot" style="color:#4f46e5; font-size:18px; margin-top:2px;"></i><div>' + res.respuesta + '</div></div>';
+            } else {
+                iaBox.innerHTML = '<div style="display:flex; gap:10px; align-items:flex-start;"><i class="fa fa-info-circle" style="color:#4f46e5; font-size:18px; margin-top:2px;"></i><div>El precio estimado se calcula considerando la marca, año de fabricación, kilometraje, estado de conservación y la demanda del mercado peruano en tu ubicación.</div></div>';
+            }
         })
         .catch(err => {
-        console.error(err);
-        document.getElementById("ia-respuesta").innerText =
-            "No se pudo generar la explicación en este momento.";
+            console.error(err);
+            iaBox.innerHTML = '<div style="display:flex; gap:10px; align-items:flex-start;"><i class="fa fa-info-circle" style="color:#4f46e5; font-size:18px; margin-top:2px;"></i><div>El precio estimado se calcula considerando la marca, año de fabricación, kilometraje, estado de conservación y la demanda del mercado peruano en tu ubicación.</div></div>';
         });
     }
 

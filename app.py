@@ -4,6 +4,10 @@ from supabase import create_client
 from dotenv import load_dotenv
 import os
 import db_manager
+from datetime import timedelta
+import hmac
+import time
+from werkzeug.security import check_password_hash
 
 # Load environment variables
 load_dotenv()
@@ -11,6 +15,38 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "carroqhatu_secret_key_2026")
+
+# Configuración de seguridad para cookies de sesión de Flask
+app.config.update(
+    SESSION_COOKIE_SECURE=not app.debug,         # Solo enviar sobre HTTPS en producción (Render)
+    SESSION_COOKIE_HTTPONLY=True,                # Evitar acceso desde scripts JS (XSS)
+    SESSION_COOKIE_SAMESITE='Lax',               # Mitigación contra ataques CSRF
+    PERMANENT_SESSION_LIFETIME=timedelta(hours=2) # Expiración de sesión tras 2 horas de inactividad
+)
+
+# Registro global en memoria para limitar intentos de acceso: { ip: {"attempts": int, "blocked_until": float} }
+FAILED_LOGIN_ATTEMPTS = {}
+
+@app.after_request
+def add_security_headers(response):
+    """Agrega cabeceras HTTP de seguridad robustas a todas las respuestas del servidor."""
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'DENY'
+    response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+    
+    # Content Security Policy compatible pero restrictiva
+    response.headers['Content-Security-Policy'] = (
+        "default-src 'self' https:; "
+        "script-src 'self' 'unsafe-inline' https://code.jquery.com https://stackpath.bootstrapcdn.com https://cdnjs.cloudflare.com; "
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://stackpath.bootstrapcdn.com; "
+        "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; "
+        "img-src 'self' data: https:;"
+    )
+    
+    if not app.debug:
+        response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+        
+    return response
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
@@ -27,6 +63,55 @@ def get_gemini_key():
     if not key:
         raise RuntimeError("Falta configurar GEMINI_API_KEY")
     return key
+
+def get_ai_completion(api_messages, max_tokens=2000, temperature=0.7):
+    """Llama a la API de IA (Gemini u OpenAI) con reintentos multimodelo automáticos."""
+    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+    try:
+        GEMINI_API_KEY = get_gemini_key()
+    except RuntimeError:
+        GEMINI_API_KEY = None
+
+    if not (GEMINI_API_KEY or OPENAI_API_KEY):
+        return None
+
+    from openai import OpenAI
+    
+    if GEMINI_API_KEY:
+        client = OpenAI(
+            api_key=GEMINI_API_KEY,
+            base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
+        )
+        models_to_try = ["gemini-flash-latest", "gemini-2.0-flash", "gemini-pro-latest", "gemini-2.0-flash-lite"]
+        last_error = None
+        for m_name in models_to_try:
+            try:
+                response = client.chat.completions.create(
+                    model=m_name,
+                    messages=api_messages,
+                    max_tokens=max_tokens,
+                    temperature=temperature
+                )
+                content = response.choices[0].message.content
+                if content:
+                    return content
+            except Exception as e:
+                last_error = e
+                print(f"WARNING (app): Intento con modelo {m_name} falló: {e}")
+                continue
+        if last_error:
+            raise last_error
+    else:
+        client = OpenAI(api_key=OPENAI_API_KEY)
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=api_messages,
+            max_tokens=max_tokens,
+            temperature=temperature
+        )
+        return response.choices[0].message.content
+
+    return None
 
 # ---------- VISTAS ----------
 @app.route("/")
@@ -571,93 +656,98 @@ def cotizar():
 @app.route("/explicar", methods=["POST"])
 def explicar():
     try:
-        data = request.json
-        if not data:
-            raise Exception("JSON vacío")
+        data = request.json or {}
 
-        marca = data.get('marca', '')
-        modelo = data.get('modelo', '')
-        year = data.get('year', '')
+        marca = str(data.get('marca', '')).strip()
+        modelo = str(data.get('modelo', '')).strip()
+        year = str(data.get('year', '')).strip()
         km = data.get('km', '')
-        estado = data.get('estado', '')
-        ubicacion = data.get('ubicacion', 'Perú')
+        estado = str(data.get('estado', '')).strip()
+        ubicacion = str(data.get('ubicacion', 'Perú')).strip()
         precio_min = data.get('min', 0)
         precio_max = data.get('max', 0)
 
-        OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-        try:
-            GEMINI_API_KEY = get_gemini_key()
-        except RuntimeError:
-            GEMINI_API_KEY = None
-        if GEMINI_API_KEY or OPENAI_API_KEY:
-            from openai import OpenAI
-            if GEMINI_API_KEY:
-                client = OpenAI(
-                    api_key=GEMINI_API_KEY,
-                    base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
+        # Intento con IA asistida
+        respuesta_ia = None
+        api_messages = [
+            {
+                "role": "system", 
+                "content": (
+                    "Eres un asesor automotriz experto de CarroQhatu en Perú. "
+                    "Responde DIRECTAMENTE con la explicación técnica y comercial en 2 a 3 oraciones completas. "
+                    "REGLA OBLIGATORIA: NO uses saludos como '¡Hola!', NO te presentes, NO uses frases de cortesía como 'Con gusto te explico'. "
+                    "Comienza DIRECTAMENTE explicando los factores del precio."
                 )
-                model_name = "gemini-3.5-flash"
-            else:
-                client = OpenAI(api_key=OPENAI_API_KEY)
-                model_name = "gpt-4o-mini"
-            prompt = f"""
-Explica de forma breve, clara y amigable por qué el precio estimado de este vehículo
-se encuentra en ese rango.
+            },
+            {
+                "role": "user", 
+                "content": f"""
+Explica directamente los factores del precio para este auto:
+- Vehículo: {marca} {modelo} ({year})
+- Kilometraje: {km} km | Estado: {estado} | Ubicación: {ubicacion}
+- Rango de precio: S/. {precio_min:,.0f} a S/. {precio_max:,.0f} soles
 
-Marca: {marca}
-Modelo: {modelo}
-Año: {year}
-Kilometraje: {km}
-Estado: {estado}
-Ubicación: {ubicacion}
-Precio estimado: entre {precio_min} y {precio_max} soles
-
-Aclara que el valor es referencial y puede variar según inspección,
-ubicación y demanda del mercado.
-Máximo 4 líneas.
+Explica la depreciación, demanda en {ubicacion} y estado del vehículo de forma clara y directa en máximo 3 oraciones.
 """
-            response = client.chat.completions.create(
-                model=model_name,
-                messages=[
-                    {"role": "system", "content": "Eres un asesor automotriz experto en el mercado peruano."},
-                    {"role": "user", "content": prompt}
-                ],
-                max_tokens=120
-            )
-            return jsonify({
-                "respuesta": response.choices[0].message.content
-            })
-        else:
-            import random
-            
-            loc_text = f"la región de {ubicacion}" if ubicacion.lower() not in ["otro", "todo el perú", "perú", "seleccionar"] else "el mercado general del Perú"
-            
-            km_num = int(km) if str(km).isdigit() else 80000
-            if km_num < 30000:
-                km_comment = "un kilometraje excepcionalmente bajo, lo cual incrementa notablemente su valor"
-            elif km_num < 80000:
-                km_comment = "un desgaste moderado y kilometraje en rango óptimo para su año"
-            elif km_num < 150000:
-                km_comment = "un kilometraje de uso regular"
-            else:
-                km_comment = "un kilometraje elevado de uso constante, lo cual se compensa con su buen estado de conservación"
+            }
+        ]
 
-            explicaciones = [
-                f"El rango estimado de S/. {precio_min:,} - S/. {precio_max:,} para tu {marca} {modelo} ({year}) se calcula con base en la alta demanda y liquidez de {marca} en {loc_text}. Se ha considerado {km_comment} y un estado de conservación '{estado}'. Este valor es un excelente referente para iniciar la venta de tu auto.",
-                f"¡Excelente vehículo! Tu {marca} {modelo} del año {year} se cotiza entre S/. {precio_min:,} y S/. {precio_max:,} soles en {loc_text}. Este valor refleja el respaldo de marca, {km_comment}, y su estado general '{estado}'. Es una tasación altamente competitiva de acuerdo al mercado real actual.",
-                f"El precio referencial en {loc_text} para este {marca} {modelo} se sitúa en S/. {precio_min:,} - S/. {precio_max:,}. Hemos ponderado {km_comment} y calificado su estado como '{estado}'. Te recordamos que este monto es referencial y se optimizará en base a la inspección mecánica y estructural final de CarroQhatu."
-            ]
-            
-            respuesta_ia = random.choice(explicaciones)
-            return jsonify({
-                "respuesta": respuesta_ia
-            })
+        try:
+            raw_response = get_ai_completion(api_messages, max_tokens=600, temperature=0.7)
+            if raw_response:
+                import re
+                clean = re.sub(r'^(¡?Hola!?\s*|Con gusto\s*|Claro,?\s*|Saludos,?\s*)+', '', raw_response.strip(), flags=re.IGNORECASE).strip()
+                invalid_keywords = ["check", "constraint", "persona", "expert", "direct response", "yes.", "no."]
+                if not any(k in clean.lower() for k in invalid_keywords) and len(clean) > 60:
+                    if clean.endswith('S/.') or clean.endswith('S/'):
+                        clean = ""
+                    elif not clean[-1] in '.!?':
+                        # Evitar cortar en el punto de S/. 
+                        clean_check = clean.replace('S/.', 'S_').replace('s/.', 's_')
+                        last_period = max(clean_check.rfind('.'), clean_check.rfind('!'), clean_check.rfind('?'))
+                        if last_period > 50:
+                            clean = clean[:last_period+1]
+                        else:
+                            clean = ""
+                    if len(clean) > 60:
+                        respuesta_ia = clean
+        except Exception as ai_err:
+            print("WARNING (/explicar AI call exception):", ai_err)
+            respuesta_ia = None
+
+        if respuesta_ia and len(respuesta_ia) > 60:
+            return jsonify({"respuesta": respuesta_ia})
+
+        # --- FALLBACK INTELIGENTE (Garantiza respuesta completa 100% de las veces) ---
+        import random
+        loc_text = f"la región de {ubicacion}" if ubicacion.lower() not in ["otro", "todo el perú", "perú", "seleccionar", "otro / todo el perú"] else "el mercado peruano"
+
+        km_num = int(km) if str(km).isdigit() else 80000
+        if km_num < 30000:
+            km_comment = "un kilometraje bajo que preserva muy bien su valor comercial"
+        elif km_num < 80000:
+            km_comment = "un desgaste moderado y kilometraje idóneo para su uso"
+        elif km_num < 150000:
+            km_comment = "un kilometraje de uso regular y continuo"
+        else:
+            km_comment = "un kilometraje avanzado que ajusta el valor referencial"
+
+        estado_clean = estado if estado.lower() not in ["selecccionar", "seleccionar", ""] else "bueno"
+
+        explicaciones = [
+            f"El precio estimado de S/. {precio_min:,.0f} a S/. {precio_max:,.0f} para tu {marca} {modelo} ({year}) se determina según la oferta y demanda de {marca} en {loc_text}. Se evalúa {km_comment}, la depreciación por año y su estado de conservación '{estado_clean}'. Este monto es una referencia en tiempo real antes de la inspección presencial.",
+            f"Tu {marca} {modelo} ({year}) se cotiza entre S/. {precio_min:,.0f} y S/. {precio_max:,.0f} soles en {loc_text}. Esta tasación pondera la liquidez del modelo, {km_comment} y la condición '{estado_clean}' del vehículo. Te sugerimos realizar la inspección técnica final con nuestros asesores para confirmar el precio definitivo.",
+            f"La estimación de S/. {precio_min:,.0f} - S/. {precio_max:,.0f} refleja el rango de transacción frecuente para un {marca} {modelo} del año {year} en {loc_text}. Se ha considerado {km_comment} y un estado '{estado_clean}'. Es una referencia confiable basada en algoritmos de mercado peruano en vivo."
+        ]
+
+        respuesta_fallback = random.choice(explicaciones)
+        return jsonify({"respuesta": respuesta_fallback})
 
     except Exception as e:
         print("ERROR /explicar:", e)
         return jsonify({
-            "error": "No se pudo generar la explicación en este momento."
-        }), 503
+            "respuesta": "El precio estimado se calcula analizando la marca, modelo, año de fabricación, kilometraje recorrido, estado de conservación y la demanda actual del mercado automotriz peruano. Este valor es una referencia previa a la revisión presencial."
+        })
 
 
 # =====================================================================
@@ -668,11 +758,21 @@ import io
 import csv
 from flask import Response
 
+def get_client_ip():
+    """Obtiene la IP real del cliente detrás de proxies de Render."""
+    x_forwarded_for = request.headers.get("X-Forwarded-For")
+    if x_forwarded_for:
+        return x_forwarded_for.split(",")[0].strip()
+    return request.remote_addr
+
 def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not session.get("admin_logged_in"):
-            return redirect(url_for("admin_login"))
+            # En vez de redirigir a admin_login y exponer la URL oculta,
+            # redirigimos silenciosamente a la página principal pública.
+            flash("Acceso no autorizado.", "warning")
+            return redirect(url_for("index"))
         return f(*args, **kwargs)
     return decorated_function
 
@@ -710,27 +810,87 @@ def save_uploaded_file(file, folder):
     print(f"INFO: Archivo guardado localmente: {local_url}")
     return local_url
 
-@app.route("/admin/login", methods=["GET", "POST"])
+# Ruta dinámica para el inicio de sesión del administrador
+ADMIN_SECRET_SLUG = os.getenv("ADMIN_SECRET_SLUG", "").strip()
+login_path = "/admin/login"
+if ADMIN_SECRET_SLUG:
+    login_path = f"/admin/login-{ADMIN_SECRET_SLUG}"
+
+@app.route(login_path, methods=["GET", "POST"])
 def admin_login():
     if session.get("admin_logged_in"):
         return redirect(url_for("admin_dashboard"))
         
+    expected_2fa_pin = os.getenv("ADMIN_2FA_PIN")
+    show_2fa = bool(expected_2fa_pin)
+    
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
+        pin_2fa = request.form.get("pin_2fa")
+        
+        client_ip = get_client_ip()
+        now = time.time()
+        
+        # 1. Verificar bloqueo temporal por IP
+        if client_ip in FAILED_LOGIN_ATTEMPTS:
+            block_data = FAILED_LOGIN_ATTEMPTS[client_ip]
+            if block_data["blocked_until"] > now:
+                remaining_time = int(block_data["blocked_until"] - now)
+                flash(f"Demasiados intentos fallidos. IP bloqueada temporalmente por {remaining_time} segundos.", "danger")
+                return render_template("admin/admin_login.html", show_2fa=show_2fa)
         
         expected_username = os.getenv("ADMIN_USERNAME", "admin")
         expected_password = os.getenv("ADMIN_PASSWORD", "CarroQhatuAdmin2026")
+        expected_password_hash = os.getenv("ADMIN_PASSWORD_HASH")
         
-        if username == expected_username and password == expected_password:
+        # 2. Validaciones con hmac y hash de contraseñas
+        username_valid = hmac.compare_digest(username.encode('utf-8'), expected_username.encode('utf-8'))
+        
+        password_valid = False
+        if expected_password_hash:
+            try:
+                password_valid = check_password_hash(expected_password_hash, password)
+            except Exception as hash_err:
+                print("WARNING (auth): Error al validar con hash, cayendo a contraseña plana:", hash_err)
+                password_valid = False
+        
+        if not expected_password_hash:
+            password_valid = hmac.compare_digest(password.encode('utf-8'), expected_password.encode('utf-8'))
+            
+        pin_valid = True
+        if expected_2fa_pin:
+            if not pin_2fa:
+                pin_valid = False
+            else:
+                pin_valid = hmac.compare_digest(pin_2fa.encode('utf-8'), expected_2fa_pin.encode('utf-8'))
+                
+        if username_valid and password_valid and pin_valid:
+            # Login correcto: resetear intentos fallidos
+            if client_ip in FAILED_LOGIN_ATTEMPTS:
+                del FAILED_LOGIN_ATTEMPTS[client_ip]
+                
             session["admin_logged_in"] = True
-            session.permanent = True  # Mantener sesión por defecto
+            session.permanent = True  # Mantener sesión por defecto (respetará la expiración de 2 horas)
             flash("Sesión iniciada correctamente.", "success")
             return redirect(url_for("admin_dashboard"))
         else:
-            flash("Usuario o contraseña incorrectos.", "danger")
+            # Login incorrecto: retardo artificial de 2 segundos para ralentizar brute force
+            time.sleep(2)
             
-    return render_template("admin/admin_login.html")
+            # Registrar intento fallido
+            if client_ip not in FAILED_LOGIN_ATTEMPTS:
+                FAILED_LOGIN_ATTEMPTS[client_ip] = {"attempts": 1, "blocked_until": 0}
+            else:
+                FAILED_LOGIN_ATTEMPTS[client_ip]["attempts"] += 1
+                
+            if FAILED_LOGIN_ATTEMPTS[client_ip]["attempts"] >= 5:
+                FAILED_LOGIN_ATTEMPTS[client_ip]["blocked_until"] = now + 900  # Bloqueo por 15 minutos (900 seg)
+                flash("Demasiados intentos fallidos. Tu dirección IP ha sido bloqueada por 15 minutos.", "danger")
+            else:
+                flash("Usuario, contraseña o PIN incorrectos.", "danger")
+                
+    return render_template("admin/admin_login.html", show_2fa=show_2fa)
 
 @app.route("/admin/logout")
 def admin_logout():
@@ -1088,66 +1248,40 @@ def api_asesor_chat():
         for v in vehiculos:
             catalog_str += f"- ID: {v['id']} | {v['marca'].upper()} {v['modelo'].upper()} ({v['year']}) | Precio: {v['precio']} | KM: {v['km']:,} | Motor: {v['motor']} | Transmisión: {v['transmision']} | Sede: {v['ciudad']} | Detalles: {v.get('descripcion', '') or 'Sin descripción adicional.'}\n"
             
-        system_prompt = f"""Eres el Asesor Automotriz Inteligente de CarroQhatu, experto en el mercado de autos en el Perú y con conocimiento general amplio para conversar sobre cualquier tema en tiempo real, tal como lo haría ChatGPT. Tu objetivo es asesorar al usuario con amabilidad, honestidad y de forma fluida.
+        system_prompt = f"""Eres el Asesor Automotriz Inteligente de CarroQhatu, experto mundial en el mercado peruano e internacional, vehículos nuevos 0KM de concesionaria de los años actuales 2026, 2027 y próximos lanzamientos/modelos 2028, así como vehículos seminuevos y usados.
+
+CATÁLOGO INTERNO (Vehículos disponibles en la plataforma de CarroQhatu):
+{catalog_str}
+
+REGLAS DE ATENCIÓN Y RECOMENDACIÓN DE VEHÍCULOS NUEVOS 0KM Y MERCADO GENERAL:
+1. Responde LIBREMENTE a cualquier pregunta sobre autos (marcas, modelos, fichas técnicas, comparaciones, consejos de compra, mantenimiento, etc.).
+2. Si el usuario pregunta por vehículos nuevos 0KM (modelos actuales 2026, 2027 o preventas/próximos lanzamientos 2028), recomiéndale los mejores modelos del mercado actual (ej: Toyota Yaris Cross 2026/2027, Kia Sportage 2026/2027, Hyundai Tucson 2026/2027, Toyota Hilux 4x4 2026/2027, Mazda CX-5 2027/2028, Suzuki Swift 2026, etc.).
+3. Para cada vehículo de afuera o 0KM que recomiendes, DEBES incluir la etiqueta especial:
+   `[EXTERNAL_CAR: Marca | Modelo | Año | Precio aprox | 0KM | Transmisión | 0km | /static/img/nombre_imagen.jpg]`
+   Ejemplos:
+   - `[EXTERNAL_CAR: Toyota | Yaris Cross 0KM | 2026 | USD $21,500 | 0KM | Automática CVT | 0km | /static/img/toyotayaris.jpg]`
+   - `[EXTERNAL_CAR: Kia | Sportage 0KM | 2027 | USD $28,900 | 0KM | Secuencial | 0km | /static/img/KIASPORTAGE2.jpg]`
+   - `[EXTERNAL_CAR: Hyundai | Tucson 0KM | 2027 | USD $29,500 | 0KM | Automática | 0km | /static/img/TUCSON2019.jpg]`
+   - `[EXTERNAL_CAR: Toyota | Hilux SRV 4x4 0KM | 2027 | USD $39,900 | 0KM | Mecánica | 0km | /static/img/HILUX2017-1.jpg]`
+   - `[EXTERNAL_CAR: Mazda | CX-5 0KM | 2028 Preview | USD $31,500 | 0KM | Automática | 0km | /static/img/MAZDACX5.jpg]`
+4. Si recomiendas un auto de nuestro stock interno de la web, usa `[CAR_ID: <id>]`.
+5. Explica al cliente que en CarroQhatu no solo vendemos nuestro stock de la web, sino que también ofrecemos el Servicio de Búsqueda, Asesoría de Compra, e Inspección Mecánica y Legal para ayudarle a adquirir cualquier vehículo nuevo 0KM de concesionaria o seminuevo en el Perú con total seguridad.
+6. MIMETIZACIÓN Y TONO: Sé empático, cercano y amigable. Si habla con jerga peruana ("causa", "chamba", "pata", "fierro", "cañita"), responde con ese mismo dinamismo natural.
+7. Responde siempre en español, de forma clara, amigable y atractiva con viñetas y negritas.
+"""
         
-        CATÁLOGO INTERNO (Vehículos disponibles en la página web de CarroQhatu. Pueden ser nuevos 0KM o de segunda/usados):
-        {catalog_str}
-        
-        Reglas de Asesoramiento y Prioridades:
-        1. Tu prioridad número uno es recomendar vehículos de nuestro CATÁLOGO INTERNO (de la página web) que se ajusten a los requisitos del usuario. Si recomiendas un vehículo de nuestro stock, debes incluir su identificador con el formato `[CAR_ID: <id>]` (ejemplo: `[CAR_ID: 1]`). Identifica si son de segunda (usados) por su kilometraje mayor a 0 o nuevos 0KM si su kilometraje es 0.
-        2. Si el usuario solicita un vehículo (ya sea nuevo 0KM o de segunda/usado) y no contamos con opciones adecuadas en nuestro catálogo interno de la página web, o si quieres ofrecer más opciones complementarias, DEBES recomendar alternativas del mercado general externo (vehículos de afuera, ya sean nuevos 0KM de concesionarias o de segunda/usados de otros propietarios en el mercado).
-        3. Para cada vehículo externo que recomiendes (ya sea nuevo 0km o usado de segunda de afuera), DEBES incluirlo exactamente con el formato `[EXTERNAL_CAR: Marca | Modelo | Año | Precio | Kilometraje o 0KM | Transmisión | Tipo]`.
-           - El campo 'Tipo' debe ser '0km' o 'Usado'.
-           - Ejemplo de 0km: `[EXTERNAL_CAR: Toyota | Yaris | 2026 | USD $18,500 | 0KM | Mecánica | 0km]`
-           - Ejemplo de usado externo: `[EXTERNAL_CAR: Hyundai | Tucson | 2021 | USD $22,000 | 45,000 km | Automática | Usado]`
-        4. Si recomiendas autos externos (nuevos 0km o usados de segunda de afuera), explícale al usuario que CarroQhatu le puede ayudar con el servicio de búsqueda, asesoría de compra, e inspección mecánica y legal integral para asegurar su inversión.
-        5. MIMETIZACIÓN Y TONO: Adáptate de forma dinámica al tono, estilo y vocabulario del usuario en tiempo real. Si el cliente te habla de manera informal, amigable o utilizando jerga peruana (ej. "causa", "chamba", "pata", "cañita", "fierro", "lucas"), respóndele con esa misma cercanía y estilo de manera natural. Si te habla de manera formal y seria, responde con total formalidad. Adapta tu uso de emojis e informalidad al nivel que muestre el usuario.
-        6. CONVERSACIÓN EN TIEMPO REAL: Tienes acceso a responder de cualquier tema general y sostener conversaciones naturales y fluidas sobre cualquier asunto como ChatGPT. Si el usuario te pregunta cosas ajenas al negocio, respóndelas cordialmente, pero intenta sutil y amigablemente guiar de vuelta la conversación hacia el sector de autos o los servicios de CarroQhatu.
-        7. Responde siempre en español, de forma clara, natural y concisa (máximo 3 párrafos cortos por respuesta para mantener el dinamismo del chat).
-        """
-        
-        OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+        respuesta_texto = None
         try:
-            GEMINI_API_KEY = get_gemini_key()
-        except RuntimeError:
-            GEMINI_API_KEY = None
-        respuesta_texto = ""
-        
-        if GEMINI_API_KEY or OPENAI_API_KEY:
-            try:
-                from openai import OpenAI
-                if GEMINI_API_KEY:
-                    client = OpenAI(
-                        api_key=GEMINI_API_KEY,
-                        base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
-                    )
-                    model_name = "gemini-3.5-flash"
-                else:
-                    client = OpenAI(api_key=OPENAI_API_KEY)
-                    model_name = "gpt-4o-mini"
-                
-                # Prepara mensajes para la API
-                api_messages = [{"role": "system", "content": system_prompt}]
-                
-                # Filtramos y agregamos el historial del cliente para evitar prompts maliciosos
-                for msg in user_messages:
-                    if msg.get("role") in ["user", "assistant"]:
-                        api_messages.append({
-                            "role": msg["role"],
-                            "content": msg["content"]
-                        })
-                        
-                response = client.chat.completions.create(
-                    model=model_name,
-                    messages=api_messages,
-                    max_tokens=600,
-                    temperature=0.7
-                )
-                respuesta_texto = response.choices[0].message.content
-            except Exception as call_err:
-                print("WARNING (app): Error llamando a la API de IA (Gemini/OpenAI), usando fallback:", call_err)
-                respuesta_texto = None
-        else:
+            api_messages = [{"role": "system", "content": system_prompt}]
+            for msg in user_messages:
+                if msg.get("role") in ["user", "assistant"]:
+                    api_messages.append({
+                        "role": msg["role"],
+                        "content": msg["content"]
+                    })
+            respuesta_texto = get_ai_completion(api_messages, max_tokens=2000, temperature=0.7)
+        except Exception as call_err:
+            print("WARNING (app): Error llamando a la API de IA (Gemini/OpenAI), usando fallback:", call_err)
             respuesta_texto = None
             
         # Fallback local determinista si no hay API Key o falla la llamada
@@ -1168,8 +1302,13 @@ def api_asesor_chat():
             is_used_request = any(k in last_user_msg for k in ["usado", "segunda", "2da", "recorrido", "kilometraje", "seminuevo", "antiguo", "usados", "ocasion"])
             
             if is_greeting or (is_general and len(last_user_msg.split()) < 6 and not is_new_request and not is_used_request):
+                has_key_configured = bool(GEMINI_API_KEY or OPENAI_API_KEY)
+                if has_key_configured:
+                    note_msg = "¡Hola! ¿Cómo estás? Soy el Asesor Vehicular Inteligente de CarroQhatu.\n\nPuedo ayudarte a buscar vehículos de nuestro catálogo o responder a tus preguntas sobre autos. ¿Buscas un auto nuevo (0KM) o de segunda mano?"
+                else:
+                    note_msg = "¡Hola! ¿Cómo estás? Soy el Asesor Vehicular Inteligente de CarroQhatu.\n\n*(Nota: Para poder conversar libremente sobre cualquier tema y en tiempo real como ChatGPT, por favor configura la clave `GEMINI_API_KEY` o `OPENAI_API_KEY` en el archivo `.env` del proyecto)*.\n\nPor ahora, en este modo básico, puedo ayudarte a buscar vehículos de nuestro catálogo. ¿Buscas un auto nuevo (0KM) o de segunda mano?"
                 return jsonify({
-                    "respuesta": "¡Hola! ¿Cómo estás? Soy el Asesor Vehicular Inteligente de CarroQhatu.\n\n*(Nota: Para poder conversar libremente sobre cualquier tema y en tiempo real como ChatGPT, por favor configura la clave `GEMINI_API_KEY` o `OPENAI_API_KEY` en el archivo `.env` del proyecto)*.\n\nPor ahora, en este modo básico, puedo ayudarte a buscar vehículos de nuestro catálogo. ¿Buscas un auto nuevo (0KM) o de segunda mano?",
+                    "respuesta": note_msg,
                     "recomendados": [],
                     "externos": []
                 })
@@ -1311,7 +1450,7 @@ def api_asesor_chat():
                     })
                     break
                     
-        # Parsear las recomendaciones de autos externos [EXTERNAL_CAR: Marca | Modelo | Año | Precio | Kilometraje | Transmisión | Tipo]
+        # Parsear las recomendaciones de autos externos [EXTERNAL_CAR: Marca | Modelo | Año | Precio | Kilometraje | Transmisión | Tipo | ImagenURL (opcional)]
         externos_list = []
         external_matches = re.findall(r'\[EXTERNAL_CAR:\s*(.*?)\s*\]', respuesta_texto)
         for match in external_matches:
@@ -1324,7 +1463,36 @@ def api_asesor_chat():
                 km = parts[4] if len(parts) >= 5 else "0KM"
                 trans = parts[5] if len(parts) >= 6 else "Mecánica"
                 tipo = parts[6] if len(parts) >= 7 else "0km"
+                imagen_url = parts[7] if len(parts) >= 8 else None
                 
+                # Asignar imagen representativa si no viene o no es relativa/url
+                if not imagen_url or not (imagen_url.startswith('/') or imagen_url.startswith('http')):
+                    m_lower = (marca + " " + modelo).lower()
+                    if "yaris" in m_lower or "toyota" in m_lower:
+                        imagen_url = "/static/img/toyotayaris.jpg"
+                    elif "hilux" in m_lower:
+                        imagen_url = "/static/img/HILUX2017-1.jpg"
+                    elif "tucson" in m_lower or "hyundai" in m_lower:
+                        imagen_url = "/static/img/TUCSON2019.jpg"
+                    elif "sportage" in m_lower or "kia" in m_lower:
+                        imagen_url = "/static/img/KIASPORTAGE2.jpg"
+                    elif "cx-5" in m_lower or "mazda" in m_lower:
+                        imagen_url = "/static/img/MAZDACX5.jpg"
+                    elif "hr-v" in m_lower or "honda" in m_lower:
+                        imagen_url = "/static/img/HONDA-HR-V.jpg"
+                    elif "ecosport" in m_lower or "ford" in m_lower:
+                        imagen_url = "/static/img/Ford_Ecosport.jpg"
+                    elif "navara" in m_lower or "nissan" in m_lower:
+                        imagen_url = "/static/img/NAVARA1.jpg"
+                    elif "audi" in m_lower or "q5" in m_lower:
+                        imagen_url = "/static/img/AUDIQ5-2.png"
+                    elif "tiguan" in m_lower or "volkswagen" in m_lower:
+                        imagen_url = "/static/img/W-TIGUAN1.png"
+                    elif "glory" in m_lower or "dfsk" in m_lower:
+                        imagen_url = "/static/img/DFSKGLORYNEW580.jpg"
+                    else:
+                        imagen_url = "/static/img/cardetail3.svg"
+
                 externos_list.append({
                     "marca": marca,
                     "modelo": modelo,
@@ -1332,7 +1500,8 @@ def api_asesor_chat():
                     "precio": precio,
                     "km": km,
                     "transmision": trans,
-                    "tipo": tipo.lower()
+                    "tipo": tipo.lower(),
+                    "imagen_url": imagen_url
                 })
                     
         # Limpiar las etiquetas del texto para que no se muestren feo en el chat
@@ -1355,12 +1524,143 @@ def api_asesor_chat():
 # =====================================================================
 
 WHATSAPP_SESSIONS = {}
+WHATSAPP_PROCESSED_MESSAGE_IDS = []
+
+def get_evolution_status():
+    """Consulta el estado de conexión de la instancia en Evolution API y la crea/actualiza si es necesario."""
+    evolution_url = os.getenv("EVOLUTION_API_URL")
+    evolution_key = os.getenv("EVOLUTION_API_KEY")
+    evolution_instance = os.getenv("EVOLUTION_INSTANCE_NAME", "carroqhatu")
+    
+    if not evolution_url or not evolution_key:
+        return {"configured": False, "connected": False, "qr": None, "error": "No configurado en el archivo .env"}
+        
+    try:
+        import requests
+        headers = {"apikey": evolution_key}
+        
+        # 1. Verificar estado de conexión de la instancia
+        state_url = f"{evolution_url.rstrip('/')}/instance/connectionState/{evolution_instance}"
+        r_state = requests.get(state_url, headers=headers, timeout=20)
+        
+        if r_state.status_code == 200:
+            state_data = r_state.json()
+            state = state_data.get("instance", {}).get("state", "close")
+            if state == "open":
+                return {"configured": True, "connected": True, "qr": None, "state": "open"}
+        elif r_state.status_code == 404:
+            # Si la instancia no existe en la API, intentar crearla automáticamente
+            create_url = f"{evolution_url.rstrip('/')}/instance/create"
+            payload = {
+                "instanceName": evolution_instance,
+                "token": evolution_key,
+                "qrcode": True,
+                "integration": "WHATSAPP-BAILEYS"
+            }
+            r_create = requests.post(create_url, json=payload, headers=headers, timeout=20)
+            if r_create.status_code != 201:
+                return {"configured": True, "connected": False, "qr": None, "error": f"Error al crear instancia: {r_create.text}"}
+        else:
+            return {"configured": True, "connected": False, "qr": None, "error": f"API respondió HTTP {r_state.status_code}"}
+            
+        # 2. Si no está abierta (open), obtener el código QR
+        connect_url = f"{evolution_url.rstrip('/')}/instance/connect/{evolution_instance}"
+        r_connect = requests.get(connect_url, headers=headers, timeout=20)
+        
+        if r_connect.status_code == 200:
+            connect_data = r_connect.json()
+            # Si ya se conectó justo en esta llamada
+            if connect_data.get("instance", {}).get("state") == "open":
+                return {"configured": True, "connected": True, "qr": None, "state": "open"}
+                
+            # Primero intentar obtener la base64 directamente (API nueva)
+            qr_base64 = connect_data.get("base64")
+            # Si no, intentar del diccionario qrcode (API antigua)
+            if not qr_base64 and "qrcode" in connect_data:
+                qr_base64 = connect_data.get("qrcode", {}).get("base64")
+                
+            if qr_base64:
+                return {"configured": True, "connected": False, "qr": qr_base64, "state": "connecting"}
+                
+        return {"configured": True, "connected": False, "qr": None, "error": "No se pudo obtener el código QR."}
+        
+    except Exception as e:
+        return {"configured": True, "connected": False, "qr": None, "error": str(e)}
+
+def configure_evolution_webhook(webhook_url):
+    """Configura el Webhook en la instancia de Evolution API para recibir mensajes."""
+    evolution_url = os.getenv("EVOLUTION_API_URL")
+    evolution_key = os.getenv("EVOLUTION_API_KEY")
+    evolution_instance = os.getenv("EVOLUTION_INSTANCE_NAME", "carroqhatu")
+    
+    if not evolution_url or not evolution_key:
+        return
+        
+    try:
+        import requests
+        url = f"{evolution_url.rstrip('/')}/webhook/set/{evolution_instance}"
+        headers = {
+            "apikey": evolution_key,
+            "Content-Type": "application/json"
+        }
+        payload = {
+            "webhook": {
+                "enabled": True,
+                "url": webhook_url,
+                "events": ["MESSAGES_UPSERT"]
+            }
+        }
+        r = requests.post(url, json=payload, headers=headers, timeout=20)
+        print("INFO (whatsapp): Configuración Webhook Evolution API:", r.status_code, r.text)
+    except Exception as e:
+        print("ERROR (whatsapp): Error configurando webhook en Evolution API:", e)
+
+def safe_print(*args, **kwargs):
+    try:
+        print(*args, **kwargs)
+    except Exception:
+        try:
+            clean_args = [str(a).encode('ascii', 'xmlcharrefreplace').decode('ascii') for a in args]
+            print(*clean_args, **kwargs)
+        except Exception:
+            pass
 
 def send_outgoing_whatsapp(to_number, body_text):
-    """Envía un mensaje saliente usando la API de Meta Cloud o Twilio si están configuradas."""
+    """Envía un mensaje saliente usando la API de Meta Cloud, Twilio, o Evolution API si están configuradas."""
+    # 1. Evolution API (Alta Prioridad para QR)
+    evolution_url = os.getenv("EVOLUTION_API_URL")
+    evolution_key = os.getenv("EVOLUTION_API_KEY")
+    evolution_instance = os.getenv("EVOLUTION_INSTANCE_NAME", "carroqhatu")
+    
+    if evolution_url and evolution_key:
+        try:
+            import requests
+            # Limpiar el número a E.164 simple (solo dígitos)
+            clean_number = "".join(filter(str.isdigit, to_number))
+            url = f"{evolution_url.rstrip('/')}/message/sendText/{evolution_instance}"
+            headers = {
+                "apikey": evolution_key,
+                "Content-Type": "application/json"
+            }
+            payload = {
+                "number": clean_number,
+                "text": body_text,
+                "options": {
+                    "delay": 1200,
+                    "presence": "composing"
+                }
+            }
+            r = requests.post(url, json=payload, headers=headers, timeout=10)
+            safe_print("INFO (whatsapp): Respuesta de Evolution API:", r.status_code)
+            return
+        except Exception as e:
+            safe_print("ERROR (whatsapp): Error enviando mensaje por Evolution API:", str(e))
+            
+    # 2. Meta Cloud API (Oficial)
     access_token = os.getenv("WHATSAPP_ACCESS_TOKEN")
     phone_id = os.getenv("WHATSAPP_PHONE_NUMBER_ID")
     
+    # 3. Twilio API (Alternativa)
     twilio_sid = os.getenv("TWILIO_ACCOUNT_SID")
     twilio_token = os.getenv("TWILIO_AUTH_TOKEN")
     twilio_from = os.getenv("TWILIO_WHATSAPP_FROM", "whatsapp:+14155238886")
@@ -1380,9 +1680,9 @@ def send_outgoing_whatsapp(to_number, body_text):
                 "text": {"body": body_text}
             }
             r = requests.post(url, json=payload, headers=headers, timeout=10)
-            print("INFO (whatsapp): Respuesta de Meta API:", r.status_code, r.text)
+            safe_print("INFO (whatsapp): Respuesta de Meta API:", r.status_code)
         except Exception as e:
-            print("ERROR (whatsapp): Error enviando mensaje por Meta API:", e)
+            safe_print("ERROR (whatsapp): Error enviando mensaje por Meta API:", str(e))
             
     elif twilio_sid and twilio_token:
         try:
@@ -1395,11 +1695,11 @@ def send_outgoing_whatsapp(to_number, body_text):
                 "Body": body_text
             }
             r = requests.post(url, data=payload, auth=auth, timeout=10)
-            print("INFO (whatsapp): Respuesta de Twilio API:", r.status_code, r.text)
+            safe_print("INFO (whatsapp): Respuesta de Twilio API:", r.status_code)
         except Exception as e:
-            print("ERROR (whatsapp): Error enviando mensaje por Twilio API:", e)
+            safe_print("ERROR (whatsapp): Error enviando mensaje por Twilio API:", str(e))
     else:
-        print(f"INFO (whatsapp): Sandbox/Simulación - Mensaje enviado a {to_number}: {body_text}")
+        safe_print(f"INFO (whatsapp): Sandbox/Simulación - Mensaje enviado a {to_number}")
 
 def process_whatsapp_ai_logic(phone_number, sender_name, message_body):
     """Procesa el mensaje del usuario con OpenAI (o fallback determinista) y extrae prospectos."""
@@ -1457,69 +1757,60 @@ def process_whatsapp_ai_logic(phone_number, sender_name, message_body):
         GEMINI_API_KEY = get_gemini_key()
     except RuntimeError:
         GEMINI_API_KEY = None
-    respuesta_texto = ""
-    
-    if GEMINI_API_KEY or OPENAI_API_KEY:
-        try:
-            from openai import OpenAI
-            if GEMINI_API_KEY:
-                logs.append("Llamando a Gemini API (gemini-3.5-flash)...")
-                client = OpenAI(
-                    api_key=GEMINI_API_KEY,
-                    base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
-                )
-                model_name = "gemini-3.5-flash"
-            else:
-                logs.append("Llamando a OpenAI API (gpt-4o-mini)...")
-                client = OpenAI(api_key=OPENAI_API_KEY)
-                model_name = "gpt-4o-mini"
-            
-            api_messages = [{"role": "system", "content": system_prompt}]
-            for msg in history:
-                api_messages.append(msg)
-                
-            response = client.chat.completions.create(
-                model=model_name,
-                messages=api_messages,
-                max_tokens=300,
-                temperature=0.6
-            )
-            respuesta_texto = response.choices[0].message.content
-            logs.append("Respuesta obtenida con éxito de la API de IA.")
-        except Exception as err:
-            logs.append(f"Error llamando a la API de IA (Gemini/OpenAI): {err}. Activando fallback determinista...")
-            respuesta_texto = None
-    else:
-        logs.append("Ni GEMINI_API_KEY ni OPENAI_API_KEY configuradas. Activando fallback determinista...")
+    api_messages = [{"role": "system", "content": system_prompt}]
+    for msg in history:
+        api_messages.append(msg)
+
+    respuesta_texto = None
+    try:
+        respuesta_texto = get_ai_completion(api_messages, max_tokens=1500, temperature=0.7)
+        if respuesta_texto:
+            logs.append("Respuesta obtenida con éxito de la API de IA (get_ai_completion).")
+    except Exception as err:
+        logs.append(f"Error en get_ai_completion: {err}. Activando fallback inteligente local...")
         respuesta_texto = None
-        
-    # Fallback determinista local
+
+    # Fallback inteligente local conversacional si la IA externa no está disponible
     if not respuesta_texto:
-        logs.append("Ejecutando algoritmo de coincidencia de palabras clave y autocompletado de leads...")
-        msg_lower = message_body.lower()
-        
-        # Búsqueda rápida de stock
+        logs.append("Ejecutando algoritmo conversacional de respaldo...")
+        msg_lower = message_body.lower().strip()
+
+        # 1. Búsqueda de vehículos en stock
         match_car = None
         for v in vehiculos:
             if v['marca'].lower() in msg_lower or v['modelo'].lower() in msg_lower:
                 match_car = v
                 break
-                
-        # Coincidencia de intenciones
-        if any(k in msg_lower for k in ["venta", "vender", "tasar", "tasacion", "tasación", "cotizar"]):
-            respuesta_texto = "¡Hola! En CarroQhatu te ayudamos a vender tu auto rápido y al mejor precio. Hacemos tasación gratuita y lo publicamos en nuestras plataformas. ¿Me podrías indicar tu nombre completo, marca, modelo y año de tu auto para cotizarlo?"
+
+        # 2. Respuestas inteligentes según intención
+        if any(k in msg_lower for k in ["ninguno", "ninguna", "nada", "no me interesa", "no gracias", "no quiero"]):
+            respuesta_texto = "¡Entendido! Si en algún momento necesitas vender, comprar o inspeccionar un vehículo con total seguridad en Perú, con gusto te ayudaremos en CarroQhatu. ¡Que tengas un excelente día! 🚗✨"
+        elif any(k in msg_lower for k in ["empresa", "carroqhatu", "quienes son", "quiénes son", "que hacen", "qué hacen", "servicios", "informacion", "información", "que es esto"]):
+            respuesta_texto = (
+                "En **CarroQhatu** somos la plataforma líder en Perú para la compra, venta e inspección técnica de vehículos.\n\n"
+                "📌 **Nuestros Servicios Principales:**\n"
+                "1️⃣ **Venta de tu auto**: Obtenemos la mejor tasación de mercado y gestionamos la venta por ti.\n"
+                "2️⃣ **Compra de autos**: Contamos con catálogo de seminuevos 100% inspeccionados y verificados.\n"
+                "3️⃣ **Inspección Técnica Integral**: Revisión mecánica, electrónica y legal de cualquier auto que desees comprar.\n\n"
+                "¿Te gustaría cotizar un vehículo o ver nuestro catálogo disponible?"
+            )
+        elif any(k in msg_lower for k in ["venta", "vender", "tasar", "tasacion", "tasación", "cotizar"]):
+            respuesta_texto = "¡Excelente! En CarroQhatu te ayudamos a vender tu auto al mejor precio del mercado peruano. ¿Me podrías indicar tu nombre completo, la marca, modelo y año de tu vehículo para realizar la cotización?"
         elif any(k in msg_lower for k in ["compra", "comprar", "catalogo", "catálogo", "stock", "precio"]):
             if match_car:
-                respuesta_texto = f"¡Hola! Sí, tenemos disponible el **{match_car['marca'].upper()} {match_car['modelo'].upper()} ({match_car['year']})** en nuestra sede de {match_car['ciudad']} por {match_car['precio']}. ¿Te interesa verlo? Déjame tu nombre para agendar una cita."
+                respuesta_texto = f"¡Sí! Tenemos disponible el **{match_car['marca'].upper()} {match_car['modelo'].upper()} ({match_car['year']})** en nuestra sede de {match_car['ciudad']} por {match_car['precio']}. ¿Te gustaría agendar una cita o llamada para verlo?"
             else:
-                respuesta_texto = "¡Hola! Contamos con un amplio stock de vehículos verificados y garantizados. Puedes revisarlos en nuestra web. ¿Qué marca o tipo de vehículo buscas y cuál es tu presupuesto aproximado?"
+                respuesta_texto = "Contamos con un amplio stock de vehículos 100% verificados y garantizados. ¿Qué marca o tipo de vehículo estás buscando y cuál es tu presupuesto aproximado?"
         elif any(k in msg_lower for k in ["inspeccion", "inspección", "revisar", "revisión"]):
-            respuesta_texto = "¡Hola! Ofrecemos inspección mecánica, eléctrica y legal integral para autos del mercado externo. ¿Qué vehículo deseas que revisemos por ti? Por favor déjame tu nombre para cotizar el servicio."
+            respuesta_texto = "Ofrecemos inspección mecánica, electrónica, estructural y legal completa para autos. ¿Qué vehículo deseas que revisemos por ti y en qué ciudad te encuentras?"
         else:
             if match_car:
-                respuesta_texto = f"¡Hola! Contamos con el **{match_car['marca'].upper()} {match_car['modelo'].upper()} ({match_car['year']})** en stock por {match_car['precio']}. ¿Me indicas tu nombre completo para coordinar una llamada con un asesor?"
+                respuesta_texto = f"Contamos con el **{match_car['marca'].upper()} {match_car['modelo'].upper()} ({match_car['year']})** en stock por {match_car['precio']}. ¿Me indicas tu nombre completo para coordinar una llamada con un asesor?"
             else:
-                respuesta_texto = "¡Hola! Te saluda el Asistente IA de CarroQhatu. Te ayudamos a comprar, vender o inspeccionar tu vehículo de forma rápida y segura. ¿Cuál es tu nombre completo y en qué servicio estás interesado?"
+                respuesta_texto = (
+                    "¡Hola! Te saluda CarroQhatu, especialistas en compra, venta e inspección vehicular en Perú.\n\n"
+                    "¿En qué te podemos ayudar hoy? Cuéntanos si deseas **vender tu auto**, **comprar un semi-nuevo** o **solicitar una revisión técnica**."
+                )
                 
         # Detección de leads por fallback
         # 1. Nombre completo
@@ -1599,6 +1890,216 @@ def process_whatsapp_ai_logic(phone_number, sender_name, message_body):
     
     return respuesta_limpia, {"logs": logs, "lead": lead_info}
 
+
+# ---------- COMPARADOR DE VEHÍCULOS ----------
+
+@app.route("/comparador")
+def comparador():
+    vehiculos, _ = db_manager.get_all_vehiculos()
+    return render_template("comparador.html", vehiculos=vehiculos)
+
+@app.route("/api/comparar", methods=["POST"])
+def api_comparar():
+    try:
+        data = request.json
+        if not data or "ids" not in data:
+            return jsonify({"error": "IDs de vehículos no proporcionados"}), 400
+            
+        vehiculo_ids = data["ids"]
+        if not isinstance(vehiculo_ids, list) or len(vehiculo_ids) < 2:
+            return jsonify({"error": "Se requieren al menos 2 vehículos para comparar"}), 400
+            
+        vehiculos = []
+        for v_id in vehiculo_ids:
+            v = db_manager.get_vehiculo_by_id(v_id)
+            if v:
+                vehiculos.append(v)
+                
+        if len(vehiculos) < 2:
+            return jsonify({"error": "No se encontraron suficientes vehículos válidos para comparar"}), 400
+            
+        # Intentar analizar con Gemini
+        OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+        try:
+            GEMINI_API_KEY = get_gemini_key()
+        except RuntimeError:
+            GEMINI_API_KEY = None
+            
+        respuesta_texto = None
+        
+        # Formatear la lista de vehículos para el prompt
+        vehiculos_info = ""
+        for idx, v in enumerate(vehiculos):
+            vehiculos_info += f"VEHÍCULO {idx + 1}:\n"
+            vehiculos_info += f"- ID: {v['id']}\n"
+            vehiculos_info += f"- Marca: {v['marca']}\n"
+            vehiculos_info += f"- Modelo: {v['modelo']}\n"
+            vehiculos_info += f"- Año: {v['year']}\n"
+            vehiculos_info += f"- Precio: {v['precio']}\n"
+            vehiculos_info += f"- Kilometraje: {v['km']:,} km\n"
+            vehiculos_info += f"- Motor: {v['motor']}\n"
+            vehiculos_info += f"- Transmisión: {v['transmision']}\n"
+            vehiculos_info += f"- Sede (Ciudad): {v['ciudad']}\n"
+            vehiculos_info += f"- Estado de conservación: {v['estado']}\n"
+            vehiculos_info += f"- Verificado por CarroQhatu: {'Sí' if v['verificado'] == 1 else 'No'}\n"
+            vehiculos_info += f"- Descripción adicional: {v.get('descripcion') or 'Sin descripción adicional.'}\n\n"
+
+        system_prompt = (
+            "Eres un asesor automotriz experto de CarroQhatu. Tu tarea es realizar una comparación detallada "
+            "y técnica entre los siguientes vehículos seleccionados por un cliente. Al final, debes elegir el "
+            "mejor de todos justificando técnicamente tu decisión (relación calidad-precio, desgaste, equipamiento, "
+            "año de fabricación, etc.).\n\n"
+            "Por favor, estructura tu respuesta con los siguientes puntos, redactados de forma atractiva, en español, "
+            "usando negritas y viñetas de manera profesional:\n"
+            "1. **Resumen de la Comparación**: Breve introducción de los vehículos a comparar.\n"
+            "2. **Tabla / Análisis Técnico Detallado**: Un desglose de ventajas y desventajas de cada uno (Marca, Modelo, Desgaste/KM, Año, etc.).\n"
+            "3. **El Veredicto (El Mejor de Todos)**: Declarar claramente cuál es el mejor vehículo en general para la mayoría de clientes y por qué. "
+            "Opcionalmente, indica si alguno de los otros es mejor para un perfil específico (ej. para trabajo pesado, para ciudad, o por presupuesto ajustado).\n"
+            "4. **Recomendación de CarroQhatu**: Explica que todos nuestros vehículos en catálogo pasan por un proceso de revisión y que el cliente puede "
+            "darle clic al botón de WhatsApp del auto ganador para agendar una prueba de manejo o solicitar asesoría personalizada.\n\n"
+            "Mantén un tono profesional, amigable, transparente y objetivo."
+        )
+
+        try:
+            respuesta_texto = get_ai_completion([
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": f"Por favor, compara estos vehículos:\n\n{vehiculos_info}"}
+            ], max_tokens=2000, temperature=0.7)
+        except Exception as call_err:
+            print("WARNING (app): Error llamando a la API de IA en el comparador, usando fallback:", call_err)
+            respuesta_texto = None
+                
+        # Fallback local programático si falla la IA
+        if not respuesta_texto:
+            # Algoritmo de puntuación determinista
+            # Puntuamos cada auto
+            scores = []
+            for v in vehiculos:
+                score = 0
+                
+                # 1. Puntuación por Año (más nuevo es mejor)
+                try:
+                    yr = int(v['year'])
+                    score += (yr - 2000) * 2
+                except:
+                    score += 20
+                    
+                # 2. Puntuación por Kilometraje (menos es mejor)
+                try:
+                    km = int(v['km'])
+                    if km == 0:
+                        score += 35
+                    elif km < 50000:
+                        score += 25
+                    elif km < 100000:
+                        score += 18
+                    elif km < 150000:
+                        score += 10
+                    elif km < 200000:
+                        score += 5
+                except:
+                    pass
+                    
+                # 3. Puntuación por Precio (más barato es mejor)
+                precio_str = v['precio'].upper()
+                try:
+                    num_val = float(''.join(c for c in precio_str if c.isdigit() or c == '.'))
+                    if 'PEN' in precio_str or 'S/.' in precio_str or 'S/' in precio_str:
+                        usd_equiv = num_val / 3.75
+                    else:
+                        usd_equiv = num_val
+                        
+                    if usd_equiv < 12000:
+                        score += 30
+                    elif usd_equiv < 18000:
+                        score += 22
+                    elif usd_equiv < 25000:
+                        score += 15
+                    elif usd_equiv < 35000:
+                        score += 8
+                    else:
+                        score += 3
+                except:
+                    score += 10
+                    
+                # 4. Verificado
+                if v['verificado'] == 1:
+                    score += 8
+                    
+                # 5. Estado
+                est = v['estado'].lower()
+                if 'excelente' in est:
+                    score += 10
+                elif 'bueno' in est:
+                    score += 6
+                else:
+                    score += 2
+                    
+                scores.append((score, v))
+                
+            scores.sort(key=lambda x: x[0], reverse=True)
+            ganador = scores[0][1]
+            
+            # Construir reporte fallback en HTML / Markdown
+            respuesta_texto = f"### Resumen de la Comparación Técnica\n" \
+                              f"Hemos analizado detalladamente los **{len(vehiculos)} vehículos** seleccionados en base a su precio, kilometraje, año y estado de conservación.\n\n"
+            
+            respuesta_texto += "#### Puntos Clave de cada vehículo:\n"
+            for score_val, v in scores:
+                verif_text = " verificado por nuestro equipo" if v['verificado'] == 1 else ""
+                respuesta_texto += f"- **{v['marca'].upper()} {v['modelo'].upper()} ({v['year']})**: " \
+                                  f"Se encuentra en estado **{v['estado']}**{verif_text}. " \
+                                  f"Tiene un kilometraje de **{v['km']:,} km** y un precio de **{v['precio']}**. " \
+                                  f"(Puntuación de relación calidad-precio: **{score_val} pts**)\n"
+            
+            respuesta_texto += f"\n### 🏆 El Veredicto: El Mejor de Todos\n" \
+                              f"El ganador indiscutible de esta comparación técnica es el **{ganador['marca'].upper()} {ganador['modelo'].upper()} ({ganador['year']})**.\n\n" \
+                              f"**¿Por qué es la mejor opción?**\n"
+            
+            razones = []
+            if ganador['km'] == 0:
+                razones.append("Es un vehículo **0KM completamente nuevo**, lo que garantiza cero desgaste mecánico y la mayor vida útil posible.")
+            elif ganador['km'] < 80000:
+                razones.append(f"Cuenta con un **bajo kilometraje ({ganador['km']:,} km)** para su año de fabricación, lo que minimiza costos de mantenimiento a corto plazo.")
+            
+            try:
+                precios_usd = []
+                for v in vehiculos:
+                    p_str = v['precio'].upper()
+                    num = float(''.join(c for c in p_str if c.isdigit() or c == '.'))
+                    if 'PEN' in p_str or 'S/.' in p_str or 'S/' in p_str:
+                        num = num / 3.75
+                    precios_usd.append(num)
+                ganador_p_str = ganador['precio'].upper()
+                ganador_p = float(''.join(c for c in ganador_p_str if c.isdigit() or c == '.'))
+                if 'PEN' in ganador_p_str or 'S/.' in ganador_p_str or 'S/' in ganador_p_str:
+                    ganador_p = ganador_p / 3.75
+                    
+                if ganador_p <= min(precios_usd):
+                    razones.append("Ofrece el **precio más competitivo** de toda la selección, maximizando el valor de tu presupuesto.")
+            except:
+                pass
+                
+            if ganador['verificado'] == 1:
+                razones.append("Cuenta con la insignia de **Vehículo Verificado**, lo que certifica que ha superado nuestra inspección mecánica y legal rigurosa.")
+                
+            if len(razones) == 0:
+                razones.append("Presenta el equilibrio más sólido entre año de fabricación, kilometraje recorrido y precio de venta.")
+                
+            for razon in razones:
+                respuesta_texto += f"- {razon}\n"
+                
+            respuesta_texto += f"\n**Consejo de CarroQhatu**: Si deseas continuar con el proceso para el **{ganador['marca'].upper()} {ganador['modelo'].upper()}**, puedes presionar el botón de WhatsApp ubicado en su columna correspondiente para chatear directamente con nuestro equipo y separar tu cita."
+            
+        return jsonify({
+            "comparacion": respuesta_texto,
+            "vehiculos": vehiculos
+        })
+        
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route("/api/whatsapp/webhook", methods=["GET"])
 def whatsapp_webhook_verify():
     """Endpoint de verificación GET del webhook de WhatsApp (Meta Cloud API)."""
@@ -1617,50 +2118,94 @@ def whatsapp_webhook_verify():
 
 @app.route("/api/whatsapp/webhook", methods=["POST"])
 def whatsapp_webhook_message():
-    """Webhook de recepción POST para mensajes de WhatsApp (Meta Cloud API y Twilio)."""
+    """Webhook de recepción POST para mensajes de WhatsApp (Meta Cloud API, Twilio y Evolution API)."""
     try:
         content_type = request.headers.get("Content-Type", "")
         phone_number = None
         sender_name = "Cliente WhatsApp"
         message_body = ""
+        message_id = None
         
         if "application/json" in content_type:
             data = request.json
             if not data:
                 return "OK", 200
             
-            entry = data.get("entry", [])
-            if not entry:
-                return "OK", 200
-            changes = entry[0].get("changes", [])
-            if not changes:
-                return "OK", 200
-            value = changes[0].get("value", {})
-            messages = value.get("messages", [])
-            if not messages:
-                return "OK", 200
-            
-            message = messages[0]
-            phone_number = message.get("from") # E.g. "51972043502"
-            message_body = message.get("text", {}).get("body", "")
-            
-            contacts = value.get("contacts", [])
-            if contacts:
-                sender_name = contacts[0].get("profile", {}).get("name", "Cliente WhatsApp")
+            # Detectar Evolution API (MESSAGES_UPSERT)
+            if "event" in data and "instance" in data and "data" in data:
+                event_type = data.get("event")
+                if event_type not in ["messages.upsert", "MESSAGES_UPSERT"]:
+                    return "OK", 200 # Ignorar otros eventos como status, etc.
+                
+                evt_data = data.get("data", {})
+                key = evt_data.get("key", {})
+                from_me = key.get("fromMe", False)
+                if from_me:
+                    # Evitar bucle infinito
+                    return "OK", 200
+                
+                remote_jid = key.get("remoteJid", "")
+                if "@" in remote_jid:
+                    phone_number = remote_jid.split("@")[0]
+                else:
+                    phone_number = remote_jid
+                
+                sender_name = evt_data.get("pushName", "Cliente WhatsApp")
+                message_id = key.get("id")
+                
+                message_obj = evt_data.get("message", {})
+                if not message_obj:
+                    return "OK", 200
+                
+                message_body = message_obj.get("conversation", "")
+                if not message_body and "extendedTextMessage" in message_obj:
+                    message_body = message_obj.get("extendedTextMessage", {}).get("text", "")
+            else:
+                # Es el JSON original de Meta Cloud API
+                entry = data.get("entry", [])
+                if not entry:
+                    return "OK", 200
+                changes = entry[0].get("changes", [])
+                if not changes:
+                    return "OK", 200
+                value = changes[0].get("value", {})
+                messages = value.get("messages", [])
+                if not messages:
+                    return "OK", 200
+                
+                message = messages[0]
+                phone_number = message.get("from") # E.g. "51972043502"
+                message_body = message.get("text", {}).get("body", "")
+                message_id = message.get("id")
+                
+                contacts = value.get("contacts", [])
+                if contacts:
+                    sender_name = contacts[0].get("profile", {}).get("name", "Cliente WhatsApp")
                 
         elif "application/x-www-form-urlencoded" in content_type:
             phone_number = request.form.get("From", "").replace("whatsapp:", "")
             message_body = request.form.get("Body", "")
             sender_name = request.form.get("ProfileName", "Cliente WhatsApp")
+            message_id = request.form.get("MessageSid")
             
         else:
             data = request.json or {}
             phone_number = data.get("from")
             message_body = data.get("body", "")
             sender_name = data.get("name", "Cliente WhatsApp")
+            message_id = data.get("id")
             
         if not phone_number or not message_body:
             return "Datos incompletos", 400
+
+        # Filtro de de-duplicación para evitar respuestas repetidas (retries de Meta/Twilio)
+        if message_id:
+            if message_id in WHATSAPP_PROCESSED_MESSAGE_IDS:
+                print(f"INFO (whatsapp): Ignorando mensaje duplicado ID: {message_id}")
+                return "OK", 200
+            WHATSAPP_PROCESSED_MESSAGE_IDS.append(message_id)
+            if len(WHATSAPP_PROCESSED_MESSAGE_IDS) > 200:
+                WHATSAPP_PROCESSED_MESSAGE_IDS.pop(0)
             
         ia_reply, result = process_whatsapp_ai_logic(phone_number, sender_name, message_body)
         
@@ -1673,35 +2218,51 @@ def whatsapp_webhook_message():
         print("ERROR (whatsapp): Error en webhook POST:", e)
         return str(e), 500
 
-@app.route("/admin/whatsapp/simulador")
+@app.route("/admin/whatsapp")
 @admin_required
-def admin_whatsapp_simulador():
-    """Renderiza el simulador interactivo de WhatsApp en el panel administrativo."""
-    cotizaciones, db_source = db_manager.get_all_cotizaciones()
-    return render_template("admin/admin_whatsapp.html", db_source=db_source)
-
-@app.route("/admin/api/whatsapp/simular_mensaje", methods=["POST"])
-@admin_required
-def admin_whatsapp_simular_mensaje():
-    """Endpoint del simulador administrativo para procesar un mensaje virtual."""
-    try:
-        data = request.json
-        if not data or "message" not in data:
-            return jsonify({"error": "Mensaje no proporcionado"}), 400
-            
-        mensaje = data.get("message", "").strip()
-        celular = data.get("celular", "51999888777").strip()
-        nombre = data.get("nombre", "Cliente de Prueba").strip()
+def admin_whatsapp():
+    """Renderiza el panel de estado y configuración de la integración de WhatsApp Real."""
+    meta_access_token = os.getenv("WHATSAPP_ACCESS_TOKEN")
+    meta_phone_id = os.getenv("WHATSAPP_PHONE_NUMBER_ID")
+    meta_verify_token = os.getenv("WHATSAPP_VERIFY_TOKEN", "carroqhatu_verify_token_2026")
+    
+    twilio_sid = os.getenv("TWILIO_ACCOUNT_SID")
+    twilio_token = os.getenv("TWILIO_AUTH_TOKEN")
+    
+    meta_configured = bool(meta_access_token and meta_phone_id)
+    twilio_configured = bool(twilio_sid and twilio_token)
+    
+    # Obtener el origen de datos activo para el badge del admin layout
+    _, db_source = db_manager.get_all_cotizaciones()
+    
+    # Calcular URL del webhook usando request.url_root
+    webhook_url = request.url_root.rstrip('/') + "/api/whatsapp/webhook"
+    
+    # Configuración de Evolution API
+    evolution_status = get_evolution_status()
+    # Si la Evolution API está configurada, aseguramos que el webhook esté actualizado
+    if evolution_status.get("configured"):
+        configure_evolution_webhook(webhook_url)
         
-        reply, result = process_whatsapp_ai_logic(celular, nombre, mensaje)
-        
-        return jsonify({
-            "reply": reply,
-            "logs": result.get("logs", []),
-            "lead": result.get("lead")
-        })
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    return render_template(
+        "admin/admin_whatsapp.html",
+        db_source=db_source,
+        meta_configured=meta_configured,
+        twilio_configured=twilio_configured,
+        verify_token=meta_verify_token,
+        webhook_url=webhook_url,
+        has_meta_token=bool(meta_access_token),
+        has_meta_phone_id=bool(meta_phone_id),
+        has_twilio_sid=bool(twilio_sid),
+        has_twilio_token=bool(twilio_token),
+        evolution_configured=evolution_status.get("configured"),
+        evolution_connected=evolution_status.get("connected"),
+        evolution_qr=evolution_status.get("qr"),
+        evolution_error=evolution_status.get("error"),
+        evolution_url=os.getenv("EVOLUTION_API_URL"),
+        evolution_key=os.getenv("EVOLUTION_API_KEY"),
+        evolution_instance=os.getenv("EVOLUTION_INSTANCE_NAME", "carroqhatu")
+    )
 
 
 @app.route("/admin/configuracion", methods=["GET", "POST"])

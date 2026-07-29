@@ -420,6 +420,24 @@ def get_all_vehiculos():
     conn.close()
     return rows, "Local SQLite"
 
+def get_vehiculo_by_id(vehiculo_id):
+    """Returns a single vehicle from the catalog by ID."""
+    if is_supabase_available():
+        try:
+            res = supabase.table("vehiculos").select("*").eq("id", vehiculo_id).execute()
+            if res.data:
+                return res.data[0]
+        except Exception as e:
+            pass
+            
+    # SQLite Fallback
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM vehiculos WHERE id = ?", (vehiculo_id,))
+    row = cursor.fetchone()
+    conn.close()
+    return dict(row) if row else None
+
 def delete_vehiculo(vehiculo_id):
     """Deletes a vehicle from the catalog by ID."""
     # SQLite

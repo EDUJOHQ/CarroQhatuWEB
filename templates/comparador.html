@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <title>CARROQHATU | COMPARADOR</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Comparador de vehículos, CarroQhatu, comparar autos, modelos, marcas" name="keywords">
+    <meta content="Compara vehículos de nuestro catálogo en tiempo real con nuestra herramienta de comparación técnica y asesoramiento inteligente." name="description">
+
+    <!-- Favicon -->
+    <link href="{{ url_for('static', filename='img/favicon.ico') }}" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Rubik:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"> 
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Customized Bootstrap Stylesheet -->    
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        :root {
+            --amarillo-carroqhatu: #FBD333;
+            --oscuro-carroqhatu: #1b262c;
+            --texto-muted: #64748b;
+        }
+
+        body {
+            font-family: 'Rubik', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+
+        /* Hero Banner */
+        .comparador-header-banner {
+            padding: 5rem 1rem 3rem;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(251, 211, 51, 0.08) 0%, rgba(248, 250, 252, 0) 100%), #0f172a;
+            color: white;
+        }
+
+        .comparador-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .comparador-title span {
+            color: var(--amarillo-carroqhatu);
+        }
+
+        .comparador-subtitle {
+            color: #94a3b8;
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0.5rem auto 0;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* Especificaciones */
+        .spec-label-item {
+            padding: 14px 15px;
+            border-bottom: 1px solid #e2e8f0;
+            font-weight: 600;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            min-height: 58px;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .spec-value-item {
+            padding: 14px 15px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #475569;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 58px;
+            background: #fff;
+            transition: background-color 0.2s;
+        }
+
+        .vehicle-compare-card {
+            border-radius: 14px;
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
+            overflow: hidden;
+            background: white;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid #e2e8f0;
+        }
+
+        .vehicle-compare-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 35px rgba(15, 23, 42, 0.12);
+            border-color: rgba(251, 211, 51, 0.5);
+        }
+
+        .select-compare {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .select-compare:focus {
+            border-color: var(--amarillo-carroqhatu);
+            box-shadow: 0 0 0 3px rgba(251, 211, 51, 0.2);
+        }
+
+        .badge-verificado {
+            background-color: #10b981;
+            color: white;
+            font-size: 0.75rem;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .badge-no-verificado {
+            background-color: #94a3b8;
+            color: white;
+            font-size: 0.75rem;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-recom-wspp {
+            background-color: #25d366;
+            color: white !important;
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 0.95rem;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2);
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .btn-recom-wspp:hover {
+            background-color: #128c7e;
+            transform: scale(1.02);
+            box-shadow: 0 6px 16px rgba(37, 211, 102, 0.3);
+        }
+
+        /* AI Recommendation Area */
+        .ai-card-glow {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            border: 1px solid rgba(251, 211, 51, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-card-glow::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(251, 211, 51, 0.05) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .btn-analizar-premium {
+            background-color: var(--amarillo-carroqhatu);
+            color: #000 !important;
+            font-weight: bold;
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 12px 36px;
+            border-radius: 30px;
+            box-shadow: 0 10px 20px rgba(251, 211, 51, 0.2);
+            border: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-analizar-premium:hover:not(:disabled) {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 15px 30px rgba(251, 211, 51, 0.35);
+        }
+
+        .btn-analizar-premium:disabled {
+            background-color: #475569;
+            color: #94a3b8 !important;
+            box-shadow: none;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .bot-avatar-result {
+            box-shadow: 0 0 15px rgba(251, 211, 51, 0.4);
+            animation: pulse-avatar 2s infinite;
+        }
+
+        @keyframes pulse-avatar {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .ai-result-content {
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            background: white;
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+        }
+        
+        .ai-result-content h3 {
+            border-bottom: 2px solid var(--amarillo-carroqhatu);
+            padding-bottom: 8px;
+            display: inline-block;
+        }
+
+        .ai-result-content li {
+            list-style-type: none;
+            position: relative;
+            padding-left: 24px;
+        }
+
+        .ai-result-content li::before {
+            content: '✦';
+            position: absolute;
+            left: 0;
+            color: var(--amarillo-carroqhatu);
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar Start -->
+    <div class="container-fluid position-relative nav-bar p-0">
+        <div class="position-relative px-lg-1" style="z-index: 1000;">
+            <nav class="navbar navbar-expand-lg bg-navbarcq navbar-dark py-3 py-lg-0 pl-3 pl-lg-5">
+                <a href="{{ url_for('index') }}" class="navbar-brand">
+                    <img class="imglogo" src="{{ site_config.site_logo|default(url_for('static', filename='img/CarroQhatuL.png')) }}" loading="lazy" alt="Logo">
+                </a>
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
+                    <div class="navbar-nav ml-auto py-0">
+                        <a href="{{ url_for('index') }}" class="nav-item nav-link">Inicio</a>
+                        <a href="{{ url_for('about') }}" class="nav-item nav-link">Compra un auto</a>
+                        <a href="{{ url_for('service') }}" class="nav-item nav-link">Vende tu auto</a>
+                        <a href="{{ url_for('asesor') }}" class="nav-item nav-link">Asesor IA</a>
+                        <a href="{{ url_for('comparador') }}" class="nav-item nav-link active">Comparador</a>
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Nosotros</a>
+                            <div class="dropdown-menu rounded-0 m-0">
+                                <a href="{{ url_for('team') }}" class="dropdown-item">Conócenos</a>
+                                <a href="{{ url_for('testimonial') }}" class="dropdown-item">Testimonios</a>
+                                <a href="{{ url_for('booking') }}" class="dropdown-item">Blog</a>
+                                <a href="{{ url_for('contact') }}" class="dropdown-item">Contáctos</a>                        
+                            </div>
+                        </div> 
+                        <div class="nav-item ml-lg-3">
+                            <a href="{{ url_for('contact') }}" class="btn-contacto">
+                                Contáctanos<i class="fa fa-headset ml-2"></i>
+                            </a>   
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+    <!-- Navbar End -->
+
+    <!-- Header Banner Start -->
+    <div class="comparador-header-banner">
+        <div class="container py-3">
+            <h1 class="comparador-title">Comparador de <span>Vehículos</span></h1>
+            <p class="comparador-subtitle">Herramienta para comparar vehículos y facilitar la toma de decisiones de los clientes.</p>
+        </div>
+    </div>
+    <!-- Header Banner End -->
+
+    <!-- Main Workspace Start -->
+    <div class="container py-5">
+        <div class="row mb-4 text-center">
+            <div class="col-12">
+                <h2 class="text-uppercase font-weight-bold" style="font-family: 'Oswald', sans-serif; color: var(--oscuro-carroqhatu);">Análisis Lado a Lado</h2>
+                <div class="d-inline-flex justify-content-center align-items-center mb-2">
+                    <span style="height: 3px; width: 40px; background-color: var(--amarillo-carroqhatu); display: inline-block;"></span>
+                    <span class="px-3 text-muted small">Selecciona hasta 3 vehículos para analizar detalladamente cuál es la mejor opción</span>
+                    <span style="height: 3px; width: 40px; background-color: var(--amarillo-carroqhatu); display: inline-block;"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Labels Column (Desktop only) -->
+            <div class="col-lg-3 d-none d-lg-block">
+                <div class="card h-100 border-0" style="background-color: #f1f5f9; border-radius: 14px; overflow: hidden; border: 1px solid #e2e8f0;">
+                    <div class="card-body p-0 d-flex flex-column h-100">
+                        <div class="d-flex align-items-center justify-content-center" style="height: 220px; border-bottom: 1px solid #cbd5e1; background-color: #e2e8f0; padding: 20px;">
+                            <h4 class="font-weight-bold text-center m-0" style="font-family: 'Oswald', sans-serif; color: var(--oscuro-carroqhatu); letter-spacing: 0.05em;">CARACTERÍSTICAS</h4>
+                        </div>
+                        <div class="flex-grow-1 d-flex flex-column">
+                            <div class="spec-label-item"><i class="fa-solid fa-tags mr-2 text-primary"></i> Marca</div>
+                            <div class="spec-label-item"><i class="fa-solid fa-car mr-2 text-primary"></i> Modelo</div>
+                            <div class="spec-label-item"><i class="fa-solid fa-calendar mr-2 text-primary"></i> Año</div>
+                            <div class="spec-label-item"><i class="fa-solid fa-money-bill-wave mr-2 text-primary"></i> Precio</div>
+                            <div class="spec-label-item"><i class="fa-solid fa-gauge-high mr-2 text-primary"></i> Kilometraje</div>
+                            <div class="spec-label-item"><i class="fa-solid fa-microchip mr-2 text-primary"></i> Motor</div>
+                            <div class="spec-label-item"><i class="fa-solid fa-gears mr-2 text-primary"></i> Transmisión</div>
+                            <div class="spec-label-item"><i class="fa-solid fa-location-dot mr-2 text-primary"></i> Sede (Ciudad)</div>
+                            <div class="spec-label-item"><i class="fa-solid fa-shield-halved mr-2 text-primary"></i> Condición</div>
+                            <div class="spec-label-item"><i class="fa-solid fa-circle-check mr-2 text-primary"></i> Verificación</div>
+                            <div class="spec-label-item" style="height: 120px; align-items: flex-start;"><i class="fa-solid fa-circle-info mr-2 mt-1 text-primary"></i> Descripción</div>
+                            <div class="spec-label-item text-center justify-content-center" style="background-color: #cbd5e1; font-weight: bold; border-bottom: none; min-height: 70px;">
+                                <i class="fa-solid fa-handshake mr-1"></i> Adquirir
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vehicles Comparison Slots -->
+            <div class="col-12 col-lg-9">
+                <div class="row">
+                    <!-- Slot 1 -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card vehicle-compare-card h-100">
+                            <div class="card-header p-3 border-0" style="background-color: var(--oscuro-carroqhatu); color: white;">
+                                <label class="small text-uppercase d-block mb-1 font-weight-bold" style="color: #94a3b8;">Vehículo 1</label>
+                                <select class="form-control select-compare" data-slot="1" style="background: #0f172a; color: white; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; font-size: 0.9rem;">
+                                    <option value="">-- Selecciona --</option>
+                                    {% for v in vehiculos %}
+                                        <option value="{{ v.id }}">{{ v.marca }} {{ v.modelo }} ({{ v.year }}) - {{ v.precio }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="card-body p-0 flex-grow-1 d-flex flex-column" id="preview-slot-1">
+                                <div class="text-center p-5 m-auto text-muted">
+                                    <i class="fa-solid fa-car-side fa-3x mb-3" style="color: #cbd5e1;"></i>
+                                    <p class="small mb-0">Selecciona un vehículo de la lista superior para cargar sus características.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slot 2 -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card vehicle-compare-card h-100">
+                            <div class="card-header p-3 border-0" style="background-color: var(--oscuro-carroqhatu); color: white;">
+                                <label class="small text-uppercase d-block mb-1 font-weight-bold" style="color: #94a3b8;">Vehículo 2</label>
+                                <select class="form-control select-compare" data-slot="2" style="background: #0f172a; color: white; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; font-size: 0.9rem;">
+                                    <option value="">-- Selecciona --</option>
+                                    {% for v in vehiculos %}
+                                        <option value="{{ v.id }}">{{ v.marca }} {{ v.modelo }} ({{ v.year }}) - {{ v.precio }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="card-body p-0 flex-grow-1 d-flex flex-column" id="preview-slot-2">
+                                <div class="text-center p-5 m-auto text-muted">
+                                    <i class="fa-solid fa-car-side fa-3x mb-3" style="color: #cbd5e1;"></i>
+                                    <p class="small mb-0">Selecciona un vehículo de la lista superior para cargar sus características.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slot 3 -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card vehicle-compare-card h-100">
+                            <div class="card-header p-3 border-0" style="background-color: var(--oscuro-carroqhatu); color: white;">
+                                <label class="small text-uppercase d-block mb-1 font-weight-bold" style="color: #94a3b8;">Vehículo 3 (Opcional)</label>
+                                <select class="form-control select-compare" data-slot="3" style="background: #0f172a; color: white; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; font-size: 0.9rem;">
+                                    <option value="">-- Selecciona --</option>
+                                    {% for v in vehiculos %}
+                                        <option value="{{ v.id }}">{{ v.marca }} {{ v.modelo }} ({{ v.year }}) - {{ v.precio }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="card-body p-0 flex-grow-1 d-flex flex-column" id="preview-slot-3">
+                                <div class="text-center p-5 m-auto text-muted">
+                                    <i class="fa-solid fa-car-side fa-3x mb-3" style="color: #cbd5e1;"></i>
+                                    <p class="small mb-0">Selecciona un vehículo de la lista superior para cargar sus características.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Trigger Section -->
+        <div class="row justify-content-center mt-5">
+            <div class="col-lg-8 text-center">
+                <div class="card p-4 text-white ai-card-glow" style="border-radius: 16px; box-shadow: 0 15px 35px rgba(15, 23, 42, 0.25);">
+                    <i class="fa-solid fa-wand-magic-sparkles fa-3x mb-3 text-warning"></i>
+                    <h3 class="font-weight-bold text-uppercase" style="font-family: 'Oswald', sans-serif;">¿Cuál es el mejor para mí?</h3>
+                    <p class="text-light small max-width-600 mx-auto">Selecciona al menos dos vehículos y presiona el botón inferior. Nuestro Asesor Experto evaluará de forma analítica el precio, desgaste, procedencia, año y detalles técnicos para entregarte un veredicto definitivo de compra.</p>
+                    <div class="d-flex justify-content-center mt-2">
+                        <button id="btn-analyze-ai" class="btn btn-analizar-premium" disabled>
+                            <i class="fa-solid fa-bolt mr-2"></i> Obtener Recomendación Inteligente
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Results Section -->
+        <div class="row justify-content-center mt-5 d-none" id="ai-result-section">
+            <div class="col-lg-10">
+                <div class="ai-result-content overflow-hidden">
+                    <div class="card-header p-4 d-flex align-items-center" style="background-color: var(--oscuro-carroqhatu); color: white;">
+                        <div class="bot-avatar-result mr-3" style="background-color: var(--amarillo-carroqhatu); color: black; border-radius: 50%; width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: bold;">
+                            <i class="fa-solid fa-robot"></i>
+                        </div>
+                        <div>
+                            <h4 style="font-family: 'Oswald', sans-serif; margin: 0; text-transform: uppercase; letter-spacing: 0.05em;">Veredicto Final CarroQhatu IA</h4>
+                            <small style="color: #94a3b8;">Asesoría de compra y análisis técnico algorítmico</small>
+                        </div>
+                    </div>
+                    <div class="card-body p-4 p-md-5" id="ai-comparison-text" style="color: #334155; line-height: 1.8;">
+                        <!-- AI Result Text -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Main Workspace End -->
+
+    <!-- INICIO FOOTER -->
+    <footer class="main-footer">    
+        <img class="logo-footer" src="{{ site_config.site_logo|default(url_for('static', filename='img/CarroQhatuL.png')) }}" alt="Logo Footer">
+        <div class="footer-grid">        
+            <div class="col-brand">
+                <p>{{ site_config.about_description|default('Plataforma líder en la Compra y Venta de Vehículos Usados en el Perú.') }}</p>
+                <div class="social-icons">
+                    <a href="https://www.tiktok.com/@carroqhatu" target="_blank" class="icon-box"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="https://www.facebook.com/carroqhatu" target="_blank" class="icon-box"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/carroqhatu" target="_blank" class="icon-box"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.youtube.com/@revelinobrayan2134" target="_blank" class="icon-box"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+                
+                <div class="col-contact">
+                    <h3 class="h3footer">Contacto</h3>
+                    <div class="contact-links">
+                        <a href="tel:{{ site_config.contact_phone|default('+51972043502')|replace(' ', '') }}"><i class="fa-solid fa-phone"></i> {{ site_config.contact_phone|default('+51 972043502') }}</a>
+                        <a href="mailto:{{ site_config.contact_email|default('rbm.aracayo@gmail.com') }}"><i class="fa-solid fa-envelope"></i> {{ site_config.contact_email|default('rbm.aracayo@gmail.com') }}</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-center">
+                <div class="center-top">
+                    <div class="sub-col">
+                        <h3 class="h3footer">Explora</h3>
+                        <ul>
+                            <li><a href="{{ url_for('about') }}">Comprar auto</a></li>
+                            <li><a href="{{ url_for('service') }}">Vender mi auto</a></li>
+                            <li><a href="{{ url_for('car') }}">Catálogo</a></li>
+                        </ul>
+                    </div>
+                    <div class="sub-col">
+                        <h3 class="h3footer">Soporte</h3>
+                        <ul>
+                            <li><a href="#">Términos y Condiciones</a></li>
+                            <li><a href="#">Privacidad</a></li>
+                            <li><a href="#">Libro de Reclamaciones</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="center-bottom">
+                    <h3 class="h3footer destaque-amarillo">¿QUIERES QUE TE CONTACTEMOS?</h3>
+                    <form action="{{ url_for('footer_contact') }}" method="POST" class="footer-form">
+                        <input type="text" name="contacto" placeholder="Tu Email o Nº Celular aquí" required>
+                        <button type="submit">ENVIAR</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 CarroQhatu • Todos los Derechos Reservados</p>
+        </div>
+    </footer>
+    <!-- FIN FOOTER -->
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-lg btn-warning btn-lg-square back-to-top" style="background-color: var(--amarillo-carroqhatu); color: black; border: none; border-radius: 4px;"><i class="fa fa-angle-double-up"></i></a>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Page Logic -->
+    <script>
+        // Serialización del catálogo de vehículos desde Jinja2
+        const vehiculosCatalog = {{ vehiculos|tojson|safe }};
+
+        // Buscar un vehículo en el catálogo por su ID
+        function getVehiculoById(id) {
+            return vehiculosCatalog.find(v => v.id === parseInt(id));
+        }
+
+        // Escuchar cambios en los selectores de vehículos
+        document.querySelectorAll('.select-compare').forEach(select => {
+            select.addEventListener('change', function() {
+                const slot = this.dataset.slot;
+                const value = this.value;
+                const container = document.getElementById(`preview-slot-${slot}`);
+                
+                // Si no hay valor seleccionado, restaurar el placeholder
+                if (!value) {
+                    container.innerHTML = `
+                        <div class="text-center p-5 m-auto text-muted">
+                            <i class="fa-solid fa-car-side fa-3x mb-3" style="color: #cbd5e1;"></i>
+                            <p class="small mb-0">Selecciona un vehículo de la lista superior para cargar sus características.</p>
+                        </div>
+                    `;
+                    updateCompareButtonState();
+                    return;
+                }
+                
+                const car = getVehiculoById(value);
+                if (!car) return;
+                
+                // Formatear Kilometraje con separador de miles
+                const kmFormatted = car.km.toLocaleString('es-PE') + ' km';
+                
+                // Badge de Verificación
+                const badgeHTML = car.verificado === 1 
+                    ? `<span class="badge-verificado"><i class="fa-solid fa-circle-check"></i> Verificado</span>` 
+                    : `<span class="badge-no-verificado">Estándar</span>`;
+                    
+                // URL de Imagen por Defecto
+                const imagenUrl = car.imagen_url ? car.imagen_url : '/static/img/cardetail3.svg';
+                
+                // Generar Link dinámico de WhatsApp para cotizar este auto específico
+                const contactPhone = "{{ site_config.contact_phone|default('51972043502')|replace(' ', '')|replace('+', '') }}";
+                const waMessage = `Hola CarroQhatu! Estoy interesado en el auto que vi en el Comparador: ${car.marca} ${car.modelo} (${car.year}) con precio ${car.precio}. Quisiera programar una cita o solicitar más información.`;
+                const waUrl = `https://wa.me/${contactPhone}?text=${encodeURIComponent(waMessage)}`;
+
+                // Inyectar la información en la columna correspondiente
+                container.innerHTML = `
+                    <div style="height: 220px; position: relative; overflow: hidden; background-color: #cbd5e1;">
+                        <img src="${imagenUrl}" alt="${car.marca} ${car.modelo}" style="width: 100%; height: 100%; object-fit: cover;">
+                        <span style="position: absolute; bottom: 12px; left: 12px; background-color: rgba(15, 23, 42, 0.85); color: var(--amarillo-carroqhatu); padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 0.95rem; font-family: 'Oswald', sans-serif; border: 1px solid rgba(251, 211, 51, 0.3);">
+                            ${car.precio}
+                        </span>
+                    </div>
+                    
+                    <div class="flex-grow-1 d-flex flex-column" style="background-color: white;">
+                        <div class="spec-value-item font-weight-bold text-uppercase d-lg-none bg-light" style="font-size:0.7rem; color:var(--texto-muted); min-height: 25px; padding: 2px 15px;">Marca</div>
+                        <div class="spec-value-item font-weight-bold" style="color: var(--oscuro-carroqhatu);">${car.marca}</div>
+                        
+                        <div class="spec-value-item font-weight-bold text-uppercase d-lg-none bg-light" style="font-size:0.7rem; color:var(--texto-muted); min-height: 25px; padding: 2px 15px;">Modelo</div>
+                        <div class="spec-value-item font-weight-bold">${car.modelo}</div>
+                        
+                        <div class="spec-value-item font-weight-bold text-uppercase d-lg-none bg-light" style="font-size:0.7rem; color:var(--texto-muted); min-height: 25px; padding: 2px 15px;">Año</div>
+                        <div class="spec-value-item font-weight-bold" style="color: #0f172a;">${car.year}</div>
+                        
+                        <div class="spec-value-item font-weight-bold text-uppercase d-lg-none bg-light" style="font-size:0.7rem; color:var(--texto-muted); min-height: 25px; padding: 2px 15px;">Precio</div>
+                        <div class="spec-value-item font-weight-bold text-primary">${car.precio}</div>
+                        
+                        <div class="spec-value-item font-weight-bold text-uppercase d-lg-none bg-light" style="font-size:0.7rem; color:var(--texto-muted); min-height: 25px; padding: 2px 15px;">Kilometraje</div>
+                        <div class="spec-value-item">${kmFormatted}</div>
+                        
+                        <div class="spec-value-item font-weight-bold text-uppercase d-lg-none bg-light" style="font-size:0.7rem; color:var(--texto-muted); min-height: 25px; padding: 2px 15px;">Motor</div>
+                        <div class="spec-value-item">${car.motor || '-'}</div>
+                        
+                        <div class="spec-value-item font-weight-bold text-uppercase d-lg-none bg-light" style="font-size:0.7rem; color:var(--texto-muted); min-height: 25px; padding: 2px 15px;">Transmisión</div>
+                        <div class="spec-value-item">${car.transmision}</div>
+                        
+                        <div class="spec-value-item font-weight-bold text-uppercase d-lg-none bg-light" style="font-size:0.7rem; color:var(--texto-muted); min-height: 25px; padding: 2px 15px;">Sede (Ciudad)</div>
+                        <div class="spec-value-item"><i class="fa-solid fa-location-dot text-danger mr-1"></i> ${car.ciudad}</div>
+                        
+                        <div class="spec-value-item font-weight-bold text-uppercase d-lg-none bg-light" style="font-size:0.7rem; color:var(--texto-muted); min-height: 25px; padding: 2px 15px;">Condición</div>
+                        <div class="spec-value-item text-capitalize">${car.estado}</div>
+                        
+                        <div class="spec-value-item font-weight-bold text-uppercase d-lg-none bg-light" style="font-size:0.7rem; color:var(--texto-muted); min-height: 25px; padding: 2px 15px;">Verificación</div>
+                        <div class="spec-value-item">${badgeHTML}</div>
+                        
+                        <div class="spec-value-item font-weight-bold text-uppercase d-lg-none bg-light" style="font-size:0.7rem; color:var(--texto-muted); min-height: 25px; padding: 2px 15px;">Descripción</div>
+                        <div class="spec-value-item text-left p-3 overflow-auto" style="height: 120px; font-size: 0.85rem; line-height: 1.4; align-items: flex-start; justify-content: flex-start; text-align: left;">
+                            ${car.descripcion || 'Sin descripción adicional.'}
+                        </div>
+                        
+                        <div class="spec-value-item text-center justify-content-center p-3 bg-light" style="border-bottom: none; min-height: 70px;">
+                            <a href="${waUrl}" target="_blank" class="btn btn-recom-wspp py-2">
+                                <i class="fa-brands fa-whatsapp"></i> Consultar Auto
+                            </a>
+                        </div>
+                    </div>
+                `;
+                
+                updateCompareButtonState();
+            });
+        });
+
+        // Obtener la lista de IDs de vehículos actualmente seleccionados en la UI
+        function getSelectedVehicleIds() {
+            const ids = [];
+            document.querySelectorAll('.select-compare').forEach(select => {
+                if (select.value) {
+                    ids.push(parseInt(select.value));
+                }
+            });
+            // Remover IDs duplicados si el usuario selecciona el mismo auto en múltiples slots
+            return [...new Set(ids)];
+        }
+
+        // Habilitar o deshabilitar el botón de IA según el número de vehículos seleccionados
+        function updateCompareButtonState() {
+            const selectedIds = getSelectedVehicleIds();
+            const btn = document.getElementById('btn-analyze-ai');
+            
+            if (selectedIds.length >= 2) {
+                btn.classList.remove('disabled');
+                btn.removeAttribute('disabled');
+            } else {
+                btn.classList.add('disabled');
+                btn.setAttribute('disabled', 'true');
+            }
+        }
+
+        // Enviar solicitud POST al backend para comparar vehículos con IA
+        document.getElementById('btn-analyze-ai').addEventListener('click', async function() {
+            const selectedIds = getSelectedVehicleIds();
+            if (selectedIds.length < 2) return;
+            
+            const resultSection = document.getElementById('ai-result-section');
+            const resultText = document.getElementById('ai-comparison-text');
+            
+            // Mostrar panel de resultados con spinner de carga
+            resultSection.classList.remove('d-none');
+            resultText.innerHTML = `
+                <div class="text-center py-5">
+                    <div class="spinner-border text-warning mb-3" style="width: 3.5rem; height: 3.5rem;" role="status">
+                        <span class="sr-only">Cargando análisis...</span>
+                    </div>
+                    <h5 class="font-weight-bold" style="font-family: 'Oswald', sans-serif;">El Asesor IA está evaluando las fichas técnicas...</h5>
+                    <p class="text-muted small">Esto tomará un par de segundos. Buscando la mejor opción para ti.</p>
+                </div>
+            `;
+            
+            // Scroll suave hacia la sección de resultados
+            resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            try {
+                const response = await fetch('/api/comparar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ ids: selectedIds })
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    // Renderizar Markdown convertido a HTML en la UI
+                    resultText.innerHTML = formatMarkdown(data.comparacion);
+                } else {
+                    resultText.innerHTML = `
+                        <div class="alert alert-danger p-4" role="alert">
+                            <h5 class="font-weight-bold"><i class="fa-solid fa-circle-exclamation mr-2"></i> Error al Procesar</h5>
+                            <p class="mb-0">${data.error || 'No se pudo generar la comparación.'}</p>
+                        </div>
+                    `;
+                }
+            } catch (err) {
+                resultText.innerHTML = `
+                    <div class="alert alert-danger p-4" role="alert">
+                        <h5 class="font-weight-bold"><i class="fa-solid fa-circle-exclamation mr-2"></i> Error de Conexión</h5>
+                        <p class="mb-0">No se pudo conectar con el servidor. Por favor, inténtalo de nuevo.</p>
+                    </div>
+                `;
+            }
+        });
+
+        // Convertidor seguro y simplificado de sintaxis Markdown a HTML
+        function formatMarkdown(text) {
+            if (!text) return '';
+            let html = text.replace(/\r/g, '');
+            
+            // Reemplazar encabezados ### y ####
+            html = html.replace(/^### (.*?)$/gm, '<h3 class="mt-4 font-weight-bold text-dark" style="font-family: \'Oswald\', sans-serif;">$1</h3>');
+            html = html.replace(/^#### (.*?)$/gm, '<h4 class="mt-3 font-weight-bold text-dark" style="font-family: \'Oswald\', sans-serif;">$1</h4>');
+            
+            // Reemplazar negritas **texto**
+            html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            // Reemplazar viñetas - item
+            html = html.replace(/^- (.*?)$/gm, '<li class="ml-2 mb-2">$1</li>');
+            
+            // Agrupar viñetas <li> consecutivas dentro de etiquetas <ul>
+            html = html.replace(/(<li>.*?<\/li>)+/gs, function(match) {
+                return '<ul class="pl-3 my-3">' + match + '</ul>';
+            });
+            
+            // Agrupar párrafos
+            const lines = html.split('\n');
+            let result = '';
+            let inParagraph = false;
+            
+            for (let line of lines) {
+                line = line.trim();
+                if (!line) {
+                    if (inParagraph) {
+                        result += '</p>';
+                        inParagraph = false;
+                    }
+                    continue;
+                }
+                
+                // Ignorar etiquetas que no deben ir en párrafos
+                if (line.startsWith('<h') || line.startsWith('<ul') || line.startsWith('</ul') || line.startsWith('<li') || line.startsWith('</li')) {
+                    if (inParagraph) {
+                        result += '</p>';
+                        inParagraph = false;
+                    }
+                    result += line + '\n';
+                } else {
+                    if (!inParagraph) {
+                        result += '<p class="mb-3">';
+                        inParagraph = true;
+                    } else {
+                        result += '<br>';
+                    }
+                    result += line;
+                }
+            }
+            if (inParagraph) {
+                result += '</p>';
+            }
+            
+            return result;
+        }
+    </script>
+</body>
+
+</html>

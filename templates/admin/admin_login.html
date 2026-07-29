@@ -235,6 +235,16 @@
                 </button>
             </div>
 
+            {% if show_2fa %}
+            <div class="form-group-custom">
+                <label class="form-label-custom" for="pin_2fa">PIN de Seguridad (2FA)</label>
+                <input type="password" id="pin_2fa" name="pin_2fa" class="form-control-custom" placeholder="Ingresa tu PIN de seguridad" required autocomplete="one-time-code">
+                <button type="button" class="password-toggle" onclick="togglePinVisibility()">
+                    <i class="fa-solid fa-eye" id="pin-icon"></i>
+                </button>
+            </div>
+            {% endif %}
+
             <button type="submit" class="btn-login">Iniciar Sesión</button>
         </form>
 
@@ -259,6 +269,22 @@
                 passwordField.type = "password";
                 passwordIcon.classList.remove("fa-eye-slash");
                 passwordIcon.classList.add("fa-eye");
+            }
+        }
+
+        function togglePinVisibility() {
+            const pinField = document.getElementById("pin_2fa");
+            const pinIcon = document.getElementById("pin-icon");
+            if (pinField) {
+                if (pinField.type === "password") {
+                    pinField.type = "text";
+                    pinIcon.classList.remove("fa-eye");
+                    pinIcon.classList.add("fa-eye-slash");
+                } else {
+                    pinField.type = "password";
+                    pinIcon.classList.remove("fa-eye-slash");
+                    pinIcon.classList.add("fa-eye");
+                }
             }
         }
     </script>

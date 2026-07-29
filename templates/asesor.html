@@ -487,6 +487,7 @@
                         <a href="{{ url_for('about') }}" class="nav-item nav-link">Compra un auto</a>
                         <a href="{{ url_for('service') }}" class="nav-item nav-link">Vende tu auto</a>
                         <a href="{{ url_for('asesor') }}" class="nav-item nav-link active">Asesor IA</a>
+                        <a href="{{ url_for('comparador') }}" class="nav-item nav-link">Comparador</a>
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Nosotros</a>
                             <div class="dropdown-menu rounded-0 m-0">
@@ -816,7 +817,9 @@
                     const btnText = isNew ? "Ayudar a Comprar" : "Inspeccionar Auto";
                     const btnColor = isNew ? "background-color: #3b82f6;" : "background-color: #2563eb;";
 
-                    const gradientHeader = `
+                    const imgHeader = car.imagen_url ? `
+                        <img src="${car.imagen_url}" class="recom-img" alt="${carTitle}">
+                    ` : `
                         <div class="d-flex align-items-center justify-content-center flex-column" style="height: 100%; background: linear-gradient(135deg, #1e3a8a, #0f172a); color: #fff; text-align: center; width: 100%;">
                             <i class="${isNew ? 'fa-solid fa-wand-magic-sparkles' : 'fa-solid fa-magnifying-glass-chart'} fa-2x mb-1" style="color: #60a5fa;"></i>
                             <span style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; color: #93c5fd;">${badgeText}</span>
@@ -826,7 +829,7 @@
                     html += `
                         <div class="recom-card" style="border-color: rgba(96, 165, 250, 0.2);">
                             <div class="recom-img-wrapper">
-                                ${gradientHeader}
+                                ${imgHeader}
                                 <span class="recom-city-badge" style="${badgeBg}">${badgeText}</span>
                             </div>
                             <div class="recom-body">
