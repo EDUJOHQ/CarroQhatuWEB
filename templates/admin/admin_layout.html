@@ -460,6 +460,9 @@
             <a href="{{ url_for('admin_publicidad') }}" class="nav-link-admin {% if request.path == url_for('admin_publicidad') %}active{% endif %}">
                 <i class="fa-solid fa-rectangle-ad"></i> Publicidad y Banners
             </a>
+            <a href="{{ url_for('admin_videos') }}" class="nav-link-admin {% if request.path == url_for('admin_videos') %}active{% endif %}">
+                <i class="fa-solid fa-circle-play"></i> Videos y Tips
+            </a>
             <a href="{{ url_for('admin_testimonios') }}" class="nav-link-admin {% if request.path == url_for('admin_testimonios') %}active{% endif %}">
                 <i class="fa-solid fa-star"></i> Testimonios
             </a>

@@ -121,11 +121,11 @@
             .prop('type', 'text/css')
             .html(`
                 #cq-chatbot-container {
-                    position: fixed;
-                    bottom: 100px;
-                    right: 30px;
-                    z-index: 9999;
-                    font-family: 'Rubik', sans-serif;
+                    position: fixed !important;
+                    bottom: 165px !important;
+                    right: 30px !important;
+                    z-index: 9999 !important;
+                    font-family: 'Rubik', sans-serif !important;
                 }
                 #cq-chatbot-trigger {
                     width: 60px;
@@ -151,12 +151,12 @@
                 }
                 #cq-chatbot-window {
                     position: fixed !important;
-                    bottom: 170px !important;
+                    bottom: 235px !important;
                     right: 30px !important;
                     width: 350px !important;
                     min-width: 350px !important;
                     max-width: calc(100vw - 60px) !important;
-                    height: 480px !important;
+                    height: 460px !important;
                     background-color: #0b0f19 !important;
                     border: 1px solid rgba(255, 255, 255, 0.1) !important;
                     border-radius: 15px !important;
@@ -287,20 +287,44 @@
                     0%, 100% { transform: translateY(0); }
                     50% { transform: translateY(-4px); }
                 }
+                #cq-whatsapp-float {
+                    position: fixed !important;
+                    bottom: 95px !important;
+                    right: 30px !important;
+                    width: 58px !important;
+                    height: 58px !important;
+                    border-radius: 50% !important;
+                    background-color: #25D366 !important;
+                    color: #ffffff !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4) !important;
+                    z-index: 9999 !important;
+                    text-decoration: none !important;
+                    transition: all 0.3s ease !important;
+                }
+                #cq-whatsapp-float:hover {
+                    transform: scale(1.08) !important;
+                    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.6) !important;
+                    background-color: #20ba5a !important;
+                }
             `)
             .appendTo('head');
 
-        // Inyectar la estructura HTML del Chatbot
+        // Inyectar la estructura HTML del Chatbot y WhatsApp Flotante
         const chatbotHtml = `
             <div id="cq-chatbot-container">
                 <div id="cq-chatbot-window">
                     <div class="cq-chatbot-header">
                         <div style="display: flex; align-items: center; gap: 10px;">
-                            <div class="cq-chatbot-avatar">🤖</div>
+                            <div class="cq-chatbot-avatar" style="background: #ffffff; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; padding: 3px; border: 2px solid #fbd333;">
+                                <img src="/static/img/CarroQhatuL.png" alt="CarroQhatu" style="width: 100%; height: 100%; object-fit: contain;">
+                            </div>
                             <div>
-                                <h6 style="margin: 0; color: #fff; font-weight: 600; font-size: 0.95rem;">Asesor IA CarroQhatu</h6>
-                                <small style="color: #10b981; font-size: 0.75rem; display: flex; align-items: center; gap: 4px;">
-                                    <span class="cq-pulse-dot"></span> En línea
+                                <h6 style="margin: 0; color: #fff; font-weight: 700; font-size: 0.95rem;">Qhatuchay IA 🚗🤖</h6>
+                                <small style="color: #fbd333; font-size: 0.75rem; display: flex; align-items: center; gap: 4px; font-weight: 600;">
+                                    <span class="cq-pulse-dot"></span> Asesor Oficial CarroQhatu
                                 </small>
                             </div>
                         </div>
@@ -308,20 +332,25 @@
                     </div>
                     <div id="cq-chatbot-messages">
                         <div class="cq-msg assistant">
-                            <p style="margin:0;">¡Hola! Soy tu Asesor Automotriz de CarroQhatu. Escríbeme cualquier consulta sobre autos, nuestros servicios, tasaciones o cómo usar la web. ¡Te responderé de inmediato!</p>
+                            <p style="margin:0;">¡Hola! Soy <strong>Qhatuchay IA</strong> 🚗🤖, el asesor oficial de <strong>CarroQhatu</strong>.<br><br>Te doy TODA la información de nuestra página web: vehículos del catálogo, precios, contacto directo por WhatsApp (+51 972043502), Inspección 360°, cotizaciones o cómo comprar/vender tu auto. ¡Pregúntame cualquier cosa de nuestra web!</p>
                         </div>
                     </div>
                     <div class="cq-chatbot-input-area">
                         <form id="cq-chatbot-form" style="display: flex; gap: 8px; width: 100%;">
-                            <input type="text" id="cq-chatbot-input" placeholder="Pregúntame lo que quieras..." required autocomplete="off">
-                            <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
+                            <input type="text" id="cq-chatbot-input" placeholder="Pregúntale a Qhatuchay IA sobre la web..." required autocomplete="off">
+                            <button type="submit" title="Enviar"><i class="fa-solid fa-paper-plane"></i></button>
                         </form>
                     </div>
                 </div>
-                <button id="cq-chatbot-trigger">
-                    <i class="fa-solid fa-robot"></i>
+                <button id="cq-chatbot-trigger" title="Qhatuchay IA - Asesor CarroQhatu" style="padding: 0; background-color: #fbd333; border: 2px solid #000; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                    <img src="/static/img/CarroQhatuL.png" alt="Qhatuchay IA" style="width: 44px; height: 44px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
                 </button>
             </div>
+
+            <!-- Botón flotante directo de WhatsApp debajo del Chatbot -->
+            <a id="cq-whatsapp-float" href="https://wa.me/51972043502?text=Hola%20CarroQhatu!%20Deseo%20informaci%C3%B3n%20y%20asesor%C3%ADa%20personalizada." target="_blank" title="Contactar por WhatsApp (+51 972043502)">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" style="width: 34px; height: 34px; object-fit: contain;">
+            </a>
         `;
         $('body').append(chatbotHtml);
 

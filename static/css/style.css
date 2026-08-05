@@ -405,8 +405,8 @@ h6,
     position: fixed;
     display: none;
     right: 30px;
-    bottom: 30px;
-    z-index: 99;
+    bottom: 25px;
+    z-index: 9990;
 }
 .vista-service-mobil-img{
     display: none;
@@ -433,10 +433,26 @@ h6,
     line-height: 1.1 !important;
 }
 
+.navbar-brand {
+    padding-top: 4px;
+    padding-bottom: 4px;
+    margin-right: 1.2rem;
+    display: inline-flex;
+    align-items: center;
+}
+
 .imglogo {
     width: auto;
-    height: 36px;
+    max-width: 240px;
+    height: 52px; /* Ampliado para alta visibilidad y nitidez */
+    object-fit: contain;
     display: block;
+    filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.12));
+    transition: transform 0.25s ease;
+}
+
+.navbar-brand:hover .imglogo {
+    transform: scale(1.04);
 }
 .btn-contactowspp {
     background-color: #921f1f; 
@@ -650,38 +666,137 @@ body { background-color: #ffffff; font-family: 'Open Sans', sans-serif; color: #
     font-size: 13px;
     color: #5a5c62;
 }
-.nav-bar{
-    background: #FBD333;
-}
-.navbar-dark .navbar-nav .nav-link {
-    letter-spacing: 1px;
-    color: var(--light);
-    outline: none;
+/* ==========================================================================
+   ULTRA-PREMIUM NAVBAR DESIGN SYSTEM
+   ========================================================================== */
+.nav-bar {
+    background: #FBD333 !important;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+    position: relative;
+    z-index: 1000;
 }
 
-.navbar-dark .navbar-nav .nav-link:hover,
-.navbar-dark .navbar-nav .nav-link.active {
-    color: red;
+.bg-navbarcq.navbar {
+    padding: 6px 0.8rem !important;
+    min-height: 66px !important;
 }
+
+/* Nav links alignment and tight responsive spacing */
+.navbar-dark .navbar-nav {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-wrap: nowrap;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    font-family: 'Oswald', 'Rubik', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: #111827 !important; /* Elegant dark charcoal */
+    padding: 6px 10px !important;
+    border-radius: 6px;
+    position: relative;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+/* Hover State */
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: #000000 !important;
+    background-color: rgba(0, 0, 0, 0.08);
+    transform: translateY(-1px);
+}
+
+/* Active State */
+.navbar-dark .navbar-nav .nav-link.active,
+.navbar-dark .navbar-nav .show > .nav-link {
+    color: #FBD333 !important;
+    background-color: #111827 !important;
+    font-weight: 700;
+    box-shadow: 0 3px 8px rgba(17, 24, 39, 0.25);
+    border-radius: 6px;
+}
+
+/* Dropdown Menu Ultra Premium Styling */
+.navbar-dark .navbar-nav .dropdown-menu {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    padding: 8px;
+    margin-top: 6px;
+    background: #ffffff;
+}
+
+.navbar-dark .navbar-nav .dropdown-item {
+    font-family: 'Rubik', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: #1e293b;
+    padding: 8px 14px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.navbar-dark .navbar-nav .dropdown-item:hover {
+    background-color: #f1f5f9;
+    color: #0f172a;
+    transform: translateX(3px);
+}
+
+/* Ultra Premium Action Buttons */
+.btn-contacto {
+    background-color: #111827 !important;
+    color: #FBD333 !important;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 0.84rem;
+    letter-spacing: 0.3px;
+    padding: 6px 14px;
+    border-radius: 50px;
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 3px 8px rgba(17, 24, 39, 0.2);
+    border: none;
+    flex-shrink: 0;
+}
+
+.btn-contacto:hover {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
 /* --- REDES SOCIALES --- */
 .navbar-social {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     align-items: center;
-    border-left: 1px solid #5b5b5b;
-    padding-left: 20px;
-    margin-left: 100px;
+    border-left: 1px solid rgba(0, 0, 0, 0.2);
+    padding-left: 12px;
+    margin-left: 15px;
+    margin-right: 10px;
 }
 
 .navbar-social a {
     color: #323232; 
-    font-size: 18px;
+    font-size: 16px;
     transition: 0.3s;
 }
 
 .navbar-social a:hover {
     color: #f63100;
-    transform: translateY(-3px);
+    transform: translateY(-2px);
 }
 @media (max-width: 991.98px) {
     
@@ -3863,22 +3978,7 @@ FIN VISTA LAPTOPS
     }
 }
 .btn-whatsapp {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    background-color: #25d366;
-    color: white !important;
-    width: 65px;
-    height: 65px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 32px;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
-    z-index: 999999 !important; /* Capa superior absoluta */
-    cursor: pointer !important;
-    pointer-events: auto !important; /* Asegura que reciba clics */
+    display: none !important;
 }
 
 /* Evita que el icono bloquee el clic */

@@ -89,9 +89,14 @@ def init_local_db():
         )
     """)
     
-    # Safely migrate existing databases to add the new 'descripcion' column if not present
+    # Safely migrate existing databases to add 'descripcion' and 'imagenes_extra' columns if not present
     try:
         cursor.execute("ALTER TABLE vehiculos ADD COLUMN descripcion TEXT")
+        conn.commit()
+    except sqlite3.OperationalError:
+        pass
+    try:
+        cursor.execute("ALTER TABLE vehiculos ADD COLUMN imagenes_extra TEXT")
         conn.commit()
     except sqlite3.OperationalError:
         pass
@@ -146,7 +151,37 @@ def init_local_db():
                 VALUES (?, ?, ?, ?, ?, ?)
             """, test + (created_at_time,))
         conn.commit()
-        print("INFO (db_manager): Pre-populados 3 testimonios por defecto en la base de datos.")
+    # 8. Table for Videos y Tips
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS videos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            titulo TEXT,
+            categoria TEXT DEFAULT 'Tip',
+            video_url TEXT,
+            miniatura_url TEXT,
+            activo INTEGER DEFAULT 1,
+            created_at TEXT
+        )
+    """)
+    
+    # Pre-populate default videos if table is empty
+    cursor.execute("SELECT COUNT(*) FROM videos")
+    if cursor.fetchone()[0] == 0:
+        default_videos = [
+            ("Conócenos - CarroQhatu", "Presentación", "https://www.dropbox.com/scl/fi/tiysadbc5kk6ugyomliyp/video0.mp4?rlkey=d21x2uwi5ajprwuo9tykcrt6v&st=5jgp60a1&raw=1", "/static/img/miniaturasomos.svg", 1),
+            ("Respondiendo a Haters", "Tip / Redes", "https://www.dropbox.com/scl/fi/6fvjdeufbf28v5axg9mlw/videohater.mp4?rlkey=6llmjudgksfxiohhs25bdaa68&st=dcn02wok&raw=1", "/static/img/miniaturahate.svg", 1),
+            ("7 Años de Ahorros", "Testimonio", "https://www.dropbox.com/scl/fi/q82dy3hpbclvvwms4coqv/testimonioahorros.mp4?rlkey=u6lo7fntzs10mk4t0b2jyip9u&st=7m3cvwmy&dl=0&raw=1", "/static/img/7añosahorros.svg", 1),
+            ("Opinión Cliente Arequipa", "Testimonio", "https://www.dropbox.com/scl/fi/05mupolm2ouf5qqqs6u5q/videoclienteaqp.mp4?rlkey=uuh6uedjptm6ttite6ucs277l&st=f0c0co2l&dl=0&raw=1", "/static/img/opinion2.svg", 1),
+            ("Tailandés o Argentino", "Tip Vehicular", "https://www.dropbox.com/scl/fi/26tyhyucjeebyqdjmz0g3/tailandesoargentino.mp4?rlkey=aldwmmsvda39nc88zsx76oo9p&st=w7zyhx4b&dl=0&raw=1", "/static/img/TAIOARG.svg", 1)
+        ]
+        created_at_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        for vid in default_videos:
+            cursor.execute("""
+                INSERT INTO videos (titulo, categoria, video_url, miniatura_url, activo, created_at)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, vid + (created_at_time,))
+        conn.commit()
+        print("INFO (db_manager): Pre-populados 5 videos por defecto en la base de datos.")
     
     # Populate default configurations if empty
     defaults = {
@@ -183,12 +218,19 @@ def init_local_db():
     conn.close()
     print("Database SQLite local inicializada en:", DB_PATH)
 
-# Initialize database on import
-init_local_db()
+_supabase_offline = False
 
 def is_supabase_available():
-    """Quick check if Supabase client is initialized."""
+    """Quick check if Supabase client is initialized and online."""
+    global _supabase_offline
+    if _supabase_offline:
+        return False
     return supabase is not None
+
+def mark_supabase_offline():
+    """Marks Supabase as offline for the current process to avoid network timeout delays."""
+    global _supabase_offline
+    _supabase_offline = True
 
 # =====================================================================
 # 1. COTIZACIONES (TASACIONES)
@@ -359,23 +401,29 @@ def update_solicitud_status(solicitud_id, nuevo_estado):
 # 3. VEHÍCULOS (CATÁLOGO DE AUTOS)
 # =====================================================================
 
-def save_vehiculo(marca, modelo, year, motor, km, transmision, precio, imagen_url, ciudad, estado, verificado, descripcion=""):
+def save_vehiculo(marca, modelo, year, motor, km, transmision, precio, imagen_url, ciudad, estado, verificado, descripcion="", imagenes_extra=""):
     """Saves a new vehicle to the catalog."""
+    import re
     created_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     verificado_val = 1 if int(verificado) == 1 else 0
+    try:
+        clean_km = int(re.sub(r'[^\d]', '', str(km)) or 0)
+    except:
+        clean_km = 0
     
     # 1. SQLite Local
+    local_id = None
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("""
-            INSERT INTO vehiculos (marca, modelo, year, motor, km, transmision, precio, imagen_url, ciudad, estado, verificado, descripcion, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (marca, modelo, str(year), motor, int(km), transmision, precio, imagen_url, ciudad, estado, verificado_val, descripcion, created_at))
+            INSERT INTO vehiculos (marca, modelo, year, motor, km, transmision, precio, imagen_url, ciudad, estado, verificado, descripcion, imagenes_extra, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (marca, modelo, str(year), motor, clean_km, transmision, precio, imagen_url, ciudad, estado, verificado_val, descripcion, imagenes_extra, created_at))
         conn.commit()
         local_id = cursor.lastrowid
         conn.close()
-        print("INFO (db_manager): Vehículo guardado en SQLite local.")
+        print("INFO (db_manager): Vehículo guardado en SQLite local con ID:", local_id)
     except Exception as e:
         print("ERROR (db_manager) al guardar vehículo en SQLite:", e)
         local_id = None
@@ -388,55 +436,77 @@ def save_vehiculo(marca, modelo, year, motor, km, transmision, precio, imagen_ur
                 "modelo": modelo,
                 "year": str(year),
                 "motor": motor,
-                "km": int(km),
+                "km": clean_km,
                 "transmision": transmision,
                 "precio": precio,
                 "imagen_url": imagen_url,
                 "ciudad": ciudad,
                 "estado": estado,
                 "verificado": verificado_val,
-                "descripcion": descripcion
+                "descripcion": descripcion,
+                "imagenes_extra": imagenes_extra
             }).execute()
             print("INFO (db_manager): Vehículo guardado en Supabase.")
         except Exception as e:
-            print("WARNING (db_manager): No se pudo guardar vehículo en Supabase:", e)
+            print("WARNING (db_manager): No se pudo guardar vehículo en Supabase con imagenes_extra, reintentando sin imagenes_extra:", e)
+            try:
+                supabase.table("vehiculos").insert({
+                    "marca": marca,
+                    "modelo": modelo,
+                    "year": str(year),
+                    "motor": motor,
+                    "km": clean_km,
+                    "transmision": transmision,
+                    "precio": precio,
+                    "imagen_url": imagen_url,
+                    "ciudad": ciudad,
+                    "estado": estado,
+                    "verificado": verificado_val,
+                    "descripcion": descripcion
+                }).execute()
+                print("INFO (db_manager): Vehículo guardado en Supabase (fallback).")
+            except Exception as e2:
+                print("ERROR (db_manager) Supabase insert fallback error:", e2)
 
     return local_id
 
 def get_all_vehiculos():
-    """Returns all vehicles in the catalog."""
-    if is_supabase_available():
-        try:
-            res = supabase.table("vehiculos").select("*").order("created_at", desc=True).execute()
-            return res.data, "Supabase"
-        except Exception as e:
-            pass
-            
-    # SQLite Fallback
+    """Returns all vehicles in the catalog, prioritizing local SQLite so new entries display instantly."""
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM vehiculos ORDER BY datetime(created_at) DESC")
-    rows = [dict(row) for row in cursor.fetchall()]
+    cursor.execute("SELECT * FROM vehiculos ORDER BY id DESC")
+    sqlite_rows = [dict(row) for row in cursor.fetchall()]
     conn.close()
-    return rows, "Local SQLite"
+
+    if is_supabase_available():
+        try:
+            res = supabase.table("vehiculos").select("*").order("id", desc=True).execute()
+            if res.data and len(res.data) > len(sqlite_rows):
+                return res.data, "Supabase"
+        except Exception as e:
+            print("WARNING (db_manager): Error consultando vehiculos en Supabase:", e)
+            
+    return sqlite_rows, "Local SQLite"
 
 def get_vehiculo_by_id(vehiculo_id):
     """Returns a single vehicle from the catalog by ID."""
-    if is_supabase_available():
-        try:
-            res = supabase.table("vehiculos").select("*").eq("id", vehiculo_id).execute()
-            if res.data:
-                return res.data[0]
-        except Exception as e:
-            pass
-            
-    # SQLite Fallback
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM vehiculos WHERE id = ?", (vehiculo_id,))
     row = cursor.fetchone()
     conn.close()
-    return dict(row) if row else None
+    if row:
+        return dict(row)
+
+    if is_supabase_available():
+        try:
+            res = supabase.table("vehiculos").select("*").eq("id", vehiculo_id).execute()
+            if res.data and len(res.data) > 0:
+                return res.data[0]
+        except Exception as e:
+            pass
+
+    return None
 
 def delete_vehiculo(vehiculo_id):
     """Deletes a vehicle from the catalog by ID."""
@@ -458,6 +528,68 @@ def delete_vehiculo(vehiculo_id):
             print("INFO (db_manager): Vehículo eliminado de Supabase.")
         except Exception as e:
             print("WARNING (db_manager): No se pudo eliminar vehículo de Supabase:", e)
+
+def update_vehiculo(vehiculo_id, marca, modelo, year, motor, km, transmision, precio, imagen_url, ciudad, verificado, descripcion="", imagenes_extra=""):
+    """Updates an existing vehicle entry in the catalog."""
+    import re
+    verificado_val = 1 if int(verificado) == 1 else 0
+    try:
+        clean_km = int(re.sub(r'[^\d]', '', str(km)) or 0)
+    except:
+        clean_km = 0
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            UPDATE vehiculos
+            SET marca = ?, modelo = ?, year = ?, motor = ?, km = ?, transmision = ?, precio = ?, imagen_url = ?, ciudad = ?, verificado = ?, descripcion = ?, imagenes_extra = ?
+            WHERE id = ?
+        """, (marca, modelo, str(year), motor, clean_km, transmision, precio, imagen_url, ciudad, verificado_val, descripcion, imagenes_extra, vehiculo_id))
+        conn.commit()
+        conn.close()
+        print(f"INFO (db_manager): Vehículo {vehiculo_id} actualizado en SQLite local.")
+    except Exception as e:
+        print("ERROR (db_manager) al actualizar vehículo en SQLite:", e)
+
+    if is_supabase_available():
+        try:
+            supabase.table("vehiculos").update({
+                "marca": marca,
+                "modelo": modelo,
+                "year": str(year),
+                "motor": motor,
+                "km": clean_km,
+                "transmision": transmision,
+                "precio": precio,
+                "imagen_url": imagen_url,
+                "ciudad": ciudad,
+                "verificado": verificado_val,
+                "descripcion": descripcion,
+                "imagenes_extra": imagenes_extra
+            }).eq("id", vehiculo_id).execute()
+            print("INFO (db_manager): Vehículo actualizado en Supabase.")
+        except Exception as e:
+            print("WARNING (db_manager): No se pudo actualizar vehículo en Supabase con imagenes_extra, reintentando sin imagenes_extra:", e)
+            try:
+                supabase.table("vehiculos").update({
+                    "marca": marca,
+                    "modelo": modelo,
+                    "year": str(year),
+                    "motor": motor,
+                    "km": clean_km,
+                    "transmision": transmision,
+                    "precio": precio,
+                    "imagen_url": imagen_url,
+                    "ciudad": ciudad,
+                    "verificado": verificado_val,
+                    "descripcion": descripcion
+                }).eq("id", vehiculo_id).execute()
+            except Exception as e2:
+                print("ERROR (db_manager) Supabase update fallback error:", e2)
+
+
+
 
 # =====================================================================
 # 4. CATÁLOGOS PDF (FOLLETOS)
@@ -755,3 +887,162 @@ def delete_testimonio(testimonio_id):
             print("INFO (db_manager): Testimonio eliminado de Supabase.")
         except Exception as e:
             print("WARNING (db_manager): No se pudo eliminar testimonio de Supabase:", e)
+
+
+# =====================================================================
+#  VIDEOS Y TIPS MANAGEMENT
+# =====================================================================
+
+def save_video(titulo, categoria, video_url, miniatura_url, activo=1):
+    """Saves a new video or tip to the database."""
+    created_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO videos (titulo, categoria, video_url, miniatura_url, activo, created_at)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (titulo, categoria, video_url, miniatura_url, activo, created_at))
+        conn.commit()
+        local_id = cursor.lastrowid
+        conn.close()
+        print("INFO (db_manager): Video guardado en SQLite local.")
+    except Exception as e:
+        print("ERROR (db_manager) al guardar video en SQLite:", e)
+        local_id = None
+
+    if is_supabase_available():
+        try:
+            supabase.table("videos").insert({
+                "titulo": titulo,
+                "categoria": categoria,
+                "video_url": video_url,
+                "miniatura_url": miniatura_url,
+                "activo": activo
+            }).execute()
+            print("INFO (db_manager): Video guardado en Supabase.")
+        except Exception as e:
+            print("WARNING (db_manager): No se pudo guardar video en Supabase:", e)
+
+    return local_id
+
+def get_all_videos():
+    """Returns all videos (active and hidden)."""
+    if is_supabase_available():
+        try:
+            res = supabase.table("videos").select("*").order("id", desc=True).execute()
+            return res.data, "Supabase"
+        except Exception as e:
+            pass
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM videos ORDER BY id DESC")
+    rows = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return rows, "Local SQLite"
+
+def get_active_videos():
+    """Returns only active videos for public display."""
+    if is_supabase_available():
+        try:
+            res = supabase.table("videos").select("*").eq("activo", 1).order("id", desc=True).execute()
+            return res.data, "Supabase"
+        except Exception as e:
+            pass
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM videos WHERE activo = 1 ORDER BY id DESC")
+    rows = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return rows, "Local SQLite"
+
+def toggle_video_status(video_id, activo):
+    """Toggles active/hidden status of a video."""
+    activo_val = 1 if int(activo) == 1 else 0
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("UPDATE videos SET activo = ? WHERE id = ?", (activo_val, video_id))
+        conn.commit()
+        conn.close()
+        print(f"INFO (db_manager): Estado de video {video_id} actualizado a {activo_val} en SQLite.")
+    except Exception as e:
+        print("ERROR (db_manager) al actualizar estado de video en SQLite:", e)
+
+    if is_supabase_available():
+        try:
+            supabase.table("videos").update({"activo": activo_val}).eq("id", video_id).execute()
+            print("INFO (db_manager): Estado de video actualizado en Supabase.")
+        except Exception as e:
+            print("WARNING (db_manager): No se pudo actualizar estado de video en Supabase:", e)
+
+def delete_video(video_id):
+    """Permanently deletes a video entry."""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM videos WHERE id = ?", (video_id,))
+        conn.commit()
+        conn.close()
+        print(f"INFO (db_manager): Video {video_id} eliminado de SQLite local.")
+    except Exception as e:
+        print("ERROR (db_manager) al eliminar video de SQLite:", e)
+
+    if is_supabase_available():
+        try:
+            supabase.table("videos").delete().eq("id", video_id).execute()
+            print("INFO (db_manager): Video eliminado de Supabase.")
+        except Exception as e:
+            print("WARNING (db_manager): No se pudo eliminar video de Supabase:", e)
+
+def get_video_by_id(video_id):
+    """Retrieves a single video entry by ID."""
+    if is_supabase_available():
+        try:
+            res = supabase.table("videos").select("*").eq("id", video_id).execute()
+            if res.data and len(res.data) > 0:
+                return res.data[0]
+        except Exception as e:
+            pass
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM videos WHERE id = ?", (video_id,))
+    row = cursor.fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+def update_video(video_id, titulo, categoria, video_url, miniatura_url, activo=1):
+    """Updates an existing video entry."""
+    activo_val = 1 if int(activo) == 1 else 0
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            UPDATE videos
+            SET titulo = ?, categoria = ?, video_url = ?, miniatura_url = ?, activo = ?
+            WHERE id = ?
+        """, (titulo, categoria, video_url, miniatura_url, activo_val, video_id))
+        conn.commit()
+        conn.close()
+        print(f"INFO (db_manager): Video {video_id} actualizado en SQLite local.")
+    except Exception as e:
+        print("ERROR (db_manager) al actualizar video en SQLite:", e)
+
+    if is_supabase_available():
+        try:
+            supabase.table("videos").update({
+                "titulo": titulo,
+                "categoria": categoria,
+                "video_url": video_url,
+                "miniatura_url": miniatura_url,
+                "activo": activo_val
+            }).eq("id", video_id).execute()
+            print("INFO (db_manager): Video actualizado en Supabase.")
+        except Exception as e:
+            print("WARNING (db_manager): No se pudo actualizar video en Supabase:", e)
+
+

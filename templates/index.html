@@ -33,6 +33,14 @@
 
     <!-- Template Stylesheet -->
     <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+
+    <!-- PWA Manifest & Meta Tags -->
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <meta name="theme-color" content="#e53935">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="CarroQhatu">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/logoCQ.png') }}">
 </head>    
 <body>
 
@@ -54,7 +62,7 @@
                 </div>
                 <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
                     <div class="navbar-nav ml-auto py-0 align-items-center">
-                        <a href="{{ url_for('about') }}" class="nav-item nav-link">Compra un auto</a>
+                        <a href="{{ url_for('car') }}" class="nav-item nav-link">Compra un auto</a>
                         <a href="{{ url_for('service') }}" class="nav-item nav-link">Vende tu auto</a>
                         <a href="{{ url_for('asesor') }}" class="nav-item nav-link">Asesor IA</a>
                         <a href="{{ url_for('comparador') }}" class="nav-item nav-link">Comparador</a>
@@ -68,9 +76,12 @@
                                             
                                         </div>
                                     </div> 
-                        <div class="nav-item ml-lg-3">
+                        <div class="nav-item ml-lg-2 d-flex align-items-center flex-nowrap" style="flex-shrink: 0;">
                             <a href="{{ url_for('contact') }}" class="btn-contacto">
-                                Contáctanos <i class="fa fa-headset ml-2"></i>
+                                Contáctanos
+                            </a>
+                            <a href="javascript:void(0)" onclick="installPWA()" class="btn-contacto ml-2 text-white" style="background: linear-gradient(135deg, #28a745, #218838); border: none;" title="Instalar Aplicación CarroQhatu en tu celular">
+                                <i class="fa-solid fa-mobile-screen-button mr-1"></i> Descargar App
                             </a>
                         </div>
                     </div>
@@ -859,69 +870,98 @@
                 <div class="video-modal-content">
                     <span class="close-btn" onclick="closeVideo()">X</span>
                     <video id="modalVideo"
-                        src="{{ url_for('static', filename='videos/video2.mp4') }}"                            
+                        src=""                            
                         controls
                         playsinline
-                        preload="none">
+                        preload="none"
+                        style="width:100%; height:100%;">
                     </video>
+                    <iframe id="modalIframe" src="" style="width:100%; height:100%; min-height:350px; border:none; display:none;" allowfullscreen></iframe>
                 </div>
             </div>   
 
-            <div class="video-card" onclick="openVideo('https://www.dropbox.com/scl/fi/tiysadbc5kk6ugyomliyp/video0.mp4?rlkey=d21x2uwi5ajprwuo9tykcrt6v&st=5jgp60a1&raw=1')">
-            <img src="{{ url_for('static', filename='img/miniaturasomos.svg') }}" alt="Video">
-            <div class="play-btn">▶</div>
-            </div>
+            {% if videos %}
+                {% for video in videos %}
+                <div class="video-card" onclick="openVideo('{{ video.video_url }}')" title="{{ video.titulo }}">
+                    <img src="{{ video.miniatura_url }}" alt="{{ video.titulo }}">
+                    <div class="play-btn">▶</div>
+                    {% if video.categoria %}
+                    <span class="badge badge-danger position-absolute m-2" style="top: 0; left: 0; font-size: 0.7rem; background-color: rgba(183,0,33,0.9); padding: 4px 8px; border-radius: 4px; color: #fff; font-weight: 600;">{{ video.categoria }}</span>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="video-card" onclick="openVideo('https://www.dropbox.com/scl/fi/tiysadbc5kk6ugyomliyp/video0.mp4?rlkey=d21x2uwi5ajprwuo9tykcrt6v&st=5jgp60a1&raw=1')">
+                <img src="{{ url_for('static', filename='img/miniaturasomos.svg') }}" alt="Video">
+                <div class="play-btn">▶</div>
+                </div>
 
-            <div class="video-card" onclick="openVideo('https://www.dropbox.com/scl/fi/6fvjdeufbf28v5axg9mlw/videohater.mp4?rlkey=6llmjudgksfxiohhs25bdaa68&st=dcn02wok&raw=1')">
-            <img src="{{ url_for('static', filename='img/miniaturahate.svg') }}" alt="Video">
-            <div class="play-btn">▶</div>
-            </div>
+                <div class="video-card" onclick="openVideo('https://www.dropbox.com/scl/fi/6fvjdeufbf28v5axg9mlw/videohater.mp4?rlkey=6llmjudgksfxiohhs25bdaa68&st=dcn02wok&raw=1')">
+                <img src="{{ url_for('static', filename='img/miniaturahate.svg') }}" alt="Video">
+                <div class="play-btn">▶</div>
+                </div>
 
-            <div class="video-card" onclick="openVideo('https://www.dropbox.com/scl/fi/q82dy3hpbclvvwms4coqv/testimonioahorros.mp4?rlkey=u6lo7fntzs10mk4t0b2jyip9u&st=7m3cvwmy&dl=0&raw=1')">
-            <img src="{{ url_for('static', filename='img/7añosahorros.svg') }}" alt="Video">
-            <div class="play-btn">▶</div>
-            </div>  
+                <div class="video-card" onclick="openVideo('https://www.dropbox.com/scl/fi/q82dy3hpbclvvwms4coqv/testimonioahorros.mp4?rlkey=u6lo7fntzs10mk4t0b2jyip9u&st=7m3cvwmy&dl=0&raw=1')">
+                <img src="{{ url_for('static', filename='img/7añosahorros.svg') }}" alt="Video">
+                <div class="play-btn">▶</div>
+                </div>  
 
-            <div class="video-card" onclick="openVideo('https://www.dropbox.com/scl/fi/05mupolm2ouf5qqqs6u5q/videoclienteaqp.mp4?rlkey=uuh6uedjptm6ttite6ucs277l&st=f0c0co2l&dl=0&raw=1')">
-            <img src="{{ url_for('static', filename='img/opinion2.svg') }}" alt="Video">
-            <div class="play-btn">▶</div>
-            </div>
+                <div class="video-card" onclick="openVideo('https://www.dropbox.com/scl/fi/05mupolm2ouf5qqqs6u5q/videoclienteaqp.mp4?rlkey=uuh6uedjptm6ttite6ucs277l&st=f0c0co2l&dl=0&raw=1')">
+                <img src="{{ url_for('static', filename='img/opinion2.svg') }}" alt="Video">
+                <div class="play-btn">▶</div>
+                </div>
 
-            <div class="video-card" onclick="openVideo('https://www.dropbox.com/scl/fi/26tyhyucjeebyqdjmz0g3/tailandesoargentino.mp4?rlkey=aldwmmsvda39nc88zsx76oo9p&st=w7zyhx4b&dl=0&raw=1')">
-            <img src="{{ url_for('static', filename='img/TAIOARG.svg') }}" alt="Video">
-            <div class="play-btn">▶</div>
-            </div>  
-           
+                <div class="video-card" onclick="openVideo('https://www.dropbox.com/scl/fi/26tyhyucjeebyqdjmz0g3/tailandesoargentino.mp4?rlkey=aldwmmsvda39nc88zsx76oo9p&st=w7zyhx4b&dl=0&raw=1')">
+                <img src="{{ url_for('static', filename='img/TAIOARG.svg') }}" alt="Video">
+                <div class="play-btn">▶</div>
+                </div>  
+            {% endif %}
 
             <script>
             function openVideo(src) {
                 const modal = document.getElementById('videoModal');
                 const video = document.getElementById('modalVideo');
+                const iframe = document.getElementById('modalIframe');
 
-                if (!modal || !video) {
-                    console.error("No se encontró el modal o el elemento de video en el HTML");
-                    return;
+                if (!modal) return;
+
+                if (src.includes('youtube.com') || src.includes('youtu.be')) {
+                    let embedUrl = src;
+                    if (src.includes('watch?v=')) {
+                        const videoId = src.split('watch?v=')[1].split('&')[0];
+                        embedUrl = 'https://www.youtube.com/embed/' + videoId + '?autoplay=1';
+                    } else if (src.includes('youtu.be/')) {
+                        const videoId = src.split('youtu.be/')[1].split('?')[0];
+                        embedUrl = 'https://www.youtube.com/embed/' + videoId + '?autoplay=1';
+                    }
+                    if (video) { video.pause(); video.style.display = 'none'; }
+                    if (iframe) { iframe.src = embedUrl; iframe.style.display = 'block'; }
+                } else {
+                    if (iframe) { iframe.src = ''; iframe.style.display = 'none'; }
+                    if (video) {
+                        video.style.display = 'block';
+                        video.src = src;
+                        video.load();
+                        video.play().catch(error => console.log("Reproducción manual requerida"));
+                    }
                 }
 
-                video.src = src;
-                video.load(); // Indispensable para Dropbox
                 modal.classList.add('active');
-                
-                // Intentar reproducir (el navegador puede pedir un clic extra)
-                video.play().catch(error => console.log("Reproducción manual requerida"));
             }
-            function closeVideo() {
-            const modal = document.getElementById('videoModal');
-            const video = document.getElementById('modalVideo');
 
-            video.pause();
-            video.src = '';
-            modal.classList.remove('active');
+            function closeVideo() {
+                const modal = document.getElementById('videoModal');
+                const video = document.getElementById('modalVideo');
+                const iframe = document.getElementById('modalIframe');
+
+                if (video) { video.pause(); video.src = ''; }
+                if (iframe) { iframe.src = ''; }
+                if (modal) { modal.classList.remove('active'); }
             }
 
             /* cerrar click afuera */
             document.getElementById('videoModal').addEventListener('click', e => {
-            if (e.target.id === 'videoModal') closeVideo();
+                if (e.target.id === 'videoModal') closeVideo();
             });
             </script>
         </section>
@@ -1364,7 +1404,55 @@
     <!-- Script principal del template -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
-    
+    <!-- Banner Flotante de Instalación de App PWA -->
+    <div id="pwa-install-banner" class="shadow-lg rounded-lg align-items-center justify-content-between p-3" style="display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; background: #1a1d24; border: 2px solid #e53935; color: white; min-width: 320px; max-width: 90%;">
+        <div class="d-flex align-items-center">
+            <img src="{{ url_for('static', filename='img/logoCQ.png') }}" alt="App Icon" style="width: 42px; height: 42px; object-fit: contain; margin-right: 12px;">
+            <div>
+                <strong style="font-size: 0.95rem; display: block; line-height: 1.2;">Instalar App CarroQhatu</strong>
+                <small class="text-muted" style="font-size: 0.78rem;">Descarga la aplicación en tu celular</small>
+            </div>
+        </div>
+        <div class="ml-3 d-flex align-items-center">
+            <button onclick="installPWA()" class="btn btn-sm text-white font-weight-bold px-3 py-1 mr-2" style="background-color: #e53935; border-radius: 20px;">
+                <i class="fa-solid fa-download mr-1"></i> Instalar
+            </button>
+            <button onclick="document.getElementById('pwa-install-banner').style.display='none'" class="btn btn-sm text-muted p-0" style="background: none; border: none; font-size: 1.2rem;">&times;</button>
+        </div>
+    </div>
+
+    <!-- Registro de Service Worker PWA -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register("{{ url_for('static', filename='sw.js') }}")
+                    .then(reg => console.log('PWA Service Worker listo:', reg.scope))
+                    .catch(err => console.log('PWA Error:', err));
+            });
+        }
+
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const pwaBanner = document.getElementById('pwa-install-banner');
+            if (pwaBanner) pwaBanner.style.display = 'flex';
+        });
+
+        function installPWA() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('App instalada con éxito');
+                    }
+                    deferredPrompt = null;
+                    const pwaBanner = document.getElementById('pwa-install-banner');
+                    if (pwaBanner) pwaBanner.style.display = 'none';
+                });
+            }
+        }
+    </script>
 </div>
 </body>
 

@@ -45,9 +45,8 @@
                 </button>
                 <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
                     <div class="navbar-nav ml-auto py-0">
-                        <a class="navbar_txtInicio nav-item nav-link" href="{{ url_for('index') }}" class="nav-item nav-link">Inicio</a>        
-                        <a href="{{ url_for('index') }}" class="nav-item nav-link">Inicio</a>
-                        <a href="{{ url_for('about') }}" class="nav-item nav-link">Compra un auto</a>
+                        <a class="navbar_txtInicio nav-item nav-link" href="{{ url_for('index') }}">Inicio</a>
+                        <a href="{{ url_for('car') }}" class="nav-item nav-link active">Compra un auto</a>
                         <a href="{{ url_for('service') }}" class="nav-item nav-link">Vende tu auto</a>
                         <a href="{{ url_for('asesor') }}" class="nav-item nav-link">Asesor IA</a>
                         <a href="{{ url_for('comparador') }}" class="nav-item nav-link">Comparador</a>            
@@ -114,37 +113,44 @@
                             
                             <!-- WhatsApp link with customized pre-filled message -->
                             {% set wa_message = "Hola CarroQhatu! Estoy interesado en el auto " ~ car.marca|upper ~ " " ~ car.modelo|upper ~ " del año " ~ car.year ~ " con " ~ "{:,}".format(car.km) ~ " km, publicado con precio " ~ car.precio ~ "." %}
-                            <a href="https://wa.me/{{ site_config.contact_phone|default('51972043502')|replace(' ', '')|replace('+', '') }}?text={{ wa_message|urlencode }}" target="_blank" style="text-decoration: none;">
+                            
+                            <a href="{{ url_for('detail', id=car.id) }}" style="text-decoration: none;">
                                 <img src="{{ car.imagen_url }}" alt="{{ car.marca }} {{ car.modelo }}" class="carcatal-image" loading="lazy">
-                                <div class="cardcatal-body">
-                                    <h2 class="carcatal-title">{{ car.marca|upper }} {{ car.modelo|upper }}</h2>
-                                    
-                                    <div class="especif-grid">
-                                        <div class="especif-item">{{ car.year }}</div>
-                                        <div class="especif-item">{{ car.motor }}</div>
-                                        <div class="especif-item">{{ "{:,}".format(car.km) }} km</div>
-                                        <div class="especif-item">{{ car.transmision }}</div>
-                                    </div>
-                                    
-                                    {% if car.descripcion %}
-                                    <p class="carcatal-desc text-muted small mt-2" style="font-size: 0.78rem; line-height: 1.35; margin-bottom: 0.5rem; text-align: left; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.7em;" title="{{ car.descripcion }}">
-                                        {{ car.descripcion }}
-                                    </p>
-                                    {% endif %}
-                                    
-                                    <div class="dividerlinecatag"></div>
-                                    <div class="pricecardcatal-container">
-                                        <span class="pricecardcatal-label">Precio</span>
-                                        <span class="pricecardcatal-value">{{ car.precio }}</span>
-                                    </div>
-                                    <span class="btn-detailcar">CONTACTAR WHATSAPP</span>
-                                    
-                                    <span class="contact-linkwspp" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                                        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" loading="lazy" style="width: 20px; height: 20px;">
-                                        CONTACTAR
-                                    </span>
-                                </div>
                             </a>
+
+                            <div class="cardcatal-body">
+                                <a href="{{ url_for('detail', id=car.id) }}" style="text-decoration: none;">
+                                    <h2 class="carcatal-title">{{ car.marca|upper }} {{ car.modelo|upper }}</h2>
+                                </a>
+                                
+                                <div class="especif-grid">
+                                    <div class="especif-item">{{ car.year }}</div>
+                                    <div class="especif-item">{{ car.motor }}</div>
+                                    <div class="especif-item">{{ "{:,}".format(car.km) }} km</div>
+                                    <div class="especif-item">{{ car.transmision }}</div>
+                                </div>
+                                
+                                {% if car.descripcion %}
+                                <p class="carcatal-desc text-muted small mt-2" style="font-size: 0.78rem; line-height: 1.35; margin-bottom: 0.5rem; text-align: left; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.7em;" title="{{ car.descripcion }}">
+                                    {{ car.descripcion }}
+                                </p>
+                                {% endif %}
+                                
+                                <div class="dividerlinecatag"></div>
+                                <div class="pricecardcatal-container">
+                                    <span class="pricecardcatal-label">Precio</span>
+                                    <span class="pricecardcatal-value">{{ car.precio }}</span>
+                                </div>
+                                
+                                <a href="https://wa.me/{{ site_config.contact_phone|default('51972043502')|replace(' ', '')|replace('+', '') }}?text={{ wa_message|urlencode }}" target="_blank" class="btn-detailcar text-center text-decoration-none d-flex align-items-center justify-content-center" style="gap: 8px;">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" loading="lazy" style="width: 18px; height: 18px;">
+                                    CONTACTAR WHATSAPP
+                                </a>
+                                
+                                <a href="{{ url_for('detail', id=car.id) }}" class="contact-linkwspp text-decoration-none mt-2" style="display: flex; align-items: center; justify-content: center; gap: 6px; color: #0046ff; font-weight: 700; font-size: 0.85rem;">
+                                    <i class="fa-solid fa-circle-info"></i> VER MÁS INFORMACIÓN
+                                </a>
+                            </div>
                         </div>
                     </div>
                     {% endfor %}

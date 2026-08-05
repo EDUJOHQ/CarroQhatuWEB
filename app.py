@@ -3,6 +3,7 @@ from flask_cors import CORS
 from supabase import create_client
 from dotenv import load_dotenv
 import os
+import json
 import db_manager
 from datetime import timedelta
 import hmac
@@ -118,7 +119,8 @@ def get_ai_completion(api_messages, max_tokens=2000, temperature=0.7):
 def index():
     vehiculos, _ = db_manager.get_all_vehiculos()
     publicidad, _ = db_manager.get_all_publicidad()
-    return render_template("index.html", vehiculos=vehiculos, publicidad=publicidad)
+    videos, _ = db_manager.get_active_videos()
+    return render_template("index.html", vehiculos=vehiculos, publicidad=publicidad, videos=videos)
 
 @app.route("/about")
 def about():
@@ -136,7 +138,39 @@ def car():
 
 @app.route("/detail")
 def detail():
-    return render_template("detail.html")
+    vehiculo_id = request.args.get("id")
+    car = None
+    vehiculos, _ = db_manager.get_all_vehiculos()
+    if vehiculo_id:
+        try:
+            # Buscar primero por ID numérico en la BD
+            try:
+                numeric_id = int(vehiculo_id)
+                car = db_manager.get_vehiculo_by_id(numeric_id)
+            except (ValueError, TypeError):
+                car = None
+                
+            if not car and vehiculos:
+                for v in vehiculos:
+                    if str(v.get('id')) == str(vehiculo_id):
+                        car = v
+                        break
+                        
+            if car:
+                raw_extra = car.get("imagenes_extra")
+                if isinstance(raw_extra, str) and raw_extra.strip():
+                    try:
+                        car["imagenes_extra_list"] = json.loads(raw_extra)
+                    except:
+                        car["imagenes_extra_list"] = [x.strip() for x in raw_extra.split(",") if x.strip()]
+                elif isinstance(raw_extra, list):
+                    car["imagenes_extra_list"] = raw_extra
+                else:
+                    car["imagenes_extra_list"] = []
+        except Exception as e:
+            print("Error en ruta /detail cargando vehiculo:", e)
+            car = None
+    return render_template("detail.html", car=car, vehiculos=vehiculos)
 
 @app.route("/team")
 def team():
@@ -195,6 +229,16 @@ def footer_contact():
     )
     flash("¡Gracias! Nos pondremos en contacto contigo muy pronto.", "success")
     return redirect(request.referrer or url_for("index"))
+
+@app.route("/manifest.json")
+def serve_manifest():
+    return send_file(os.path.join(app.root_path, "static", "manifest.json"), mimetype="application/json")
+
+@app.route("/sw.js")
+def serve_sw():
+    response = send_file(os.path.join(app.root_path, "static", "sw.js"), mimetype="application/javascript")
+    response.headers["Service-Worker-Allowed"] = "/"
+    return response
 
 @app.route("/comunidad")
 def comunidad():
@@ -777,36 +821,38 @@ def admin_required(f):
     return decorated_function
 
 def save_uploaded_file(file, folder):
-    """Saves an uploaded file. Uploads to Supabase Storage if online, otherwise to local static/uploads/."""
-    filename = file.filename
-    # Clean filename
-    import re
-    filename = re.sub(r'[^a-zA-Z0-9_.-]', '_', filename)
+    """Saves an uploaded file instantly. Saves locally first and attempts Supabase Storage if online."""
+    import re, time
+    raw_filename = file.filename or "file.jpg"
+    clean_name = re.sub(r'[^a-zA-Z0-9_.-]', '_', raw_filename)
+    unique_filename = f"{int(time.time()*1000)}_{clean_name}"
     
-    # 1. Try to upload to Supabase Storage
+    # 1. Save to local storage first (instant response < 1ms)
+    upload_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "uploads", folder)
+    os.makedirs(upload_dir, exist_ok=True)
+    local_path = os.path.join(upload_dir, unique_filename)
+    file.seek(0)
+    file.save(local_path)
+    local_url = f"/static/uploads/{folder}/{unique_filename}"
+
+    # 2. Upload to Supabase Storage if available
     if db_manager.is_supabase_available():
         try:
-            file.seek(0)
-            file_bytes = file.read()
-            file_path = f"{folder}/{filename}"
+            file_path = f"{folder}/{unique_filename}"
+            with open(local_path, "rb") as f:
+                file_bytes = f.read()
             db_manager.supabase.storage.from_("archivos_web").upload(
                 path=file_path,
                 file=file_bytes,
-                file_options={"content-type": file.content_type, "x-upsert": "true"}
+                file_options={"content-type": getattr(file, "content_type", "image/jpeg") or "image/jpeg", "x-upsert": "true"}
             )
             public_url = db_manager.supabase.storage.from_("archivos_web").get_public_url(file_path)
             print(f"INFO: Archivo subido a Supabase Storage: {public_url}")
             return public_url
         except Exception as e:
-            print(f"WARNING: Error al subir a Supabase Storage ({e}). Guardando localmente.")
+            print(f"WARNING: Error al subir a Supabase Storage ({e}). Usando URL local instantánea.")
+            db_manager.mark_supabase_offline()
 
-    # 2. Fallback to local storage
-    upload_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "uploads", folder)
-    os.makedirs(upload_dir, exist_ok=True)
-    local_path = os.path.join(upload_dir, filename)
-    file.seek(0)
-    file.save(local_path)
-    local_url = f"/static/uploads/{folder}/{filename}"
     print(f"INFO: Archivo guardado localmente: {local_url}")
     return local_url
 
@@ -1015,23 +1061,51 @@ def admin_vehiculos():
     if request.method == "POST":
         marca = request.form.get("marca", "").strip()
         modelo = request.form.get("modelo", "").strip()
-        year = request.form.get("year", "").strip()
-        motor = request.form.get("motor", "").strip()
+        year = request.form.get("year", "2024").strip()
+        motor = request.form.get("motor", "2.0 cc").strip()
         km = request.form.get("km", "0").strip()
-        transmision = request.form.get("transmision", "").strip()
+        transmision = request.form.get("transmision", "Mecánica").strip()
         precio = request.form.get("precio", "").strip()
-        ciudad = request.form.get("ciudad", "").strip()
+        ciudad = request.form.get("ciudad", "Arequipa").strip()
         verificado = int(request.form.get("verificado", "1"))
         descripcion = request.form.get("descripcion", "").strip()
         
         file = request.files.get("imagen_auto")
-        
-        if marca and modelo and precio and file:
+        imagen_url = ""
+        if file and file.filename != "":
             try:
-                # Guardar imagen (en carpeta 'vehiculos')
                 imagen_url = save_uploaded_file(file, "vehiculos")
+            except Exception as e:
+                print("Error guardando foto principal:", e)
                 
-                # Guardar en base de datos de forma segura (Dual-Storage)
+        if not imagen_url:
+            imagen_url_alt = request.form.get("imagen_url_alt", "").strip()
+            if imagen_url_alt:
+                imagen_url = imagen_url_alt
+            else:
+                imagen_url = "/static/img/HONDA-HR-V.jpg"
+        
+        if marca and modelo and precio:
+            try:
+                # Guardar imágenes adicionales (múltiples fotos)
+                extra_files = request.files.getlist("imagenes_extra_auto")
+                extra_urls = []
+                for ef in extra_files:
+                    if ef and hasattr(ef, 'filename') and ef.filename != "":
+                        try:
+                            u = save_uploaded_file(ef, "vehiculos")
+                            if u:
+                                extra_urls.append(u)
+                        except Exception as e_extra:
+                            print("Error subiendo foto extra:", e_extra)
+                            
+                # Si no se adjuntó foto principal pero sí fotos de galería, usar la 1ra como portada
+                if extra_urls and (not imagen_url or imagen_url == "/static/img/HONDA-HR-V.jpg"):
+                    imagen_url = extra_urls[0]
+
+                imagenes_extra_str = json.dumps(extra_urls) if extra_urls else ""
+                
+                # Guardar en base de datos
                 db_manager.save_vehiculo(
                     marca=marca,
                     modelo=modelo,
@@ -1042,20 +1116,112 @@ def admin_vehiculos():
                     precio=precio,
                     imagen_url=imagen_url,
                     ciudad=ciudad,
-                    estado="bueno", # Default value since field was removed from UI
+                    estado="bueno",
                     verificado=verificado,
-                    descripcion=descripcion
+                    descripcion=descripcion,
+                    imagenes_extra=imagenes_extra_str
                 )
-                flash("¡Vehículo agregado al catálogo con éxito!", "success")
+                flash("¡Vehículo publicado con éxito en el catálogo web y panel de control!", "success")
             except Exception as e:
                 flash(f"Error al registrar el vehículo: {str(e)}", "danger")
         else:
-            flash("Por favor, completa todos los campos requeridos y sube una imagen.", "warning")
+            flash("Por favor, completa los campos requeridos: Marca, Modelo y Precio.", "warning")
             
         return redirect(url_for("admin_vehiculos"))
         
     vehiculos, db_source = db_manager.get_all_vehiculos()
+    for car in vehiculos:
+        raw_extra = car.get("imagenes_extra")
+        if isinstance(raw_extra, str) and raw_extra.strip():
+            try:
+                car["imagenes_extra_list"] = json.loads(raw_extra)
+            except:
+                car["imagenes_extra_list"] = [x.strip() for x in raw_extra.split(",") if x.strip()]
+        elif isinstance(raw_extra, list):
+            car["imagenes_extra_list"] = raw_extra
+        else:
+            car["imagenes_extra_list"] = []
+
     return render_template("admin/admin_vehiculos.html", vehiculos=vehiculos, db_source=db_source)
+
+@app.route("/admin/vehiculos/editar/<int:vehiculo_id>", methods=["POST"])
+@admin_required
+def admin_edit_vehiculo(vehiculo_id):
+    existing_car = db_manager.get_vehiculo_by_id(vehiculo_id)
+    if not existing_car:
+        flash("El vehículo especificado no existe.", "danger")
+        return redirect(url_for("admin_vehiculos"))
+        
+    marca = request.form.get("marca", existing_car.get("marca", "")).strip()
+    modelo = request.form.get("modelo", existing_car.get("modelo", "")).strip()
+    year = request.form.get("year", existing_car.get("year", "")).strip()
+    motor = request.form.get("motor", existing_car.get("motor", "")).strip()
+    km = request.form.get("km", str(existing_car.get("km", "0"))).strip()
+    transmision = request.form.get("transmision", existing_car.get("transmision", "")).strip()
+    precio = request.form.get("precio", existing_car.get("precio", "")).strip()
+    ciudad = request.form.get("ciudad", existing_car.get("ciudad", "")).strip()
+    verificado = int(request.form.get("verificado", existing_car.get("verificado", 1)))
+    descripcion = request.form.get("descripcion", existing_car.get("descripcion", "")).strip()
+    
+    # Imagen principal
+    imagen_url = existing_car.get("imagen_url", "")
+    file = request.files.get("imagen_auto")
+    if file and file.filename != "":
+        try:
+            imagen_url = save_uploaded_file(file, "vehiculos")
+        except Exception as e:
+            flash(f"Error al subir la nueva foto principal del vehículo: {str(e)}", "danger")
+            return redirect(url_for("admin_vehiculos"))
+            
+    # Imágenes extra de la galería
+    existing_extra = existing_car.get("imagenes_extra", "")
+    try:
+        current_extra_list = json.loads(existing_extra) if existing_extra else []
+    except:
+        current_extra_list = [x.strip() for x in existing_extra.split(",") if x.strip()] if isinstance(existing_extra, str) else []
+        
+    extra_action = request.form.get("imagenes_extra_action", "append")
+    new_extra_files = request.files.getlist("imagenes_extra_auto")
+    new_extra_urls = []
+    for ef in new_extra_files:
+        if ef and ef.filename != "":
+            u = save_uploaded_file(ef, "vehiculos")
+            new_extra_urls.append(u)
+
+    if extra_action == "replace":
+        final_extra_list = new_extra_urls if new_extra_urls else current_extra_list
+    elif extra_action == "clear":
+        final_extra_list = []
+    else: # append / keep
+        final_extra_list = current_extra_list + new_extra_urls
+
+    imagenes_extra_str = json.dumps(final_extra_list) if final_extra_list else ""
+
+    if marca and modelo and precio:
+        try:
+            db_manager.update_vehiculo(
+                vehiculo_id=vehiculo_id,
+                marca=marca,
+                modelo=modelo,
+                year=year,
+                motor=motor,
+                km=km,
+                transmision=transmision,
+                precio=precio,
+                imagen_url=imagen_url,
+                ciudad=ciudad,
+                verificado=verificado,
+                descripcion=descripcion,
+                imagenes_extra=imagenes_extra_str
+            )
+            flash("¡Datos del vehículo e imágenes actualizadas correctamente!", "success")
+        except Exception as e:
+            flash(f"Error al actualizar el vehículo: {str(e)}", "danger")
+    else:
+        flash("Por favor, completa los campos requeridos.", "warning")
+
+    return redirect(url_for("admin_vehiculos"))
+
 
 @app.route("/admin/vehiculos/eliminar/<int:vehiculo_id>", methods=["POST"])
 @admin_required
@@ -1066,6 +1232,7 @@ def admin_delete_vehiculo(vehiculo_id):
     except Exception as e:
         flash(f"Error al eliminar el vehículo: {str(e)}", "danger")
     return redirect(url_for("admin_vehiculos"))
+
 
 @app.route("/admin/catalogos", methods=["GET", "POST"])
 @admin_required
@@ -1225,6 +1392,143 @@ def admin_delete_testimonio(t_id):
         return jsonify({"error": str(e)}), 500
 
 
+# ---------- VIDEOS Y TIPS (ADMIN) ----------
+
+@app.route("/admin/videos", methods=["GET", "POST"])
+@admin_required
+def admin_videos():
+    if request.method == "POST":
+        titulo = request.form.get("titulo", "").strip()
+        categoria = request.form.get("categoria", "Tip Vehicular").strip()
+        video_tipo = request.form.get("video_tipo", "url")
+        miniatura_tipo = request.form.get("miniatura_tipo", "url")
+        
+        video_url = ""
+        if video_tipo == "file":
+            file_v = request.files.get("video_file")
+            if file_v and file_v.filename != "":
+                try:
+                    video_url = save_uploaded_file(file_v, "videos")
+                except Exception as e:
+                    flash(f"Error al subir el archivo de video: {str(e)}", "danger")
+                    return redirect(url_for("admin_videos"))
+        else:
+            video_url = request.form.get("video_url", "").strip()
+            
+        miniatura_url = ""
+        if miniatura_tipo == "file":
+            file_m = request.files.get("miniatura_file")
+            if file_m and file_m.filename != "":
+                try:
+                    miniatura_url = save_uploaded_file(file_m, "miniaturas")
+                except Exception as e:
+                    print("Error miniatura:", e)
+        else:
+            miniatura_url = request.form.get("miniatura_url", "").strip()
+            
+        if not miniatura_url:
+            miniatura_url = "/static/img/miniaturasomos.svg"
+            
+        if titulo and video_url:
+            try:
+                db_manager.save_video(titulo=titulo, categoria=categoria, video_url=video_url, miniatura_url=miniatura_url)
+                flash("¡Video / Tip agregado con éxito al catálogo web!", "success")
+            except Exception as e:
+                flash(f"Error al guardar el video: {str(e)}", "danger")
+        else:
+            flash("Por favor, proporciona el título y el video (URL o archivo).", "warning")
+            
+        return redirect(url_for("admin_videos"))
+        
+    videos, db_source = db_manager.get_all_videos()
+    return render_template("admin/admin_videos.html", videos=videos, db_source=db_source)
+
+@app.route("/admin/videos/toggle/<int:video_id>", methods=["POST"])
+@admin_required
+def admin_toggle_video(video_id):
+    try:
+        data = request.json or {}
+        activo = int(data.get("activo", 1))
+        db_manager.toggle_video_status(video_id, activo)
+        msg = "Video activado y visible en la web" if activo == 1 else "Video ocultado de la web pública"
+        return jsonify({"success": True, "message": msg})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/admin/videos/editar/<int:video_id>", methods=["POST"])
+@admin_required
+def admin_edit_video(video_id):
+    existing_video = db_manager.get_video_by_id(video_id)
+    if not existing_video:
+        flash("El video que intentas editar no existe.", "danger")
+        return redirect(url_for("admin_videos"))
+        
+    titulo = request.form.get("titulo", existing_video.get("titulo", "")).strip()
+    categoria = request.form.get("categoria", existing_video.get("categoria", "Tip Vehicular")).strip()
+    activo = int(request.form.get("activo", existing_video.get("activo", 1)))
+    
+    # Video source handling
+    video_tipo = request.form.get("video_tipo", "keep")
+    video_url = existing_video.get("video_url", "")
+    if video_tipo == "file":
+        file_v = request.files.get("video_file")
+        if file_v and file_v.filename != "":
+            try:
+                video_url = save_uploaded_file(file_v, "videos")
+            except Exception as e:
+                flash(f"Error al subir el nuevo archivo de video: {str(e)}", "danger")
+                return redirect(url_for("admin_videos"))
+    elif video_tipo == "url":
+        new_url = request.form.get("video_url", "").strip()
+        if new_url:
+            video_url = new_url
+
+    # Thumbnail handling
+    miniatura_tipo = request.form.get("miniatura_tipo", "keep")
+    miniatura_url = existing_video.get("miniatura_url", "")
+    if miniatura_tipo == "file":
+        file_m = request.files.get("miniatura_file")
+        if file_m and file_m.filename != "":
+            try:
+                miniatura_url = save_uploaded_file(file_m, "miniaturas")
+            except Exception as e:
+                print("Error miniatura:", e)
+    elif miniatura_tipo == "url":
+        new_min_url = request.form.get("miniatura_url", "").strip()
+        if new_min_url:
+            miniatura_url = new_min_url
+
+    if titulo and video_url:
+        try:
+            db_manager.update_video(
+                video_id=video_id,
+                titulo=titulo,
+                categoria=categoria,
+                video_url=video_url,
+                miniatura_url=miniatura_url,
+                activo=activo
+            )
+            flash("¡Video / Tip actualizado con éxito!", "success")
+        except Exception as e:
+            flash(f"Error al actualizar el video: {str(e)}", "danger")
+    else:
+        flash("Por favor, proporciona el título y la ubicación del video.", "warning")
+
+    return redirect(url_for("admin_videos"))
+
+@app.route("/admin/videos/eliminar/<int:video_id>", methods=["POST"])
+@admin_required
+def admin_delete_video(video_id):
+    try:
+        db_manager.delete_video(video_id)
+        flash("Video / Tip eliminado correctamente.", "success")
+    except Exception as e:
+        flash(f"Error al eliminar el video: {str(e)}", "danger")
+    return redirect(url_for("admin_videos"))
+
+
+
+
 # ---------- ASESOR VEHICULAR IA ----------
 
 @app.route("/asesor")
@@ -1238,36 +1542,70 @@ def api_asesor_chat():
         if not data or "messages" not in data:
             return jsonify({"error": "Mensajes no proporcionados"}), 400
             
-        user_messages = data["messages"] # List of {role, content}
+        user_messages = data["messages"]
+        
+        # Obtener el último mensaje del usuario
+        last_user_msg = ""
+        for m in reversed(user_messages):
+            if m.get("role") == "user":
+                last_user_msg = m.get("content", "").strip()
+                break
+                
+        last_user_lower = last_user_msg.lower()
         
         # Obtener catálogo en tiempo real
         vehiculos, _ = db_manager.get_all_vehiculos()
         
+        # -------------------------------------------------------------
+        # FAST-PATH: Respuestas instantáneas (< 5ms) para consultas web
+        # -------------------------------------------------------------
+        # 1. Solicitud de Contacto / WhatsApp / Teléfono
+        if any(k in last_user_lower for k in ["contacto", "telefono", "teléfono", "whatsapp", "wspp", "llamar", "celular", "numero", "número"]):
+            resp = "¡Hola! Soy **Qhatuchay IA** 🚗🤖. Aquí tienes los datos de contacto oficial de **CarroQhatu**:\n\n" \
+                   "📱 **WhatsApp Directo**: [+51 972043502](https://wa.me/51972043502)\n" \
+                   "📍 **Sedes de Atención**: Juliaca, Arequipa y Lima (Perú)\n" \
+                   "🌐 **Servicios Web**: Catálogo de autos, Inspección 360°, Tasaciones y Asesoría Inteligente.\n\n" \
+                   "¡Escríbenos al WhatsApp para ayudarte al instante con la compra o venta de tu vehículo!"
+            return jsonify({"respuesta": resp, "recomendados": [], "externos": []})
+            
+        # 2. Solicitud de Información Completa de la Web / "Dame todo" / "Qué ofrecen"
+        if any(k in last_user_lower for k in ["dame todo", "toda la información", "toda la informacion", "todo de la pagina", "todo de la página", "qué es carroqhatu", "servicios de la web", "qué ofrecen", "que ofrecen"]):
+            resp = "¡Hola! Soy **Qhatuchay IA** 🚗🤖 y te doy **TODA la información oficial de la plataforma CarroQhatu**:\n\n" \
+                   "🚗 **1. Catálogo de Autos**: Publicamos vehículos seminuevos verificados y 0KM con fotos reales, precios, motor, kilometraje y ficha técnica completa.\n" \
+                   "🔍 **2. Inspección 360°**: Servicio de evaluación técnica, mecánica y verificación legal de documentos para comprar o vender con total seguridad.\n" \
+                   "💰 **3. Vende tu Auto / Tasaciones**: Herramienta de cotización gratuita para valuar tu vehículo al precio real de mercado.\n" \
+                   "📊 **4. Comparador de Vehículos**: Permite comparar dos o más autos en tiempo real para tomar la mejor decisión.\n" \
+                   "📱 **5. Contacto Directo**: WhatsApp +51 972043502 | Atendemos en Juliaca, Arequipa y Lima.\n\n" \
+                   "¿Qué parte de nuestra página web te gustaría explorar ahora?"
+            return jsonify({"respuesta": resp, "recomendados": [], "externos": []})
+
         # Formatear el catálogo para la IA
         catalog_str = ""
         for v in vehiculos:
             catalog_str += f"- ID: {v['id']} | {v['marca'].upper()} {v['modelo'].upper()} ({v['year']}) | Precio: {v['precio']} | KM: {v['km']:,} | Motor: {v['motor']} | Transmisión: {v['transmision']} | Sede: {v['ciudad']} | Detalles: {v.get('descripcion', '') or 'Sin descripción adicional.'}\n"
             
-        system_prompt = f"""Eres el Asesor Automotriz Inteligente de CarroQhatu, experto mundial en el mercado peruano e internacional, vehículos nuevos 0KM de concesionaria de los años actuales 2026, 2027 y próximos lanzamientos/modelos 2028, así como vehículos seminuevos y usados.
+        system_prompt = f"""Tu nombre es Qhatuchay IA, el Asesor Automotriz Experto y Representante Oficial de CarroQhatu en Perú.
 
-CATÁLOGO INTERNO (Vehículos disponibles en la plataforma de CarroQhatu):
+COMPORTAMIENTO Y SERVICIO DE BÚSQUEDA Y COTIZACIÓN EXTERNA:
+1. SI EL CLIENTE BUSCA UN VEHÍCULO (0KM O DE SEGUNDA) QUE NO ESTÁ EN NUESTRO STOCK DIRECTO:
+   - Sé 100% transparente y dile: "Actualmente no contamos con este modelo específico en nuestro stock directo de la web, PERO en **CarroQhatu** te ofrecemos el **Servicio de Búsqueda Personalizada, Cotización e Inspección Técnica 360°** en todo el mercado peruano (concesionarias oficiales 0KM, portales verificados o vendedores particulares)".
+   - Ofrécete a buscarle, cotizarle y mostrarle opciones reales del mercado general con sus precios aproximados en soles o dólares y fotos reales del modelo.
+   - Para cada alternativa recomendada del mercado general, DEBES incluir la etiqueta:
+     `[EXTERNAL_CAR: Marca | Modelo | Año | Precio Aprox | Kilometraje o 0KM | Transmisión | 0km o usado]`
+   - Invita al usuario a solicitar la cotización e inspección directa a través de nuestro WhatsApp Oficial: +51 972043502.
+
+2. SI EL CLIENTE BUSCA VEHÍCULOS QUE SÍ ESTÁN EN NUESTRO CATÁLOGO DE LA WEB:
+   - Recomienda los modelos del stock e incluye la etiqueta `[CAR_ID: <id>]`.
+
+3. REGLA DE INVENTARIO INTERNO:
+   - ÚNICAMENTE los vehículos listados en "CATÁLOGO ACTUAL EN BASE DE DATOS" pertenecen al stock propio directo de la web. NO inventes otros autos dentro del stock propio.
+
+CATÁLOGO ACTUAL EN BASE DE DATOS DE CARROQHATU:
 {catalog_str}
 
-REGLAS DE ATENCIÓN Y RECOMENDACIÓN DE VEHÍCULOS NUEVOS 0KM Y MERCADO GENERAL:
-1. Responde LIBREMENTE a cualquier pregunta sobre autos (marcas, modelos, fichas técnicas, comparaciones, consejos de compra, mantenimiento, etc.).
-2. Si el usuario pregunta por vehículos nuevos 0KM (modelos actuales 2026, 2027 o preventas/próximos lanzamientos 2028), recomiéndale los mejores modelos del mercado actual (ej: Toyota Yaris Cross 2026/2027, Kia Sportage 2026/2027, Hyundai Tucson 2026/2027, Toyota Hilux 4x4 2026/2027, Mazda CX-5 2027/2028, Suzuki Swift 2026, etc.).
-3. Para cada vehículo de afuera o 0KM que recomiendes, DEBES incluir la etiqueta especial:
-   `[EXTERNAL_CAR: Marca | Modelo | Año | Precio aprox | 0KM | Transmisión | 0km | /static/img/nombre_imagen.jpg]`
-   Ejemplos:
-   - `[EXTERNAL_CAR: Toyota | Yaris Cross 0KM | 2026 | USD $21,500 | 0KM | Automática CVT | 0km | /static/img/toyotayaris.jpg]`
-   - `[EXTERNAL_CAR: Kia | Sportage 0KM | 2027 | USD $28,900 | 0KM | Secuencial | 0km | /static/img/KIASPORTAGE2.jpg]`
-   - `[EXTERNAL_CAR: Hyundai | Tucson 0KM | 2027 | USD $29,500 | 0KM | Automática | 0km | /static/img/TUCSON2019.jpg]`
-   - `[EXTERNAL_CAR: Toyota | Hilux SRV 4x4 0KM | 2027 | USD $39,900 | 0KM | Mecánica | 0km | /static/img/HILUX2017-1.jpg]`
-   - `[EXTERNAL_CAR: Mazda | CX-5 0KM | 2028 Preview | USD $31,500 | 0KM | Automática | 0km | /static/img/MAZDACX5.jpg]`
-4. Si recomiendas un auto de nuestro stock interno de la web, usa `[CAR_ID: <id>]`.
-5. Explica al cliente que en CarroQhatu no solo vendemos nuestro stock de la web, sino que también ofrecemos el Servicio de Búsqueda, Asesoría de Compra, e Inspección Mecánica y Legal para ayudarle a adquirir cualquier vehículo nuevo 0KM de concesionaria o seminuevo en el Perú con total seguridad.
-6. MIMETIZACIÓN Y TONO: Sé empático, cercano y amigable. Si habla con jerga peruana ("causa", "chamba", "pata", "fierro", "cañita"), responde con ese mismo dinamismo natural.
-7. Responde siempre en español, de forma clara, amigable y atractiva con viñetas y negritas.
+REGLAS DE ATENCIÓN Y FORMATO:
+- Actúa como un asesor automotriz real, amable, experto, técnico y servicial.
+- Usa negritas (*texto*) y listas organizadas para una lectura clara.
 """
         
         respuesta_texto = None
@@ -1279,34 +1617,16 @@ REGLAS DE ATENCIÓN Y RECOMENDACIÓN DE VEHÍCULOS NUEVOS 0KM Y MERCADO GENERAL:
                         "role": msg["role"],
                         "content": msg["content"]
                     })
-            respuesta_texto = get_ai_completion(api_messages, max_tokens=2000, temperature=0.7)
+            respuesta_texto = get_ai_completion(api_messages, max_tokens=1600, temperature=0.3)
         except Exception as call_err:
             print("WARNING (app): Error llamando a la API de IA (Gemini/OpenAI), usando fallback:", call_err)
             respuesta_texto = None
             
-        # Fallback local determinista si no hay API Key o falla la llamada
+        # Fallback local determinista rápido
         if not respuesta_texto:
-            # Obtener el último mensaje del usuario
-            last_user_msg = ""
-            for m in reversed(user_messages):
-                if m.get("role") == "user":
-                    last_user_msg = m.get("content", "").lower().strip()
-                    break
-                    
-            # Analizar si es saludo o pregunta general sin clave de autos
-            is_greeting = any(k in last_user_msg for k in ["hola", "buenos dias", "buenas tardes", "buenas noches", "como estas", "que tal", "hi", "hello"])
-            is_general = not any(k in last_user_msg for k in ["auto", "carro", "vehiculo", "camioneta", "suv", "marca", "precio", "catalogo", "comprar", "vender", "nuevo", "usado", "0km", "inspeccion", "cotizar", "qhatu"])
-            
-            # Analizar intenciones del usuario
-            is_new_request = any(k in last_user_msg for k in ["nuevo", "0km", "0 km", "concesionaria", "cero kilometros", "cero km", "tienda"])
-            is_used_request = any(k in last_user_msg for k in ["usado", "segunda", "2da", "recorrido", "kilometraje", "seminuevo", "antiguo", "usados", "ocasion"])
-            
-            if is_greeting or (is_general and len(last_user_msg.split()) < 6 and not is_new_request and not is_used_request):
-                has_key_configured = bool(GEMINI_API_KEY or OPENAI_API_KEY)
-                if has_key_configured:
-                    note_msg = "¡Hola! ¿Cómo estás? Soy el Asesor Vehicular Inteligente de CarroQhatu.\n\nPuedo ayudarte a buscar vehículos de nuestro catálogo o responder a tus preguntas sobre autos. ¿Buscas un auto nuevo (0KM) o de segunda mano?"
-                else:
-                    note_msg = "¡Hola! ¿Cómo estás? Soy el Asesor Vehicular Inteligente de CarroQhatu.\n\n*(Nota: Para poder conversar libremente sobre cualquier tema y en tiempo real como ChatGPT, por favor configura la clave `GEMINI_API_KEY` o `OPENAI_API_KEY` en el archivo `.env` del proyecto)*.\n\nPor ahora, en este modo básico, puedo ayudarte a buscar vehículos de nuestro catálogo. ¿Buscas un auto nuevo (0KM) o de segunda mano?"
+            is_greeting = any(k in last_user_lower for k in ["hola", "buenos dias", "buenas tardes", "buenas noches", "como estas", "que tal", "hi", "hello"])
+            if is_greeting or len(last_user_lower.split()) < 3:
+                note_msg = "¡Hola! Soy **Qhatuchay IA** 🚗🤖, el asesor oficial de **CarroQhatu**.\n\nPuedo darte toda la información de nuestra página web: catálogo de vehículos, precios, ficha técnica, contacto WhatsApp (+51 972043502), Inspección 360° o cómo vender tu auto. ¿Qué deseas consultar?"
                 return jsonify({
                     "respuesta": note_msg,
                     "recomendados": [],
@@ -1415,17 +1735,15 @@ REGLAS DE ATENCIÓN Y RECOMENDACIÓN DE VEHÍCULOS NUEVOS 0KM Y MERCADO GENERAL:
             if externos_list_fallback:
                 respuesta_texto += "\n🌐 **Alternativas del Mercado General Externo (Otros Vehículos de Afuera):**\n"
                 for ext in externos_list_fallback:
-                    tipo_txt = "Nuevo 0KM" if ext[6] == "0km" else "De Segunda / Usado"
-                    respuesta_texto += f"* **{ext[0].upper()} {ext[1].upper()} ({ext[2]})** [{tipo_txt}]: Disponible en el mercado general por aproximadamente {ext[3]}. Recorrido {ext[4]} con transmisión {ext[5]}.\n"
+                    tipo_txt = "Nuevo 0KM" if ext[6] == "0km" else "De Segunda"
+                    respuesta_texto += f"* **{ext[0].upper()} {ext[1].upper()} ({ext[2]})** [{tipo_txt}]: Precio aprox {ext[3]}, transmisión {ext[5]}.\n"
+                respuesta_texto += "\n*Recuerda que en CarroQhatu te ayudamos a buscar, verificar físicamente e inspeccionar legalmente cualquier vehículo nuevo 0KM o de segunda del mercado.*"
                 
-                respuesta_texto += "\n¡Recuerda! Si te interesa alguna de estas alternativas del mercado general externo, CarroQhatu te ayuda con la búsqueda, asesoramiento de compra y una rigurosa inspección mecánica y legal para garantizar tu seguridad."
-                
-            # Agregar etiquetas [CAR_ID: X] y [EXTERNAL_CAR: ...] para que el parser las extraiga
-            for c in candidatos_internos[:3]:
+            for c in candidatos_internos:
                 respuesta_texto += f" [CAR_ID: {c['id']}]"
             for ext in externos_list_fallback:
-                respuesta_texto += f" [EXTERNAL_CAR: {ext[0]} | {ext[1]} | {ext[2]} | {ext[3]} | {ext[4]} | {ext[5]} | {ext[6]}]"
-                
+                respuesta_texto += f" [EXTERNAL_CAR: {ext[0]} | {ext[1]} | {ext[2]} | {ext[3]} | {ext[4]} | {ext[5]} | {ext[6]} | {ext[7]}]"
+
         # Parsear las IDs recomendadas en el texto de respuesta
         import re
         car_ids = [int(x) for x in re.findall(r'\[CAR_ID:\s*(\d+)\]', respuesta_texto)]
@@ -1465,31 +1783,59 @@ REGLAS DE ATENCIÓN Y RECOMENDACIÓN DE VEHÍCULOS NUEVOS 0KM Y MERCADO GENERAL:
                 tipo = parts[6] if len(parts) >= 7 else "0km"
                 imagen_url = parts[7] if len(parts) >= 8 else None
                 
-                # Asignar imagen representativa si no viene o no es relativa/url
+                # Asignar foto real autenticada del repositorio
                 if not imagen_url or not (imagen_url.startswith('/') or imagen_url.startswith('http')):
                     m_lower = (marca + " " + modelo).lower()
-                    if "yaris" in m_lower or "toyota" in m_lower:
-                        imagen_url = "/static/img/toyotayaris.jpg"
-                    elif "hilux" in m_lower:
+                    if "hilux" in m_lower:
                         imagen_url = "/static/img/HILUX2017-1.jpg"
-                    elif "tucson" in m_lower or "hyundai" in m_lower:
-                        imagen_url = "/static/img/TUCSON2019.jpg"
-                    elif "sportage" in m_lower or "kia" in m_lower:
+                    elif "rav4" in m_lower:
+                        imagen_url = "/static/img/RAV4-1.jpg"
+                    elif "yaris" in m_lower or "corolla" in m_lower:
+                        imagen_url = "/static/img/toyotayaris.jpg"
+                    elif "sportage" in m_lower:
                         imagen_url = "/static/img/KIASPORTAGE2.jpg"
-                    elif "cx-5" in m_lower or "mazda" in m_lower:
-                        imagen_url = "/static/img/MAZDACX5.jpg"
+                    elif "seltos" in m_lower:
+                        imagen_url = "/static/img/KIA SELTOS.jpg"
+                    elif "sonet" in m_lower:
+                        imagen_url = "/static/img/KIANEWSONET.jpg"
+                    elif "soluto" in m_lower:
+                        imagen_url = "/static/img/kiasoluto.jpg"
+                    elif "tucson" in m_lower:
+                        imagen_url = "/static/img/TUCSON2019.jpg"
+                    elif "verna" in m_lower:
+                        imagen_url = "/static/img/hyundaiverna.jpg"
+                    elif "tracker" in m_lower:
+                        imagen_url = "/static/img/HYUNDAITRACKER-1.png"
                     elif "hr-v" in m_lower or "honda" in m_lower:
                         imagen_url = "/static/img/HONDA-HR-V.jpg"
+                    elif "cx-5" in m_lower or "mazda" in m_lower:
+                        imagen_url = "/static/img/MAZDACX5.jpg"
+                    elif "navara" in m_lower or "frontier" in m_lower or "nissan" in m_lower:
+                        imagen_url = "/static/img/NAVARA1.jpg"
+                    elif "glory" in m_lower or "dfsk" in m_lower:
+                        imagen_url = "/static/img/DFSKGLORYNEW580.jpg"
                     elif "ecosport" in m_lower or "ford" in m_lower:
                         imagen_url = "/static/img/Ford_Ecosport.jpg"
-                    elif "navara" in m_lower or "nissan" in m_lower:
-                        imagen_url = "/static/img/NAVARA1.jpg"
                     elif "audi" in m_lower or "q5" in m_lower:
                         imagen_url = "/static/img/AUDIQ5-2.png"
                     elif "tiguan" in m_lower or "volkswagen" in m_lower:
                         imagen_url = "/static/img/W-TIGUAN1.png"
-                    elif "glory" in m_lower or "dfsk" in m_lower:
-                        imagen_url = "/static/img/DFSKGLORYNEW580.jpg"
+                    elif "stepway" in m_lower or "renault" in m_lower:
+                        imagen_url = "/static/img/RenaultStepway.jpg"
+                    elif "aveo" in m_lower or "spin" in m_lower or "chevrolet" in m_lower:
+                        imagen_url = "/static/img/TRACKERLTZ.jpg"
+                    elif "l200" in m_lower or "mitsubishi" in m_lower:
+                        imagen_url = "/static/img/mitsubishil200.jpg"
+                    elif "vigus" in m_lower or "jmc" in m_lower:
+                        imagen_url = "/static/img/JMCVIGUS.png"
+                    elif "king" in m_lower or "long" in m_lower:
+                        imagen_url = "/static/img/kinglong.jpg"
+                    elif "toyota" in m_lower:
+                        imagen_url = "/static/img/HILUX2017-1.jpg"
+                    elif "kia" in m_lower:
+                        imagen_url = "/static/img/KIASPORTAGE2.jpg"
+                    elif "hyundai" in m_lower:
+                        imagen_url = "/static/img/TUCSON2019.jpg"
                     else:
                         imagen_url = "/static/img/cardetail3.svg"
 
@@ -1587,7 +1933,79 @@ def get_evolution_status():
     except Exception as e:
         return {"configured": True, "connected": False, "qr": None, "error": str(e)}
 
-def configure_evolution_webhook(webhook_url):
+def reset_evolution_instance():
+    """Elimina y vuelve a crear la instancia en Evolution API para limpiar sesiones corruptas o atascadas."""
+    evolution_url = os.getenv("EVOLUTION_API_URL")
+    evolution_key = os.getenv("EVOLUTION_API_KEY")
+    evolution_instance = os.getenv("EVOLUTION_INSTANCE_NAME", "carroqhatu")
+    
+    if not evolution_url or not evolution_key:
+        return False, "Evolution API no está configurada."
+        
+    try:
+        import requests
+        headers = {"apikey": evolution_key}
+        
+        # 1. Eliminar la instancia existente para borrar la sesión desincronizada
+        delete_url = f"{evolution_url.rstrip('/')}/instance/delete/{evolution_instance}"
+        try:
+            requests.delete(delete_url, headers=headers, timeout=15)
+        except Exception as e:
+            print("WARNING (whatsapp): Error eliminando instancia previa:", e)
+            
+        # 2. Recrear la instancia desde cero
+        create_url = f"{evolution_url.rstrip('/')}/instance/create"
+        payload = {
+            "instanceName": evolution_instance,
+            "token": evolution_key,
+            "qrcode": True,
+            "integration": "WHATSAPP-BAILEYS"
+        }
+        r_create = requests.post(create_url, json=payload, headers=headers, timeout=20)
+        
+        # 3. Actualizar webhook
+        webhook_url = get_best_webhook_url()
+        configure_evolution_webhook(webhook_url)
+        
+        return True, "Sesión de WhatsApp reiniciada exitosamente. Se ha generado un código QR 100% nuevo."
+    except Exception as e:
+        return False, f"Error al reiniciar la sesión: {str(e)}"
+
+
+def get_best_webhook_url(request_url_root=None):
+    """Obtiene la mejor URL pública disponible para el webhook (Env var > public request.url_root > ngrok activo > local fallback)."""
+    # 1. Variable de entorno explícita (EVOLUTION_WEBHOOK_URL o PUBLIC_WEBHOOK_URL)
+    env_url = os.getenv("EVOLUTION_WEBHOOK_URL") or os.getenv("PUBLIC_WEBHOOK_URL")
+    if env_url:
+        return env_url if env_url.endswith("/api/whatsapp/webhook") else env_url.rstrip('/') + "/api/whatsapp/webhook"
+
+    # 2. Si la petición viene de un dominio público (ej. ngrok o dominio real)
+    if request_url_root:
+        clean_root = request_url_root.rstrip('/')
+        if not ("127.0.0.1" in clean_root or "localhost" in clean_root):
+            return clean_root + "/api/whatsapp/webhook"
+
+    # 3. Intentar auto-detectar túnel local de ngrok si está corriendo en segundo plano
+    try:
+        import requests
+        r = requests.get("http://127.0.0.1:4040/api/tunnels", timeout=2)
+        if r.status_code == 200:
+            tunnels = r.json().get("tunnels", [])
+            for t in tunnels:
+                pub_url = t.get("public_url", "")
+                if pub_url.startswith("https"):
+                    return pub_url.rstrip('/') + "/api/whatsapp/webhook"
+    except Exception:
+        pass
+
+    # 4. Fallback a request.url_root o localhost si no hay túnel ni dominio público
+    if request_url_root:
+        return request_url_root.rstrip('/') + "/api/whatsapp/webhook"
+
+    return "http://localhost:5000/api/whatsapp/webhook"
+
+
+def configure_evolution_webhook(webhook_url=None):
     """Configura el Webhook en la instancia de Evolution API para recibir mensajes."""
     evolution_url = os.getenv("EVOLUTION_API_URL")
     evolution_key = os.getenv("EVOLUTION_API_KEY")
@@ -1595,6 +2013,15 @@ def configure_evolution_webhook(webhook_url):
     
     if not evolution_url or not evolution_key:
         return
+
+    if not webhook_url:
+        webhook_url = get_best_webhook_url()
+    else:
+        # Si webhook_url trae 127.0.0.1 o localhost pero tenemos una URL pública mejor (ngrok/env), usar la mejor
+        if "127.0.0.1" in webhook_url or "localhost" in webhook_url:
+            best = get_best_webhook_url()
+            if not ("127.0.0.1" in best or "localhost" in best):
+                webhook_url = best
         
     try:
         import requests
@@ -1611,9 +2038,10 @@ def configure_evolution_webhook(webhook_url):
             }
         }
         r = requests.post(url, json=payload, headers=headers, timeout=20)
-        print("INFO (whatsapp): Configuración Webhook Evolution API:", r.status_code, r.text)
+        print(f"INFO (whatsapp): Configuración Webhook Evolution API ({webhook_url}):", r.status_code, r.text)
     except Exception as e:
         print("ERROR (whatsapp): Error configurando webhook en Evolution API:", e)
+
 
 def safe_print(*args, **kwargs):
     try:
@@ -1651,7 +2079,10 @@ def send_outgoing_whatsapp(to_number, body_text):
                 }
             }
             r = requests.post(url, json=payload, headers=headers, timeout=10)
-            safe_print("INFO (whatsapp): Respuesta de Evolution API:", r.status_code)
+            if r.status_code in [200, 201]:
+                safe_print("INFO (whatsapp): Mensaje enviado exitosamente vía Evolution API (HTTP", r.status_code, ")")
+            else:
+                safe_print(f"WARNING (whatsapp): Evolution API devolvió HTTP {r.status_code}: {r.text}. Verifica que el celular esté vinculado escaneando el QR en /admin/whatsapp.")
             return
         except Exception as e:
             safe_print("ERROR (whatsapp): Error enviando mensaje por Evolution API:", str(e))
@@ -2235,12 +2666,12 @@ def admin_whatsapp():
     # Obtener el origen de datos activo para el badge del admin layout
     _, db_source = db_manager.get_all_cotizaciones()
     
-    # Calcular URL del webhook usando request.url_root
-    webhook_url = request.url_root.rstrip('/') + "/api/whatsapp/webhook"
+    # Calcular la mejor URL pública del webhook (Auto-detectando ngrok si aplica)
+    webhook_url = get_best_webhook_url(request.url_root)
     
     # Configuración de Evolution API
     evolution_status = get_evolution_status()
-    # Si la Evolution API está configurada, aseguramos que el webhook esté actualizado
+    # Si la Evolution API está configurada, aseguramos que el webhook esté actualizado con la URL pública
     if evolution_status.get("configured"):
         configure_evolution_webhook(webhook_url)
         
@@ -2261,8 +2692,28 @@ def admin_whatsapp():
         evolution_error=evolution_status.get("error"),
         evolution_url=os.getenv("EVOLUTION_API_URL"),
         evolution_key=os.getenv("EVOLUTION_API_KEY"),
-        evolution_instance=os.getenv("EVOLUTION_INSTANCE_NAME", "carroqhatu")
     )
+
+
+@app.route("/admin/whatsapp/reset_instance", methods=["POST"])
+@admin_required
+def admin_whatsapp_reset_instance():
+    """Limpia la sesión corrupta de WhatsApp y recrea la instancia para generar un QR fresco."""
+    success, msg = reset_evolution_instance()
+    if success:
+        flash(msg, "success")
+    else:
+        flash(msg, "danger")
+    return redirect(url_for("admin_whatsapp"))
+
+
+@app.route("/api/whatsapp/qr_status")
+def api_whatsapp_qr_status():
+    """Endpoint JSON para actualización en vivo del código QR y estado de WhatsApp en el frontend."""
+    if not session.get("admin_logged_in"):
+        return jsonify({"error": "No autorizado"}), 401
+    return jsonify(get_evolution_status())
+
 
 
 @app.route("/admin/configuracion", methods=["GET", "POST"])

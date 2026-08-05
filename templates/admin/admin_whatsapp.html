@@ -144,8 +144,13 @@
 {% if evolution_configured %}
 <!-- Evolution API QR Code Scan Section -->
 <div class="card-admin mb-4" id="qr-section">
-    <h6 class="text-white font-weight-bold mb-4">
-        <i class="fa-solid fa-qrcode mr-2 text-success"></i> Vinculación por Código QR
+    <h6 class="text-white font-weight-bold mb-4 d-flex justify-content-between align-items-center">
+        <span><i class="fa-solid fa-qrcode mr-2 text-success"></i> Vinculación por Código QR</span>
+        {% if not evolution_connected %}
+            <span class="badge badge-info px-3 py-2 font-weight-normal" id="qr-refresh-badge" style="font-size: 0.78rem;">
+                <i class="fa-solid fa-arrows-rotate fa-spin mr-1"></i> Auto-actualizando QR cada 8s
+            </span>
+        {% endif %}
     </h6>
     
     {% if evolution_connected %}
@@ -160,34 +165,63 @@
         </div>
     {% else %}
         <div class="row align-items-center">
-            <div class="col-md-4 text-center mb-4 mb-md-0">
-                {% if evolution_qr %}
-                    <div class="d-inline-block p-3 bg-white rounded shadow-lg" style="border: 4px solid var(--border-color);">
-                        <img src="{{ evolution_qr }}" alt="Código QR WhatsApp" style="width: 200px; height: 200px; display: block;">
-                    </div>
-                    <small class="text-muted mt-2 d-block">* Refresca la página si el código expira o tarda en conectar.</small>
-                {% elif evolution_error %}
-                    <div class="p-4 rounded border text-danger" style="background-color: rgba(220, 53, 69, 0.1); border-color: rgba(220, 53, 69, 0.2);">
-                        <i class="fa-solid fa-triangle-exclamation fa-2x mb-2"></i>
-                        <p class="small mb-0 font-weight-bold">Error de conexión con la API:</p>
-                        <p class="text-muted small mb-0">{{ evolution_error }}</p>
-                    </div>
-                {% else %}
-                    <div class="p-4 text-center text-muted">
-                        <i class="fa-solid fa-spinner fa-spin fa-2x mb-2 text-indigo"></i>
-                        <p class="small mb-0">Cargando código QR de vinculación...</p>
-                    </div>
-                {% endif %}
+            <div class="col-md-5 text-center mb-4 mb-md-0">
+                <div id="qr-container">
+                    {% if evolution_qr %}
+                        <div class="d-inline-block p-3 bg-white rounded shadow-lg mb-2" style="border: 4px solid var(--border-color);">
+                            <img id="whatsapp-qr-img" src="{{ evolution_qr }}" alt="Código QR WhatsApp" style="width: 280px; height: 280px; display: block; image-rendering: pixelated; shape-rendering: crispEdges;">
+                        </div>
+                    {% elif evolution_error %}
+                        <div class="p-4 rounded border text-danger" style="background-color: rgba(220, 53, 69, 0.1); border-color: rgba(220, 53, 69, 0.2);">
+                            <i class="fa-solid fa-triangle-exclamation fa-2x mb-2"></i>
+                            <p class="small mb-0 font-weight-bold">Error de conexión con la API:</p>
+                            <p class="text-muted small mb-0">{{ evolution_error }}</p>
+                        </div>
+                    {% else %}
+                        <div class="p-4 text-center text-muted">
+                            <i class="fa-solid fa-spinner fa-spin fa-2x mb-2 text-indigo"></i>
+                            <p class="small mb-0">Cargando código QR de vinculación...</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="mt-3 d-flex flex-wrap justify-content-center gap-2">
+                    <button class="btn btn-sm btn-outline-light rounded-pill px-3 py-1 font-weight-bold m-1" onclick="reloadQRManual();">
+                        <i class="fa-solid fa-arrows-rotate mr-1"></i> Recargar QR
+                    </button>
+                    
+                    <form action="{{ url_for('admin_whatsapp_reset_instance') }}" method="POST" class="d-inline-block m-1" onsubmit="return confirm('¿Deseas limpiar y reiniciar la sesión de WhatsApp? Esto corregirá el error \'No se pudo vincular\'.');">
+                        <button type="submit" class="btn btn-sm btn-outline-warning rounded-pill px-3 py-1 font-weight-bold">
+                            <i class="fa-solid fa-broom mr-1"></i> Solucionar Error (Reiniciar Sesión)
+                        </button>
+                    </form>
+                </div>
+                
+                <small class="text-muted mt-2 d-block mx-auto" style="font-size: 0.8rem; max-width: 320px;">
+                    * Si tu celular mostró "No se pudo vincular", haz clic en <strong>Solucionar Error (Reiniciar Sesión)</strong> para limpiar el servidor y generar un QR 100% fresco.
+                </small>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-7">
                 <h6 class="text-white font-weight-bold mb-3">Sigue estos pasos para conectar tu celular:</h6>
-                <ol class="text-muted small pl-3" style="line-height: 1.6;">
-                    <li class="mb-2">Abre la aplicación de **WhatsApp** en tu teléfono celular.</li>
-                    <li class="mb-2">Toca el icono de **Menú (tres puntos)** en Android o ve a **Configuración** en iPhone.</li>
-                    <li class="mb-2">Selecciona la opción **Dispositivos vinculados** (Linked Devices).</li>
-                    <li class="mb-2">Haz clic en **Vincular un dispositivo** y escanea el código QR que se muestra a la izquierda.</li>
-                    <li class="mb-2">Una vez escaneado, la página se recargará automáticamente mostrando el estado como <strong>Conectado</strong>.</li>
+                <ol class="text-muted small pl-3 mb-4" style="line-height: 1.6;">
+                    <li class="mb-2">Abre la aplicación de <strong>WhatsApp</strong> en tu teléfono celular.</li>
+                    <li class="mb-2">Toca el icono de <strong>Menú (tres puntos)</strong> en Android o ve a <strong>Configuración</strong> en iPhone.</li>
+                    <li class="mb-2">Selecciona la opción <strong>Dispositivos vinculados</strong> (Linked Devices).</li>
+                    <li class="mb-2">Haz clic en <strong>Vincular un dispositivo</strong> y escanea el código QR que se muestra a la izquierda de inmediato.</li>
+                    <li class="mb-2">Una vez escaneado, la página detectará automáticamente la vinculación.</li>
                 </ol>
+                
+                <div class="p-3 rounded border" style="background-color: rgba(255, 193, 7, 0.08); border-color: rgba(255, 193, 7, 0.2) !important;">
+                    <h6 class="text-warning font-weight-bold small mb-2">
+                        <i class="fa-solid fa-lightbulb mr-1"></i> ¿Por qué sale "No se pudo vincular el dispositivo"?
+                    </h6>
+                    <ul class="text-muted small mb-0 pl-3" style="font-size: 0.82rem; line-height: 1.5;">
+                        <li class="mb-1"><strong>Sesión caducada / atascada</strong>: Haz clic en el botón amarillo <strong>Solucionar Error (Reiniciar Sesión)</strong> para generar un nuevo código.</li>
+                        <li class="mb-1"><strong>Brillo del monitor</strong>: Aumenta el brillo de tu pantalla para que la cámara del celular enfoque con claridad.</li>
+                        <li class="mb-1"><strong>Cerrar la cámara de WhatsApp</strong>: En tu teléfono, regresa a la pantalla anterior y vuelve a pulsar "Vincular dispositivo" antes de escanear.</li>
+                        <li><strong>Límite de dispositivos</strong>: Si tienes 4 dispositivos ya vinculados en tu WhatsApp, desvincula uno de ellos desde tu celular.</li>
+                    </ul>
+                </div>
             </div>
         </div>
     {% endif %}
@@ -377,6 +411,43 @@ TWILIO_WHATSAPP_FROM=whatsapp:+14155238886
         }).catch(err => {
             console.error('Error al copiar texto: ', err);
         });
+    }
+
+    // Polling en tiempo real del código QR y estado de conexión de WhatsApp
+    let isConnected = {{ 'true' if evolution_connected else 'false' }};
+    
+    function checkWhatsAppStatus() {
+        if (isConnected) return;
+        
+        fetch('/api/whatsapp/qr_status')
+            .then(res => res.json())
+            .then(data => {
+                if (data.connected) {
+                    isConnected = true;
+                    location.reload();
+                } else if (data.qr) {
+                    const imgEl = document.getElementById('whatsapp-qr-img');
+                    if (imgEl && imgEl.src !== data.qr) {
+                        imgEl.src = data.qr;
+                    }
+                }
+            })
+            .catch(err => console.log('Poll QR status notice:', err));
+    }
+
+    function reloadQRManual() {
+        checkWhatsAppStatus();
+        const badge = document.getElementById('qr-refresh-badge');
+        if (badge) {
+            badge.innerHTML = '<i class="fa-solid fa-check text-success mr-1"></i> QR Recargado';
+            setTimeout(() => {
+                badge.innerHTML = '<i class="fa-solid fa-arrows-rotate fa-spin mr-1"></i> Auto-actualizando QR cada 8s';
+            }, 1500);
+        }
+    }
+
+    if (!isConnected) {
+        setInterval(checkWhatsAppStatus, 8000);
     }
 </script>
 {% endblock %}

@@ -1,0 +1,419 @@
+{% extends "admin/admin_layout.html" %}
+
+{% block page_title %}Administrar Videos y Tips{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Left Column: Add Video / Tip Form -->
+    <div class="col-lg-5 mb-4">
+        <div class="card-admin">
+            <h5 class="text-white mb-3 font-weight-bold"><i class="fa-solid fa-circle-play mr-2 text-danger"></i> Registrar Nuevo Video o Tip</h5>
+            <p class="text-muted small">Agrega un video explicativo, consejo vehicular o testimonio que aparecerá en la sección "Videos y Tips" de la página principal.</p>
+            
+            <hr style="border-color: var(--border-color); margin: 1.5rem 0;">
+            
+            <form action="{{ url_for('admin_videos') }}" method="POST" enctype="multipart/form-data">
+                <!-- Title -->
+                <div class="form-group mb-3">
+                    <label for="titulo" class="text-muted font-weight-bold small text-uppercase">Título o Descripción Breve</label>
+                    <input type="text" id="titulo" name="titulo" class="form-control" style="border-radius: 0.5rem; padding: 0.75rem;" placeholder="Ej: Tip: Cómo revisar el motor de un auto usado" required>
+                </div>
+
+                <!-- Category -->
+                <div class="form-group mb-3">
+                    <label for="categoria" class="text-muted font-weight-bold small text-uppercase">Categoría</label>
+                    <select id="categoria" name="categoria" class="form-control" style="border-radius: 0.5rem; padding: 0.75rem;">
+                        <option value="Tip Vehicular" selected>Tip Vehicular</option>
+                        <option value="Presentación">Presentación / Empresa</option>
+                        <option value="Testimonio">Testimonio de Cliente</option>
+                        <option value="Reseña">Reseña / Prueba de Auto</option>
+                        <option value="General">General / Entretenimiento</option>
+                    </select>
+                </div>
+                
+                <!-- Video Input Source Selector -->
+                <div class="form-group mb-3">
+                    <label class="text-muted font-weight-bold small text-uppercase d-block">Origen del Video</label>
+                    <div class="btn-group btn-group-toggle w-100" data-toggle="buttons">
+                        <label class="btn btn-outline-danger active font-weight-bold btn-sm py-2" onclick="setVideoSource('url')">
+                            <input type="radio" name="video_tipo" value="url" checked> <i class="fa-solid fa-link mr-1"></i> URL / Enlace (Dropbox, YouTube, etc.)
+                        </label>
+                        <label class="btn btn-outline-danger font-weight-bold btn-sm py-2" onclick="setVideoSource('file')">
+                            <input type="radio" name="video_tipo" value="file"> <i class="fa-solid fa-upload mr-1"></i> Subir Archivo MP4
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Video URL Input -->
+                <div class="form-group mb-3" id="group-video-url">
+                    <label for="video_url" class="text-muted font-weight-bold small text-uppercase">URL / Enlace del Video</label>
+                    <input type="url" id="video_url" name="video_url" class="form-control" style="border-radius: 0.5rem; padding: 0.75rem;" placeholder="Ej: https://www.dropbox.com/.../video.mp4?raw=1 o YouTube">
+                    <small class="text-muted">Acepta enlaces directos (.mp4, Dropbox con raw=1) o enlaces de YouTube.</small>
+                </div>
+
+                <!-- Video File Input -->
+                <div class="form-group mb-3 d-none" id="group-video-file">
+                    <label class="text-muted font-weight-bold small text-uppercase">Archivo de Video (.mp4, .webm)</label>
+                    <div class="custom-file" style="overflow: hidden;">
+                        <input type="file" id="video_file" name="video_file" class="custom-file-input" accept="video/mp4,video/webm" onchange="updateFileNameLabel(this)">
+                        <label class="custom-file-label" for="video_file" style="border-radius: 0.5rem; padding: 0.75rem; text-align: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">Seleccionar video (.mp4)...</label>
+                    </div>
+                </div>
+
+                <!-- Thumbnail Input Source Selector -->
+                <div class="form-group mb-3 mt-4">
+                    <label class="text-muted font-weight-bold small text-uppercase d-block">Miniatura / Carátula</label>
+                    <div class="btn-group btn-group-toggle w-100 mb-2" data-toggle="buttons">
+                        <label class="btn btn-outline-secondary active font-weight-bold btn-sm py-1" onclick="setMinSource('url')">
+                            <input type="radio" name="miniatura_tipo" value="url" checked> URL Imagen
+                        </label>
+                        <label class="btn btn-outline-secondary font-weight-bold btn-sm py-1" onclick="setMinSource('file')">
+                            <input type="radio" name="miniatura_tipo" value="file"> Subir Imagen
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Thumbnail URL Input -->
+                <div class="form-group mb-3" id="group-min-url">
+                    <input type="text" id="miniatura_url" name="miniatura_url" class="form-control" style="border-radius: 0.5rem; padding: 0.75rem;" placeholder="Ej: /static/img/miniaturasomos.svg o https://...">
+                    <small class="text-muted">Si se deja vacío, se asignará una miniatura por defecto.</small>
+                </div>
+
+                <!-- Thumbnail File Input -->
+                <div class="form-group mb-3 d-none" id="group-min-file">
+                    <div class="custom-file" style="overflow: hidden;">
+                        <input type="file" id="miniatura_file" name="miniatura_file" class="custom-file-input" accept="image/*" onchange="updateFileNameLabel(this)">
+                        <label class="custom-file-label" for="miniatura_file" style="border-radius: 0.5rem; padding: 0.75rem; text-align: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">Seleccionar imagen de portada...</label>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-admin btn-admin-primary w-100 justify-content-center mt-3">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Publicar Video / Tip
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Right Column: Active Videos & Tips List -->
+    <div class="col-lg-7 mb-4">
+        <div class="card-admin h-100">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="text-white mb-0 font-weight-bold"><i class="fa-solid fa-film mr-2 text-danger"></i> Videos y Tips en la Web</h5>
+                <span class="badge badge-pill badge-primary px-3 py-2" style="font-size: 0.85rem;">Total: {{ videos|length }}</span>
+            </div>
+            
+            {% if videos %}
+            <div class="row">
+                {% for vid in videos %}
+                <div class="col-md-6 mb-4">
+                    <div class="border rounded-3 d-flex flex-column justify-content-between h-100 overflow-hidden shadow-sm" style="background-color: #ffffff; border-color: var(--border-color) !important; border-radius: 0.75rem;">
+                        <!-- Thumbnail Preview with Play Icon -->
+                        <div class="position-relative" style="height: 140px; overflow: hidden; background-color: #0f172a;">
+                            <img src="{{ vid.miniatura_url }}" alt="{{ vid.titulo }}" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.85;">
+                            
+                            <!-- Category Badge -->
+                            <span class="badge badge-danger position-absolute m-2" style="top: 0; left: 0; font-size: 0.7rem; background-color: var(--primary);">
+                                {{ vid.categoria|default('Tip') }}
+                            </span>
+
+                            <!-- Active / Hidden Badge -->
+                            <span id="badge-status-{{ vid.id }}" class="badge position-absolute m-2 {% if vid.activo %}badge-success{% else %}badge-secondary{% endif %}" style="top: 0; right: 0; font-size: 0.7rem;">
+                                {% if vid.activo %}Visible{% else %}Oculto{% endif %}
+                            </span>
+
+                            <!-- Play Button Trigger Modal -->
+                            <button type="button" class="btn btn-danger btn-circle position-absolute" style="top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 50%; width: 45px; height: 45px; padding: 0; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.4);" onclick="previewAdminVideo('{{ vid.video_url }}', '{{ vid.titulo|escape }}')">
+                                <i class="fa-solid fa-play ml-1"></i>
+                            </button>
+                        </div>
+
+                        <!-- Card Content -->
+                        <div class="p-3">
+                            <h6 class="font-weight-bold mb-1 text-truncate" style="color: var(--text-main);" title="{{ vid.titulo }}">{{ vid.titulo }}</h6>
+                            <p class="text-muted small text-truncate mb-2" style="font-size: 0.78rem;" title="{{ vid.video_url }}">
+                                <i class="fa-solid fa-link mr-1 text-danger"></i> {{ vid.video_url }}
+                            </p>
+                            <span class="text-muted small" style="font-size: 0.72rem;">
+                                <i class="fa-regular fa-clock mr-1"></i> {{ vid.created_at }}
+                            </span>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="p-2 border-top d-flex gap-2 justify-content-between align-items-center" style="border-color: var(--border-color) !important; background-color: #f8fafc;">
+                            <!-- Toggle Active/Hidden Button -->
+                            <button type="button" class="btn btn-sm {% if vid.activo %}btn-outline-secondary{% else %}btn-outline-success{% endif %}" style="font-size: 0.75rem; font-weight: 600;" onclick="toggleVideoStatus({{ vid.id }}, {% if vid.activo %}0{% else %}1{% endif %}, this)">
+                                {% if vid.activo %}
+                                    <i class="fa-solid fa-eye-slash mr-1"></i> Ocultar
+                                {% else %}
+                                    <i class="fa-solid fa-eye mr-1"></i> Mostrar
+                                {% endif %}
+                            </button>
+
+                            <div class="d-flex gap-1">
+                                <!-- Editar button -->
+                                <button type="button" class="btn btn-sm btn-outline-warning text-dark font-weight-bold" style="font-size: 0.75rem;" onclick="openEditModal({{ vid.id }}, '{{ vid.titulo|escape }}', '{{ vid.categoria|escape }}', '{{ vid.video_url|escape }}', '{{ vid.miniatura_url|escape }}', {{ vid.activo }})">
+                                    <i class="fa-solid fa-pen-to-square"></i> Editar
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-primary" style="font-size: 0.75rem;" onclick="previewAdminVideo('{{ vid.video_url }}', '{{ vid.titulo|escape }}')">
+                                    <i class="fa-solid fa-play"></i> Ver
+                                </button>
+                                <form action="{{ url_for('admin_delete_video', video_id=vid.id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este video permanentemente?');" class="mb-0 d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" style="font-size: 0.75rem;">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-5 text-muted my-auto">
+                <i class="fa-solid fa-film fa-3x mb-3 text-muted"></i>
+                <p class="mb-0">No hay videos ni tips cargados todavía.</p>
+                <p class="small text-muted mt-1">Utiliza el formulario de la izquierda para agregar tu primer video.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Previsualizar Video en Admin -->
+<div class="modal fade" id="adminVideoModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content overflow-hidden" style="border-radius: 1rem; background-color: #000;">
+            <div class="modal-header border-0 text-white" style="background-color: #111827;">
+                <h5 class="modal-title font-weight-bold text-white" id="modalVideoTitle">Vista Previa del Video</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" onclick="closeAdminVideoModal()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body p-0 text-center position-relative" style="background-color: #000; min-height: 380px;">
+                <video id="adminPlayerVideo" controls playsinline style="width: 100%; max-height: 500px; display: none;"></video>
+                <iframe id="adminPlayerIframe" src="" style="width: 100%; height: 450px; border: none; display: none;" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Editar Video -->
+<div class="modal fade" id="editVideoModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content" style="border-radius: 1rem; background-color: #ffffff;">
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title font-weight-bold" style="color: var(--text-main);"><i class="fa-solid fa-pen-to-square mr-2 text-warning"></i> Editar Video / Tip</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="editVideoForm" action="" method="POST" enctype="multipart/form-data">
+                <div class="modal-body p-4">
+                    <input type="hidden" id="edit_video_id" name="video_id">
+                    
+                    <!-- Title -->
+                    <div class="form-group mb-3">
+                        <label for="edit_titulo" class="text-muted font-weight-bold small text-uppercase">Título del Video / Tip</label>
+                        <input type="text" id="edit_titulo" name="titulo" class="form-control" style="border-radius: 0.5rem;" required>
+                    </div>
+
+                    <!-- Category -->
+                    <div class="form-group mb-3">
+                        <label for="edit_categoria" class="text-muted font-weight-bold small text-uppercase">Categoría</label>
+                        <select id="edit_categoria" name="categoria" class="form-control" style="border-radius: 0.5rem;">
+                            <option value="Tip Vehicular">Tip Vehicular</option>
+                            <option value="Presentación">Presentación / Empresa</option>
+                            <option value="Testimonio">Testimonio de Cliente</option>
+                            <option value="Reseña">Reseña / Prueba de Auto</option>
+                            <option value="General">General / Entretenimiento</option>
+                        </select>
+                    </div>
+
+                    <!-- Video Section -->
+                    <div class="form-group mb-3">
+                        <label class="text-muted font-weight-bold small text-uppercase d-block">Video (Ubicación o Archivo)</label>
+                        <div class="btn-group btn-group-toggle w-100 mb-2" data-toggle="buttons">
+                            <label class="btn btn-outline-danger active font-weight-bold btn-sm py-2" onclick="setEditVideoSource('keep')">
+                                <input type="radio" name="video_tipo" value="keep" checked> Mantener Actual
+                            </label>
+                            <label class="btn btn-outline-danger font-weight-bold btn-sm py-2" onclick="setEditVideoSource('url')">
+                                <input type="radio" name="video_tipo" value="url"> Cambiar URL
+                            </label>
+                            <label class="btn btn-outline-danger font-weight-bold btn-sm py-2" onclick="setEditVideoSource('file')">
+                                <input type="radio" name="video_tipo" value="file"> Subir Nuevo MP4
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-3" id="edit-group-video-url" style="display:none;">
+                        <input type="url" id="edit_video_url" name="video_url" class="form-control" style="border-radius: 0.5rem;" placeholder="https://...">
+                    </div>
+
+                    <div class="form-group mb-3" id="edit-group-video-file" style="display:none;">
+                        <div class="custom-file" style="overflow: hidden;">
+                            <input type="file" id="edit_video_file" name="video_file" class="custom-file-input" accept="video/mp4,video/webm" onchange="updateFileNameLabel(this)">
+                            <label class="custom-file-label" for="edit_video_file" style="border-radius: 0.5rem;">Seleccionar nuevo archivo video (.mp4)...</label>
+                        </div>
+                    </div>
+
+                    <!-- Thumbnail Section -->
+                    <div class="form-group mb-3">
+                        <label class="text-muted font-weight-bold small text-uppercase d-block">Miniatura / Imagen Portada</label>
+                        <div class="btn-group btn-group-toggle w-100 mb-2" data-toggle="buttons">
+                            <label class="btn btn-outline-secondary active font-weight-bold btn-sm py-1" onclick="setEditMinSource('keep')">
+                                <input type="radio" name="miniatura_tipo" value="keep" checked> Mantener Actual
+                            </label>
+                            <label class="btn btn-outline-secondary font-weight-bold btn-sm py-1" onclick="setEditMinSource('url')">
+                                <input type="radio" name="miniatura_tipo" value="url"> Cambiar URL
+                            </label>
+                            <label class="btn btn-outline-secondary font-weight-bold btn-sm py-1" onclick="setEditMinSource('file')">
+                                <input type="radio" name="miniatura_tipo" value="file"> Subir Nueva Imagen
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-3" id="edit-group-min-url" style="display:none;">
+                        <input type="text" id="edit_miniatura_url" name="miniatura_url" class="form-control" style="border-radius: 0.5rem;" placeholder="/static/img/... o URL de imagen">
+                    </div>
+
+                    <div class="form-group mb-3" id="edit-group-min-file" style="display:none;">
+                        <div class="custom-file" style="overflow: hidden;">
+                            <input type="file" id="edit_miniatura_file" name="miniatura_file" class="custom-file-input" accept="image/*" onchange="updateFileNameLabel(this)">
+                            <label class="custom-file-label" for="edit_miniatura_file" style="border-radius: 0.5rem;">Seleccionar nueva imagen de portada...</label>
+                        </div>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="form-group mb-0">
+                        <label for="edit_activo" class="text-muted font-weight-bold small text-uppercase">Visibilidad</label>
+                        <select id="edit_activo" name="activo" class="form-control" style="border-radius: 0.5rem;">
+                            <option value="1">Visible en la Web Pública</option>
+                            <option value="0">Oculto</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer border-top">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-warning font-weight-bold text-dark"><i class="fa-solid fa-floppy-disk mr-1"></i> Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function setVideoSource(type) {
+        if (type === 'url') {
+            document.getElementById('group-video-url').classList.remove('d-none');
+            document.getElementById('group-video-file').classList.add('d-none');
+        } else {
+            document.getElementById('group-video-url').classList.add('d-none');
+            document.getElementById('group-video-file').classList.remove('d-none');
+        }
+    }
+
+    function setMinSource(type) {
+        if (type === 'url') {
+            document.getElementById('group-min-url').classList.remove('d-none');
+            document.getElementById('group-min-file').classList.add('d-none');
+        } else {
+            document.getElementById('group-min-url').classList.add('d-none');
+            document.getElementById('group-min-file').classList.remove('d-none');
+        }
+    }
+
+    function updateFileNameLabel(input) {
+        const fileName = input.files[0] ? input.files[0].name : "Seleccionar archivo...";
+        const label = input.nextElementSibling;
+        if (label) {
+            label.textContent = fileName;
+        }
+    }
+
+    function previewAdminVideo(src, title) {
+        document.getElementById('modalVideoTitle').textContent = title || "Vista Previa del Video";
+        const video = document.getElementById('adminPlayerVideo');
+        const iframe = document.getElementById('adminPlayerIframe');
+
+        if (src.includes('youtube.com') || src.includes('youtu.be')) {
+            let embedUrl = src;
+            if (src.includes('watch?v=')) {
+                const videoId = src.split('watch?v=')[1].split('&')[0];
+                embedUrl = 'https://www.youtube.com/embed/' + videoId + '?autoplay=1';
+            } else if (src.includes('youtu.be/')) {
+                const videoId = src.split('youtu.be/')[1].split('?')[0];
+                embedUrl = 'https://www.youtube.com/embed/' + videoId + '?autoplay=1';
+            }
+            video.pause();
+            video.style.display = 'none';
+            iframe.src = embedUrl;
+            iframe.style.display = 'block';
+        } else {
+            iframe.src = '';
+            iframe.style.display = 'none';
+            video.style.display = 'block';
+            video.src = src;
+            video.load();
+            video.play().catch(e => console.log("Reproducción manual requerida"));
+        }
+
+        $('#adminVideoModal').modal('show');
+    }
+
+    function closeAdminVideoModal() {
+        const video = document.getElementById('adminPlayerVideo');
+        const iframe = document.getElementById('adminPlayerIframe');
+        if (video) { video.pause(); video.src = ''; }
+        if (iframe) { iframe.src = ''; }
+    }
+
+    $('#adminVideoModal').on('hidden.bs.modal', function () {
+        closeAdminVideoModal();
+    });
+
+    function toggleVideoStatus(videoId, newStatus, btn) {
+        fetch(`/admin/videos/toggle/${videoId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ activo: newStatus })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert("Error: " + (data.error || "No se pudo cambiar el estado."));
+            }
+        })
+        .catch(err => alert("Error de red: " + err));
+    }
+
+    function openEditModal(id, titulo, categoria, videoUrl, miniaturaUrl, activo) {
+        document.getElementById('editVideoForm').action = '/admin/videos/editar/' + id;
+        document.getElementById('edit_video_id').value = id;
+        document.getElementById('edit_titulo').value = titulo;
+        document.getElementById('edit_categoria').value = categoria;
+        document.getElementById('edit_video_url').value = videoUrl;
+        document.getElementById('edit_miniatura_url').value = miniaturaUrl;
+        document.getElementById('edit_activo').value = activo;
+
+        setEditVideoSource('keep');
+        setEditMinSource('keep');
+
+        $('#editVideoModal').modal('show');
+    }
+
+    function setEditVideoSource(type) {
+        document.getElementById('edit-group-video-url').style.display = type === 'url' ? 'block' : 'none';
+        document.getElementById('edit-group-video-file').style.display = type === 'file' ? 'block' : 'none';
+    }
+
+    function setEditMinSource(type) {
+        document.getElementById('edit-group-min-url').style.display = type === 'url' ? 'block' : 'none';
+        document.getElementById('edit-group-min-file').style.display = type === 'file' ? 'block' : 'none';
+    }
+</script>
+{% endblock %}
