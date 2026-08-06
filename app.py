@@ -2558,39 +2558,57 @@ def whatsapp_webhook_message():
         message_id = None
         
         if "application/json" in content_type:
-            data = request.json
+            data = request.json or {}
             if not data:
                 return "OK", 200
             
             # Detectar Evolution API (MESSAGES_UPSERT)
-            if "event" in data and "instance" in data and "data" in data:
-                event_type = data.get("event")
-                if event_type not in ["messages.upsert", "MESSAGES_UPSERT"]:
-                    return "OK", 200 # Ignorar otros eventos como status, etc.
+            if "event" in data and ("data" in data or "instance" in data):
+                event_type = str(data.get("event", "")).lower()
+                if "messages" not in event_type:
+                    return "OK", 200 # Ignorar eventos no relacionados con mensajes
                 
-                evt_data = data.get("data", {})
+                raw_evt = data.get("data", {})
+                if isinstance(raw_evt, list) and len(raw_evt) > 0:
+                    evt_data = raw_evt[0]
+                elif isinstance(raw_evt, dict):
+                    evt_data = raw_evt
+                else:
+                    evt_data = {}
+
+                if not isinstance(evt_data, dict):
+                    return "OK", 200
+
                 key = evt_data.get("key", {})
                 from_me = key.get("fromMe", False)
                 if from_me:
-                    # Evitar bucle infinito
+                    # Ignorar mensajes enviados por el propio bot para evitar bucles
                     return "OK", 200
                 
                 remote_jid = key.get("remoteJid", "")
+                if "@g.us" in remote_jid:
+                    # Ignorar chats de grupo
+                    return "OK", 200
+
                 if "@" in remote_jid:
                     phone_number = remote_jid.split("@")[0]
                 else:
                     phone_number = remote_jid
                 
-                sender_name = evt_data.get("pushName", "Cliente WhatsApp")
+                sender_name = evt_data.get("pushName") or "Cliente WhatsApp"
                 message_id = key.get("id")
                 
                 message_obj = evt_data.get("message", {})
-                if not message_obj:
-                    return "OK", 200
-                
-                message_body = message_obj.get("conversation", "")
-                if not message_body and "extendedTextMessage" in message_obj:
-                    message_body = message_obj.get("extendedTextMessage", {}).get("text", "")
+                if isinstance(message_obj, dict):
+                    message_body = message_obj.get("conversation", "")
+                    if not message_body and "extendedTextMessage" in message_obj:
+                        message_body = message_obj.get("extendedTextMessage", {}).get("text", "")
+                    if not message_body and "imageMessage" in message_obj:
+                        message_body = message_obj.get("imageMessage", {}).get("caption", "Hola")
+                    if not message_body and "videoMessage" in message_obj:
+                        message_body = message_obj.get("videoMessage", {}).get("caption", "Hola")
+                    if not message_body and "documentMessage" in message_obj:
+                        message_body = message_obj.get("documentMessage", {}).get("caption", "Hola")
             else:
                 # Es el JSON original de Meta Cloud API
                 entry = data.get("entry", [])
@@ -2629,7 +2647,7 @@ def whatsapp_webhook_message():
         if not phone_number or not message_body:
             return "Datos incompletos", 400
 
-        # Filtro de de-duplicación para evitar respuestas repetidas (retries de Meta/Twilio)
+        # Filtro de de-duplicación para evitar respuestas repetidas
         if message_id:
             if message_id in WHATSAPP_PROCESSED_MESSAGE_IDS:
                 print(f"INFO (whatsapp): Ignorando mensaje duplicado ID: {message_id}")
@@ -2638,15 +2656,17 @@ def whatsapp_webhook_message():
             if len(WHATSAPP_PROCESSED_MESSAGE_IDS) > 200:
                 WHATSAPP_PROCESSED_MESSAGE_IDS.pop(0)
             
+        safe_print(f"INFO (whatsapp): Mensaje recibido de {sender_name} ({phone_number}): '{message_body}'")
         ia_reply, result = process_whatsapp_ai_logic(phone_number, sender_name, message_body)
+        safe_print(f"INFO (whatsapp): Respondiendo a {phone_number} con IA...")
         
-        # Enviar mensaje saliente
+        # Enviar mensaje saliente vía Evolution API / Meta / Twilio
         send_outgoing_whatsapp(phone_number, ia_reply)
         
         return jsonify({"status": "sent", "reply": ia_reply}), 200
         
     except Exception as e:
-        print("ERROR (whatsapp): Error en webhook POST:", e)
+        safe_print("ERROR (whatsapp): Error en webhook POST:", str(e))
         return str(e), 500
 
 @app.route("/admin/whatsapp")
