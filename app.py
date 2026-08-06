@@ -2597,14 +2597,16 @@ def whatsapp_webhook_message():
                     # Ignorar chats de grupo
                     return "OK", 200
 
+                clean_raw = remote_jid.split("@")[0]
                 if sender_pn:
                     phone_number = "".join(filter(str.isdigit, str(sender_pn)))
                 elif remote_jid_alt and "@s.whatsapp.net" in remote_jid_alt:
                     phone_number = remote_jid_alt.split("@")[0]
-                elif "@lid" in remote_jid:
-                    phone_number = remote_jid
+                elif "@lid" in remote_jid or (clean_raw.isdigit() and len(clean_raw) > 12 and not clean_raw.startswith("51")):
+                    # Es un identificador LID de WhatsApp (13-15 dígitos como 30967049805853)
+                    phone_number = f"{clean_raw}@lid"
                 elif "@" in remote_jid:
-                    phone_number = remote_jid.split("@")[0]
+                    phone_number = clean_raw
                 else:
                     phone_number = remote_jid
                 
