@@ -867,7 +867,7 @@ def admin_login():
     if session.get("admin_logged_in"):
         return redirect(url_for("admin_dashboard"))
         
-    expected_2fa_pin = os.getenv("ADMIN_2FA_PIN")
+    expected_2fa_pin = os.getenv("ADMIN_2FA_PIN", "948201")
     show_2fa = bool(expected_2fa_pin)
     
     if request.method == "POST":
@@ -886,8 +886,8 @@ def admin_login():
                 flash(f"Demasiados intentos fallidos. IP bloqueada temporalmente por {remaining_time} segundos.", "danger")
                 return render_template("admin/admin_login.html", show_2fa=show_2fa)
         
-        expected_username = os.getenv("ADMIN_USERNAME", "admin")
-        expected_password = os.getenv("ADMIN_PASSWORD", "CarroQhatuAdmin2026")
+        expected_username = os.getenv("ADMIN_USERNAME", "revelino")
+        expected_password = os.getenv("ADMIN_PASSWORD", "RevelinoQhatu#2026!")
         expected_password_hash = os.getenv("ADMIN_PASSWORD_HASH")
         
         # 2. Validaciones con hmac y hash de contraseñas
