@@ -2063,15 +2063,19 @@ def send_outgoing_whatsapp(to_number, body_text):
     if evolution_url and evolution_key:
         try:
             import requests
-            # Limpiar el número a E.164 simple (solo dígitos)
-            clean_number = "".join(filter(str.isdigit, to_number))
+            # Preservar identificador @lid si aplica, de lo contrario extraer dígitos
+            if "@lid" in str(to_number):
+                number_val = str(to_number)
+            else:
+                number_val = "".join(filter(str.isdigit, str(to_number)))
+
             url = f"{evolution_url.rstrip('/')}/message/sendText/{evolution_instance}"
             headers = {
                 "apikey": evolution_key,
                 "Content-Type": "application/json"
             }
             payload = {
-                "number": clean_number,
+                "number": number_val,
                 "text": body_text,
                 "options": {
                     "delay": 1200,
@@ -2586,11 +2590,20 @@ def whatsapp_webhook_message():
                     return "OK", 200
                 
                 remote_jid = key.get("remoteJid", "")
+                remote_jid_alt = key.get("remoteJidAlt", "") or evt_data.get("remoteJidAlt", "")
+                sender_pn = evt_data.get("senderPn", "") or key.get("senderPn", "")
+
                 if "@g.us" in remote_jid:
                     # Ignorar chats de grupo
                     return "OK", 200
 
-                if "@" in remote_jid:
+                if sender_pn:
+                    phone_number = "".join(filter(str.isdigit, str(sender_pn)))
+                elif remote_jid_alt and "@s.whatsapp.net" in remote_jid_alt:
+                    phone_number = remote_jid_alt.split("@")[0]
+                elif "@lid" in remote_jid:
+                    phone_number = remote_jid
+                elif "@" in remote_jid:
                     phone_number = remote_jid.split("@")[0]
                 else:
                     phone_number = remote_jid
